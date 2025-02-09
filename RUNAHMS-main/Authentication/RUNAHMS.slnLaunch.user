@@ -1,0 +1,11 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "RUNAHMS-API\\RUNAHMS-API.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]
