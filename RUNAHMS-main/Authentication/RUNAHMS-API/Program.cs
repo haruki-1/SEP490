@@ -1,52 +1,118 @@
-﻿using DAL;
-using Microsoft.Extensions.FileProviders;
-using GraduationAPI_EPOSHBOOKING.IRepository;
-using GraduationAPI_EPOSHBOOKING.Model;
-using GraduationAPI_EPOSHBOOKING.Repository;
-using GraduationAPI_EPOSHBOOKING.Ultils;
-using Microsoft.OpenApi.Models;
-using Microsoft.Extensions.Configuration;
-using System.Text.Json.Serialization;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Http.Features;
-using WebAPI.Utils.Middlewares;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using DAL.Mapper;
-#pragma warning disable // tắt cảnh báo để code sạch hơn
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Mvc;
+using API.Services;
+using DataAccess.Context;
+using DataAccess.Handlers;
+using DataAccess.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using API.Middlewares;
+using BusinessObject.Interfaces;
+using DataAccess.Repositories;
+using BusinessObject.Settings;
+using DataAccess.EmailHandler;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
-var configuration = builder.Configuration;
-builder.Services.AddHttpClient();
+
+// Add services to the container.
+
 builder.Services.AddControllers();
+
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-builder.Services.AddScoped<Utils>();
-builder.Services.AddDbContext<DAL.DBContext>();
-builder.Services.AddAutoMapper(typeof(ApplicationMapper));
-builder.Services.AddScoped<IAccountRepository, AccountRepository>();
-builder.Services.AddScoped<IAccountRepository, AccountRepository>();
-builder.Services.AddScoped<IBlogRepository, BlogRepository>();
-builder.Services.AddSingleton<JWTAuthenticationMiddleware>();
-builder.Services.AddAutoMapper(typeof(Program));
-builder.Services.AddControllers().AddJsonOptions(options =>
+builder.Services.AddSwaggerGen(opt =>
 {
-    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
-    options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
-    options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.Never;
+    opt.SwaggerDoc("v1", new OpenApiInfo { Title = "Auth API", Version = "v1" });
+    opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Please enter token",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "bearer"
+    });
+    opt.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type=ReferenceType.SecurityScheme,
+                    Id="Bearer"
+                }
+            },
+            new string[]{}
+        }
+    });
 });
 
-builder.Services.Configure<FormOptions>(options =>
+builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+);
+
+builder.Services.AddScoped<IAuthenticatedUserService, AuthenticatedUserService>();
+
+builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
+builder.Services.AddScoped<ITokenService, TokenService>();
+
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
+builder.Services.AddScoped<ITokenService, TokenService>();
+
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
+builder.Services.AddScoped<IEmailSender, EmailSender>();
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SecretKey"]))
+        };
+    });
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy("AdminPolicy", policy =>
+        policy.RequireRole("Admin"))
+    .AddPolicy("ManagerPolicy", policy =>
+        policy.RequireRole("Manager"))
+    .AddPolicy("UserPolicy", policy =>
+        policy.RequireRole("User"));
+
+
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
+builder.Services.AddCors(options =>
 {
-    options.MultipartBodyLengthLimit = 1024 * 1024 * 50; // 50 MB
+    options.AddPolicy(name: "MyAllowSpecificOrigins",
+                      policy =>
+                      {
+                          policy.WithOrigins("http://localhost:5290")
+                                .AllowAnyHeader()
+                                .AllowAnyMethod();
+                      });
 });
 
-builder.WebHost.ConfigureKestrel(serverOptions =>
+builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
-    serverOptions.Limits.MaxRequestBodySize = long.MaxValue; // No limit
+    options.SuppressModelStateInvalidFilter = true;
 });
-
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAllOrigins",
@@ -57,58 +123,28 @@ builder.Services.AddCors(options =>
                    .AllowAnyHeader();
         });
 });
-
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = false,
-        ValidateAudience = false,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(configuration["JWT:SecretKey"] ?? throw new ArgumentNullException("JWT Secret Key is missing"))
-        ),
-        NameClaimType = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
-    };
-});
-
-
-builder.Services.AddLogging();
 var app = builder.Build();
-app.UseDeveloperExceptionPage();
+
 app.UseSwagger();
-app.UseSwaggerUI(c =>
-{
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-
-});
-
+app.UseSwaggerUI();
 app.UseCors("AllowAllOrigins");
-app.UseHttpsRedirection();
-
-var imagesPath = Path.Combine(Directory.GetCurrentDirectory(), "images");
-
-// Kiểm tra thư mục tồn tại, nếu không thì tạo
-if (!Directory.Exists(imagesPath))
-{
-    Directory.CreateDirectory(imagesPath);
-}
-app.UseMiddleware<JWTAuthenticationMiddleware>();
-
 app.UseStaticFiles(new StaticFileOptions
 {
-    FileProvider = new PhysicalFileProvider(imagesPath),
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), "images")),
     RequestPath = "/images"
 });
+app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
+
+app.UseCors(MyAllowSpecificOrigins);
+
+//app.UseMiddleware<ApiKeyMiddleware>();
+app.UseMiddleware<ApiUserIdMiddleware>();
+app.UseMiddleware<ApiResponseMiddleware>();
 
 app.Run();

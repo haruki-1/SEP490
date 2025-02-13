@@ -1,19 +1,22 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>RUNAHMS_API</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.19" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    <Compile Remove="Controllers\Admin\**" />
+    <Content Remove="Controllers\Admin\**" />
+    <EmbeddedResource Remove="Controllers\Admin\**" />
+    <None Remove="Controllers\Admin\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\Admin\" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.19" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>
 
   <ItemGroup>
