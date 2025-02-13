@@ -1,4 +1,4 @@
-namespace RUNAHMS_API
+namespace API
 {
     public class WeatherForecast
     {
