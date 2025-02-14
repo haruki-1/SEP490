@@ -146,12 +146,7 @@ namespace RUNAHMS_API.Controllers
                     c.Price
                 }).ToList(),
 
-                Amenities = h.HomestayAmenities!
-                    .Select(ha => new
-                    {
-                        ha.Amenity.Id,
-                        ha.Amenity.Name
-                    }).ToList()
+            
             }).ToList();
 
             return Ok(response);
