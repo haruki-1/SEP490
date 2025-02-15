@@ -88,6 +88,35 @@ namespace RUNAHMS_API.Controllers
             return NotFound();
         }
 
+
+        [HttpPut("edit-home-stay-information")]
+        public async Task<IActionResult> EditHomeStay([FromBody] EditHomeStayInforRequest request)
+        {
+            try
+            {
+                var getHomeStay = await _homeStayRepository.GetByIdAsync(request.HomeStayID);
+                if (getHomeStay == null)
+                {
+                    return NotFound();
+                }
+                getHomeStay.Name = request.Name ?? getHomeStay.Name;
+                getHomeStay.MainImage = request.MainImage ?? getHomeStay.MainImage;
+                getHomeStay.Standar = getHomeStay.Standar = request.Standar != 0 ? request.Standar : getHomeStay.Standar;
+                getHomeStay.CheckOutTime = request.CheckOutTime ?? getHomeStay.CheckOutTime;
+                getHomeStay.CheckInTime = request.CheckInTime ?? getHomeStay.CheckInTime;
+                getHomeStay.Address = request.Address ?? getHomeStay.Address;
+                getHomeStay.OpenIn = request.OpenIn = request.OpenIn != 0 ? request.OpenIn : getHomeStay.OpenIn;
+                getHomeStay.Description = request.Description ?? getHomeStay.Description;
+                await _homeStayRepository.UpdateAsync(getHomeStay);
+                await _homeStayRepository.SaveAsync();
+                return Ok(new { Message = "Update Home Stay Success" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "An error occurred", Error = ex.Message });
+            }
+        }
+
         [HttpPost("get-all-home-stay")]
         public async Task<IActionResult> GetAllHomeStay([FromBody] FilterDTO request)
         {
@@ -146,8 +175,63 @@ namespace RUNAHMS_API.Controllers
                     c.Price
                 }).ToList(),
 
-            
+
             }).ToList();
+
+            return Ok(response);
+        }
+    
+
+
+    [HttpGet("get-home-stay-detail")]
+        public async Task<IActionResult> GetHomeStayDetail([FromQuery] Guid homeStayID)
+        {
+            var getDetail = await _calendarRepository
+                .FindWithInclude(h => h.HomeStay)
+                .Include(h => h.HomeStay!)
+                .ThenInclude(hs => hs.HomestayAmenities!)
+                .ThenInclude(ha => ha.Amenity)
+                .Include(h => h.HomeStay.HomestayImages!)
+                .FirstOrDefaultAsync(h => h.HomeStay.Id == homeStayID);
+
+            if (getDetail == null)
+            {
+                return NotFound();
+            }
+
+            var response = new
+            {
+                getDetail.Id,
+                getDetail.HomeStay.Name,
+                getDetail.HomeStay.MainImage,
+                getDetail.HomeStay.Address,
+                getDetail.HomeStay.City,
+                getDetail.HomeStay.CheckInTime,
+                getDetail.HomeStay.CheckOutTime,
+                getDetail.HomeStay.OpenIn,
+                getDetail.HomeStay.Description,
+                getDetail.HomeStay.Standar,
+                getDetail.HomeStay.isDeleted,
+                getDetail.HomeStay.isBooked,
+                Calendar = _calendarRepository
+                    .FindWithInclude(c => c.HomeStay)
+                    .Where(c => c.HomeStay.Id == homeStayID)
+                    .Select(c => new
+                    {
+                        c.Id,
+                        c.Date,
+                        c.Price
+                    }).ToList(),
+                HomeStayImage = getDetail.HomeStay.HomestayImages!.Select(image => new
+                {
+                    Image = image.Image,
+                }),
+                Amenities = getDetail.HomeStay.HomestayAmenities!.Select(ha => new
+                {
+                    ha.Amenity.Id,
+                    ha.Amenity.Name
+                }).ToList()
+            };
 
             return Ok(response);
         }
