@@ -1,0 +1,13 @@
+D:\New folder (2)\SEP490\BE\RUNAHMS-main\Authentication\Bussiness Object\bin\Debug\net8.0\Bussiness Object.deps.json
+D:\New folder (2)\SEP490\BE\RUNAHMS-main\Authentication\Bussiness Object\bin\Debug\net8.0\Bussiness Object.dll
+D:\New folder (2)\SEP490\BE\RUNAHMS-main\Authentication\Bussiness Object\bin\Debug\net8.0\Bussiness Object.pdb
+D:\New folder (2)\SEP490\BE\RUNAHMS-main\Authentication\Bussiness Object\obj\Debug\net8.0\Bussiness Object.csproj.AssemblyReference.cache
+D:\New folder (2)\SEP490\BE\RUNAHMS-main\Authentication\Bussiness Object\obj\Debug\net8.0\Bussiness Object.GeneratedMSBuildEditorConfig.editorconfig
+D:\New folder (2)\SEP490\BE\RUNAHMS-main\Authentication\Bussiness Object\obj\Debug\net8.0\Bussiness Object.AssemblyInfoInputs.cache
+D:\New folder (2)\SEP490\BE\RUNAHMS-main\Authentication\Bussiness Object\obj\Debug\net8.0\Bussiness Object.AssemblyInfo.cs
+D:\New folder (2)\SEP490\BE\RUNAHMS-main\Authentication\Bussiness Object\obj\Debug\net8.0\Bussiness Object.csproj.CoreCompileInputs.cache
+D:\New folder (2)\SEP490\BE\RUNAHMS-main\Authentication\Bussiness Object\obj\Debug\net8.0\Bussiness Object.sourcelink.json
+D:\New folder (2)\SEP490\BE\RUNAHMS-main\Authentication\Bussiness Object\obj\Debug\net8.0\Bussiness Object.dll
+D:\New folder (2)\SEP490\BE\RUNAHMS-main\Authentication\Bussiness Object\obj\Debug\net8.0\refint\Bussiness Object.dll
+D:\New folder (2)\SEP490\BE\RUNAHMS-main\Authentication\Bussiness Object\obj\Debug\net8.0\Bussiness Object.pdb
+D:\New folder (2)\SEP490\BE\RUNAHMS-main\Authentication\Bussiness Object\obj\Debug\net8.0\ref\Bussiness Object.dll
