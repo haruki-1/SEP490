@@ -180,60 +180,6 @@ namespace RUNAHMS_API.Controllers
 
             return Ok(response);
         }
-    
-
-
-    [HttpGet("get-home-stay-detail")]
-        public async Task<IActionResult> GetHomeStayDetail([FromQuery] Guid homeStayID)
-        {
-            var getDetail = await _calendarRepository
-                .FindWithInclude(h => h.HomeStay)
-                .Include(h => h.HomeStay!)
-                .ThenInclude(hs => hs.HomestayAmenities!)
-                .ThenInclude(ha => ha.Amenity)
-                .Include(h => h.HomeStay.HomestayImages!)
-                .FirstOrDefaultAsync(h => h.HomeStay.Id == homeStayID);
-
-            if (getDetail == null)
-            {
-                return NotFound();
-            }
-
-            var response = new
-            {
-                getDetail.Id,
-                getDetail.HomeStay.Name,
-                getDetail.HomeStay.MainImage,
-                getDetail.HomeStay.Address,
-                getDetail.HomeStay.City,
-                getDetail.HomeStay.CheckInTime,
-                getDetail.HomeStay.CheckOutTime,
-                getDetail.HomeStay.OpenIn,
-                getDetail.HomeStay.Description,
-                getDetail.HomeStay.Standar,
-                getDetail.HomeStay.isDeleted,
-                getDetail.HomeStay.isBooked,
-                Calendar = _calendarRepository
-                    .FindWithInclude(c => c.HomeStay)
-                    .Where(c => c.HomeStay.Id == homeStayID)
-                    .Select(c => new
-                    {
-                        c.Id,
-                        c.Date,
-                        c.Price
-                    }).ToList(),
-                HomeStayImage = getDetail.HomeStay.HomestayImages!.Select(image => new
-                {
-                    Image = image.Image,
-                }),
-                Amenities = getDetail.HomeStay.HomestayAmenities!.Select(ha => new
-                {
-                    ha.Amenity.Id,
-                    ha.Amenity.Name
-                }).ToList()
-            };
-
-            return Ok(response);
-        }
+   
     }
 }
