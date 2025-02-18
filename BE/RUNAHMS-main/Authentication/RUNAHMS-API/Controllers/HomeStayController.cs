@@ -256,4 +256,31 @@ namespace RUNAHMS_API.Controllers
         }
     
     }
+
+
+        [HttpPost("add-home-stay-image")]
+        public async Task<IActionResult> AddHomeStayImage([FromBody]HomeStayImageDTO request)
+        {
+            var getHomeStay = await _homeStayRepository.GetByIdAsync(request.HomeStayID);
+            foreach (var item in request.Images) {
+
+                Guid imageID = Guid.NewGuid();
+                HomeStayImage addImage = new HomeStayImage
+                {
+                    Id = imageID,
+                    Image = item,
+                    HomeStay = getHomeStay,
+                    isDeleted = false
+                };
+                await _homeStayImageRepository.AddAsync(addImage);
+            }
+            await _homeStayImageRepository.SaveAsync();
+            return Ok(new {Message = "Add Image Success"});
+        }
+
+        
+
+    }
 }
+
+
