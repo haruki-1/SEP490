@@ -1,8 +1,0 @@
-﻿################################################################################
-# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
-################################################################################
-
-/RUNAHMS-main/Authentication/.vs/ProjectEvaluation
-/RUNAHMS-main/Authentication/Bussiness Object/bin/Debug/net8.0
-/RUNAHMS-main/Authentication/DAL/bin/Debug/net8.0
-/RUNAHMS-main/Authentication/RUNAHMS-API/bin/Debug/net8.0
