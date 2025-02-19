@@ -276,6 +276,55 @@ namespace RUNAHMS_API.Controllers
             await _homeStayImageRepository.SaveAsync();
             return Ok(new { Message = "Add Image Success" });
         }
+
+        [HttpPost("add-home-stay-amenity")]
+        public async Task<IActionResult> AddHomeStayAmennity([FromBody] AddAmenityDTO request)
+        {
+            try
+            {
+                var getHomeStay = await _homeStayRepository.GetByIdAsync(request.HomeStayID);
+                if (getHomeStay == null) return NotFound();
+                foreach (var amenity in request.AmenityName)
+                {
+                    var getAmenity = await _amenityRepository.Find(n => n.Name.Equals(amenity)).FirstOrDefaultAsync();
+                    var existingAmenity = await _homeStayAmenity
+                                               .Find(x => x.HomeStayID == getHomeStay.Id && x.AmenityId == getAmenity.Id)
+                                               .FirstOrDefaultAsync();
+                    if (existingAmenity != null)
+                    {
+                        return Conflict();
+
+                    }
+                    HomestayAmenity addAmenity = new HomestayAmenity
+                    {
+                        AmenityId = getAmenity.Id,
+                        HomeStayID = getHomeStay.Id,
+                    };
+                    await _homeStayAmenity.AddAsync(addAmenity);
+                    await _homeStayAmenity.SaveAsync();
+                }
+                return Ok(new { Message = "Add Amentity Success" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "An error occurred", Error = ex.Message });
+            }
+        }
+
+        [HttpDelete("delete-home-stay-amenity")]
+        public async Task<IActionResult> DeleteHomeStayAmenity([FromQuery] Guid HomeStayID, Guid AmenityID)
+        {
+            var checkDelete = await _homeStayAmenity.Find(h => h.HomeStayID == HomeStayID && h.AmenityId == AmenityID)
+                                                    .FirstOrDefaultAsync();
+            if (checkDelete != null)
+            {
+                checkDelete.isDeleted = true;
+                await _homeStayAmenity.DeleteAsync(checkDelete);
+                await _homeStayAmenity.SaveAsync();
+                return Ok(new { Message = "Delete Amenity Success" });
+            }
+            return NotFound();
+        }
     }
 
 }
