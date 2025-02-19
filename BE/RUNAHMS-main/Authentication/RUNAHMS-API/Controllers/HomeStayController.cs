@@ -113,135 +113,7 @@ namespace RUNAHMS_API.Controllers
             return NotFound();
         }
 
-        [HttpPost("get-all-home-stay")]
-        public async Task<IActionResult> GetAllHomeStay([FromBody]FilterDTO request)
-        {
-            var query = _homeStayRepository
-                .FindWithInclude(h => h.Calendars!)
-                .Include(h => h.HomestayAmenities!)
-                .ThenInclude(ha => ha.Amenity)
-                .Include(hf =>  hf.HomestayFacilities)
-                .ThenInclude(fa => fa.Facility)
-                .AsQueryable();
-
-            if (request.Standard is { Count: > 0 })
-            {
-                query = query.Where(h => request.Standard.Contains(h.Standar));
-            }
-
-            if (request.AmenityNames is { Count: > 0 })
-            {
-                query = query.Where(h =>
-                    h.HomestayAmenities!.Any(ha => request.AmenityNames.Contains(ha.Amenity.Name)));
-            }
-
-
-            if (request.MinPrice.HasValue || request.MaxPrice.HasValue)
-            {
-                query = query.Where(h => h.Calendars!.Any(c =>
-                    (!request.MinPrice.HasValue || c.Price >= request.MinPrice.Value) &&
-                    (!request.MaxPrice.HasValue || c.Price <= request.MaxPrice.Value)
-                ));
-            }
-
-            var listHomeStay = await query.ToListAsync();
-
-            if (!listHomeStay.Any())
-            {
-                return NotFound();
-            }
-
-            var response = listHomeStay.Select(h => new
-            {
-                h.Id,
-                h.Name,
-                h.MainImage,
-                h.Address,
-                h.City,
-                h.CheckInTime,
-                h.CheckOutTime,
-                h.OpenIn,
-                h.Description,
-                h.Standar,
-                h.isDeleted,
-                h.isBooked,
-
-                Calendar = h.Calendars!.Select(c => new
-                {
-                    c.Id,
-                    c.Date,
-                    c.Price
-                }).ToList(),
-
-                Amenities = h.HomestayAmenities!
-                    .Select(ha => new
-                    {
-                        ha.Amenity.Id,
-                        ha.Amenity.Name
-                    }).ToList(),
-                Facility = h.HomestayFacilities!.Select(hf => new
-                {
-                        hf.FacilityID,
-                        hf.Facility.Name,
-                        hf.Facility.Description
-                }).ToList()
-            }).ToList();
-
-            return Ok(response);
-        }
-
-        [HttpGet("get-home-stay-detail")]
-        public async Task<IActionResult> GetHomeStayDetail([FromQuery] Guid homeStayID)
-        {
-            var getDetail = await _calendarRepository
-                .FindWithInclude(h => h.HomeStay)
-                .Include(h => h.HomeStay!)
-                .ThenInclude(hs => hs.HomestayAmenities!)
-                .ThenInclude(ha => ha.Amenity)
-                .Include(h => h.HomeStay.HomestayImages!)
-                .FirstOrDefaultAsync(h => h.HomeStay.Id == homeStayID);
-
-            if (getDetail == null)
-            {
-                return NotFound();
-            }
-
-            var response = new
-            {
-                getDetail.Id,
-                getDetail.HomeStay.Name,
-                getDetail.HomeStay.MainImage,
-                getDetail.HomeStay.Address,
-                getDetail.HomeStay.City,
-                getDetail.HomeStay.CheckInTime,
-                getDetail.HomeStay.CheckOutTime,
-                getDetail.HomeStay.OpenIn,
-                getDetail.HomeStay.Description,
-                getDetail.HomeStay.Standar,
-                getDetail.HomeStay.isDeleted,
-                getDetail.HomeStay.isBooked,
-                Calendar = _calendarRepository
-                    .FindWithInclude(c => c.HomeStay)
-                    .Where(c => c.HomeStay.Id == homeStayID)
-                    .Select(c => new
-                    {
-                        c.Id,
-                        c.Date,
-                        c.Price
-                    }).ToList(),
-                HomeStayImage = getDetail.HomeStay.HomestayImages!.Select(image => new
-                {
-                    Image = image.Image,
-                }),
-                Amenities = getDetail.HomeStay.HomestayAmenities!.Select(ha => new
-                {
-                    ha.Amenity.Id,
-                    ha.Amenity.Name
-                }).ToList()
-            };
-
-            return Ok(response);
-        }
+        
 
         [HttpGet("filter-home-stay-with-status")]
         public async Task<IActionResult> FilterHomeStayWithStatus([FromQuery] bool status)
@@ -255,7 +127,7 @@ namespace RUNAHMS_API.Controllers
             return NotFound();
         }
     
-    }
+    
 
         [HttpPost("add-home-stay-image")]
         public async Task<IActionResult> AddHomeStayImage([FromBody]HomeStayImageDTO request)
