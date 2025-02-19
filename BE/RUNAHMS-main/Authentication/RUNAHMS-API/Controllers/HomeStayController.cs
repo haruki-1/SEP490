@@ -129,6 +129,7 @@ namespace RUNAHMS_API.Controllers
     
     
 
+
         [HttpPost("add-home-stay-image")]
         public async Task<IActionResult> AddHomeStayImage([FromBody]HomeStayImageDTO request)
         {
@@ -153,4 +154,5 @@ namespace RUNAHMS_API.Controllers
 
     }
 }
+
 
