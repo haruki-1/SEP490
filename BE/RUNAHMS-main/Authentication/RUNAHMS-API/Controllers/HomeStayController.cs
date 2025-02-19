@@ -64,9 +64,9 @@ namespace RUNAHMS_API.Controllers
 
             return Ok(new { message = "Add Home Stay Success." });
         }
-
-        [HttpPut("edit-home-stay-information")]
-        public async Task<IActionResult> EditHomeStay([FromBody]EditHomeStayInforRequest request)
+    
+    [HttpPut("edit-home-stay-information")]
+        public async Task<IActionResult> EditHomeStay([FromBody] EditHomeStayInforRequest request)
         {
             try
             {
@@ -82,26 +82,27 @@ namespace RUNAHMS_API.Controllers
                 getHomeStay.CheckInTime = request.CheckInTime ?? getHomeStay.CheckInTime;
                 getHomeStay.Address = request.Address ?? getHomeStay.Address;
                 getHomeStay.OpenIn = request.OpenIn = request.OpenIn != 0 ? request.OpenIn : getHomeStay.OpenIn;
-                getHomeStay.Description = request.Description ?? getHomeStay.Description    ;
+                getHomeStay.Description = request.Description ?? getHomeStay.Description;
                 await _homeStayRepository.UpdateAsync(getHomeStay);
                 await _homeStayRepository.SaveAsync();
                 return Ok(new { Message = "Update Home Stay Success" });
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 return StatusCode(500, new { Message = "An error occurred", Error = ex.Message });
             }
         }
 
         [HttpDelete("delete-home-stay")]
-        public async Task<IActionResult> DeleteHomeStay([FromQuery]Guid homeStayID)
+        public async Task<IActionResult> DeleteHomeStay([FromQuery] Guid homeStayID)
         {
             var checkDelete = await _homeStayRepository.GetByIdAsync(homeStayID);
             if (checkDelete != null && checkDelete.isDeleted == false)
             {
                 checkDelete.isDeleted = true;
-               await _homeStayRepository.UpdateAsync(checkDelete);
-               await _homeStayRepository.SaveAsync();
-                return Ok(new { Message = "Delete Success" }); 
+                await _homeStayRepository.UpdateAsync(checkDelete);
+                await _homeStayRepository.SaveAsync();
+                return Ok(new { Message = "Delete Success" });
             }
             else if (checkDelete != null && checkDelete.isDeleted == true)
             {
@@ -114,13 +115,13 @@ namespace RUNAHMS_API.Controllers
         }
 
         [HttpPost("get-all-home-stay")]
-        public async Task<IActionResult> GetAllHomeStay([FromBody]FilterDTO request)
+        public async Task<IActionResult> GetAllHomeStay([FromBody] FilterDTO request)
         {
             var query = _homeStayRepository
                 .FindWithInclude(h => h.Calendars!)
                 .Include(h => h.HomestayAmenities!)
                 .ThenInclude(ha => ha.Amenity)
-                .Include(hf =>  hf.HomestayFacilities)
+                .Include(hf => hf.HomestayFacilities)
                 .ThenInclude(fa => fa.Facility)
                 .AsQueryable();
 
@@ -181,9 +182,9 @@ namespace RUNAHMS_API.Controllers
                     }).ToList(),
                 Facility = h.HomestayFacilities!.Select(hf => new
                 {
-                        hf.FacilityID,
-                        hf.Facility.Name,
-                        hf.Facility.Description
+                    hf.FacilityID,
+                    hf.Facility.Name,
+                    hf.Facility.Description
                 }).ToList()
             }).ToList();
 
@@ -247,13 +248,34 @@ namespace RUNAHMS_API.Controllers
         public async Task<IActionResult> FilterHomeStayWithStatus([FromQuery] bool status)
         {
             var filter = await _homeStayRepository.Find(x => x.isDeleted == status).ToListAsync();
-            if(filter.Any())
+            if (filter.Any())
             {
                 return Ok(filter);
 
             }
             return NotFound();
         }
-    
+
+        [HttpPost("add-home-stay-image")]
+        public async Task<IActionResult> AddHomeStayImage([FromBody] HomeStayImageDTO request)
+        {
+            var getHomeStay = await _homeStayRepository.GetByIdAsync(request.HomeStayID);
+            foreach (var item in request.Images)
+            {
+
+                Guid imageID = Guid.NewGuid();
+                HomeStayImage addImage = new HomeStayImage
+                {
+                    Id = imageID,
+                    Image = item,
+                    HomeStay = getHomeStay,
+                    isDeleted = false
+                };
+                await _homeStayImageRepository.AddAsync(addImage);
+            }
+            await _homeStayImageRepository.SaveAsync();
+            return Ok(new { Message = "Add Image Success" });
+        }
     }
+
 }

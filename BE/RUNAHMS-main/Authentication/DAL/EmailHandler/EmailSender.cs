@@ -1,15 +1,15 @@
-﻿using Microsoft.AspNetCore.Identity.UI.Services;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using MimeKit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BusinessObject.Settings;
-using MimeKit;
 using MailKit.Security;
-
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace DataAccess.EmailHandler
 {
