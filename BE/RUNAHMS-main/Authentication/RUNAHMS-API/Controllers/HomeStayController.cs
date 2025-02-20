@@ -150,7 +150,27 @@ namespace RUNAHMS_API.Controllers
             return Ok(new {Message = "Add Image Success"});
         }
 
-        
+        [HttpDelete("delete-home-stay-image")]
+        public async Task<IActionResult> DeleteHomeStayImage([FromBody] DeleteHomeStayImageDTO request)
+        {
+            if (request == null || request.ImageIds == null || !request.ImageIds.Any())
+            {
+                return BadRequest(new { Message = "Invalid request data." });
+            }
+            var imagesToDelete = await _homeStayImageRepository
+                .Find(h => request.ImageIds.Contains(h.Id))
+                .ToListAsync();
+
+            if (!imagesToDelete.Any())
+            {
+                return NotFound(new { Message = "No matching images found." });
+            }
+
+            _homeStayImageRepository.DeleteRange(imagesToDelete);
+            await _homeStayImageRepository.SaveAsync();
+
+            return Ok(new { Message = "Images deleted successfully" });
+        }
 
     }
 }
