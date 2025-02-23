@@ -1,5 +1,4 @@
 'use client';
-
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/components/ui/button';
@@ -7,6 +6,7 @@ import { Input } from '@/components/components/ui/input';
 import { Label } from '@/components/components/ui/label';
 import { Textarea } from '@/components/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/components/ui/card';
+import OtpConfirmation from '@/components/OtpConfirmation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { toast } from 'react-toastify';
@@ -59,11 +59,11 @@ export default function RegisterForm() {
 		}
 	};
 
-	const password = watch('password');
+		const password = watch('password');
 
 	return (
 		<div className='relative flex items-center justify-center h-full p-4 bg-gray-100'>
-			<Image src='/images/authen/bg-authen.jpg' fill alt='bg-authen' />
+			{/* <Image src='/images/authen/bg-authen.jpg' fill alt='bg-authen' /> */}
 			<Card className='relative z-50 w-full max-w-xl bg-white/80'>
 				<CardHeader>
 					<CardTitle>Register</CardTitle>
@@ -115,7 +115,7 @@ export default function RegisterForm() {
 							/>
 							{errors.phone && <p className='text-sm text-red-500'>{errors.phone.message}</p>}
 						</div>
-						<div className='space-y-2'>
+						{/*<div className='space-y-2'>
 							<Label htmlFor='address'>Address</Label>
 							<Textarea
 								id='address'
@@ -124,7 +124,7 @@ export default function RegisterForm() {
 								className='border border-black'
 							/>
 							{errors.address && <p className='text-sm text-red-500'>{errors.address.message}</p>}
-						</div>
+						</div> */}
 						<div className='relative'>
 							<Label htmlFor='password'>Password</Label>
 							<Input
@@ -196,8 +196,8 @@ export default function RegisterForm() {
 						</div>
 					</CardContent>
 					<CardFooter>
-						<Button type='submit' className='w-full' disabled={loading}>
-							{loading ? 'Registering...' : 'Register'}
+					<Button type='submit' className='w-full' disabled={loading}>
+						{loading ? 'Registering...' : 'Register'}
 						</Button>
 					</CardFooter>
 				</form>

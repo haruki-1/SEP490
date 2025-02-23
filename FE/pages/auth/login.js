@@ -2,37 +2,30 @@
 
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Button } from '@/components/components/ui/button';
-import { Input } from '@/components/components/ui/input';
-import { Label } from '@/components/components/ui/label';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/components/ui/card';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff } from 'lucide-react';
 import { toast } from 'react-toastify';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/components/ui/dialog';
-import { useAuth } from 'context/AuthProvider';
+import { jwtDecode } from 'jwt-decode';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../../components/components/ui/card';
+import { Label } from '../../components/components/ui/label';
+import { Input } from '../../components/components/ui/input';
+import { Button } from '../../components/components/ui/button';
+
+
 
 export default function LoginForm() {
 	const [loading, setLoading] = useState(false);
 	const [showPassword, setShowPassword] = useState(false);
-	const [showForgotDialog, setShowForgotDialog] = useState(false);
 	const router = useRouter();
-	const { login } = useAuth();
+	const [dataAuth, setDataAuth] = useState();
 
+	
 	const {
 		register,
 		handleSubmit,
 		formState: { errors },
-		reset,
-	} = useForm();
-
-	const {
-		register: registerForgot,
-		handleSubmit: handleForgotSubmit,
-		formState: { errors: forgotErrors },
-		reset: resetForgot,
 	} = useForm();
 
 	const onSubmit = async (data) => {
@@ -40,53 +33,47 @@ export default function LoginForm() {
 		try {
 			const response = await fetch('https://homestaybooking-001-site1.ntempurl.com/api/Auth/login', {
 				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
+				headers: {
+					'Content-Type': 'application/json',
+				},
 				body: JSON.stringify(data),
 			});
 			const responseData = await response.json();
-			if (response.ok) {
-				const accessToken = responseData.Data.accessToken;
-				const role = responseData.Data.role;
-				localStorage.setItem('accessToken', accessToken);
-				login({ accessToken });
 
-				toast.success('Login successful! Redirecting...');
-				reset();
-				role === 'Manager'
-					? router.push('/manager')
-					: role === 'Admin'
-					? router.push('/admin')
-					: router.push('/');
+			if (response.ok) {
+				const accessToken = responseData.accessToken;
+				localStorage.setItem('accessToken', accessToken);
+				const decoded = jwtDecode(accessToken);
+				const role = decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+				console.log('User Role:', role);
+				setDataAuth(decoded);
+				toast.success('Login successful! Redirecting to...');
+				setTimeout(() => {
+					if (role === 'Admin') {
+						router.push('/admin');
+					} else if (role === 'Manager') {
+						router.push('/manager');
+					} else {
+						router.push('/');
+					}
+				}, 2000);
 			} else {
-				toast.error(`Login failed: ${responseData.message || 'Unknown error'}`);
+				const errorData = await response.json();
+				console.error('Login failed:', errorData);
+				toast.error(`Login failed: ${errorData.message || 'Unknown error'}`);
 			}
 		} catch (error) {
-			toast.error('An error occurred. Please try again later.');
+			console.error('Error:', error);
+			alert('An error occurred. Please try again later.');
 		} finally {
 			setLoading(false);
 		}
 	};
 
-	const handleForgotPassword = async (data) => {
-		try {
-			const response = await fetch('https://homestaybooking-001-site1.ntempurl.com/api/Auth/forgot-password', {
-				method: 'PUT',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(data),
-			});
-			if (response.ok) {
-				toast.success('Password reset email sent!');
-				resetForgot();
-				setShowForgotDialog(false);
-			} else {
-				toast.error('Failed to send reset email.');
-			}
-		} catch (error) {
-			toast.error('An error occurred. Please try again.');
-		}
-	};
+	console.log(dataAuth);
 
-	return (
+	
+	return(
 		<div className='relative flex items-center justify-center p-4 bg-gray-100 h-dvh'>
 			<Image src='/images/authen/bg-authen.jpg' fill alt='bg-authen' />
 			<Card className='relative z-50 w-full max-w-xl bg-white/80'>
@@ -101,7 +88,13 @@ export default function LoginForm() {
 							<Input
 								id='email'
 								type='email'
-								{...register('email', { required: 'Email is required' })}
+								{...register('email', {
+									required: 'Email is required',
+									pattern: {
+										value: /\S+@\S+\.\S+/,
+										message: 'Invalid email address',
+									},
+								})}
 								className='border border-black'
 								placeholder='john@example.com'
 							/>
@@ -113,7 +106,13 @@ export default function LoginForm() {
 								<Input
 									id='password'
 									type={showPassword ? 'text' : 'password'}
-									{...register('password', { required: 'Password is required' })}
+									{...register('password', {
+										required: 'Password is required',
+										minLength: {
+											value: 8,
+											message: 'Password must be at least 8 characters long',
+										},
+									})}
 									className='pr-10 border border-black'
 									placeholder='*******'
 								/>
@@ -127,43 +126,19 @@ export default function LoginForm() {
 							</div>
 							{errors.password && <p className='text-sm text-red-500'>{errors.password.message}</p>}
 						</div>
-						<div className='text-sm'>
-							Don't have an account?{' '}
-							<Link href='/auth/register' className='text-blue-500 hover:underline'>
-								Register
-							</Link>
+						<div className='mt-4 text-center'>
+							<p>
+								Don't have an account?{' '}
+								<Link href='/auth/register'>
+									<button className='text-blue-500 hover:underline'>Register</button>
+								</Link>
+							</p>
 						</div>
 					</CardContent>
-					<CardFooter className='flex flex-col'>
-						<Button type='submit' className='w-full' disabled={loading}>
-							{loading ? 'Logging in...' : 'Login'}
+					<CardFooter>
+					<Button type='submit' className='w-full' disabled={loading}>
+						{loading ? 'Logging in...' : 'Login'}
 						</Button>
-						<div className='mt-4 text-center'>
-							<Dialog open={showForgotDialog} onOpenChange={setShowForgotDialog}>
-								<DialogTrigger asChild>
-									<button className='text-sm text-blue-500 hover:underline'>Forgot Password?</button>
-								</DialogTrigger>
-								<DialogContent>
-									<DialogHeader>
-										<DialogTitle>Forgot Password</DialogTitle>
-									</DialogHeader>
-									<form
-										onSubmit={handleForgotSubmit(handleForgotPassword)}
-										className='flex flex-col gap-3'
-									>
-										<Label>Email</Label>
-										<Input
-											{...registerForgot('email', { required: 'Email is required' })}
-											placeholder='Enter your email'
-										/>
-										{forgotErrors.email && (
-											<p className='text-sm text-red-500'>{forgotErrors.email.message}</p>
-										)}
-										<Button type='submit'>Submit</Button>
-									</form>
-								</DialogContent>
-							</Dialog>
-						</div>
 					</CardFooter>
 				</form>
 			</Card>

@@ -23,7 +23,7 @@ import {
 import { Button } from './components/ui/button';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useAuth } from 'context/AuthProvider';
+
 
 const Header = ({ placeholder }) => {
 	const router = useRouter();
@@ -207,6 +207,11 @@ const Header = ({ placeholder }) => {
 
 				<div className='profile'>
 					<ThemeToggle icon />
+					<Link href='/auth/register'>
+						<button className='px-2 py-1 bg-transparent border border-white rounded-md'>
+							Login/Register
+						</button>
+					</Link>
 					{dataProfile ? (
 						<DropdownMenu>
 							<DropdownMenuTrigger asChild>

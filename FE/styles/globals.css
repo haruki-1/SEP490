@@ -100,13 +100,6 @@ button {
 	transform: scale(0.95);
 }
 
-section:not(.hero) {
-	margin: 3rem var(--sidePadding) 0;
-}
-
-section:last-of-type {
- 	margin-bottom: 3rem;
-}
 
 section h2 {
  	font-weight: 800;
@@ -215,11 +208,3 @@ section h2 {
 	}
 }
 
-@layer base {
-	* {
-		@apply border-border;
-	}
-	body {
-		@apply bg-background text-foreground;
-	}
-}
