@@ -74,9 +74,68 @@ namespace API.Controllers
             return Ok(new { Message = "Voucher updated successfully" });
         }
 
+        [HttpPost("receive")]
+        public async Task<IActionResult> ReceiveVoucher([FromBody] ReceiveVoucherRequest request)
+        {
 
+            try
+            {
+                var user = await _userRepository.Find(u => u.Id == request.UserID).FirstOrDefaultAsync();
+                var voucher = await _voucherRepository.Find(v => v.Id == request.VoucherID).FirstOrDefaultAsync();
+                var checkAlready = await _userVoucherRepository.Find(x => x.UserID == request.UserID && request.VoucherID == request.VoucherID)
+                                                                    .FirstOrDefaultAsync();
+                if (checkAlready != null)
+                {
+                    return Conflict(new { Message = "You have already received this voucher" });
+                }
+                UserVoucher reciveVoucher = new UserVoucher
+                {
+                    isUsed = false,
+                    UserID = user.Id,
+                    VoucherID = voucher.Id,
+                    voucher = voucher,
+                    user = user,
+                };
+                await _userVoucherRepository.AddAsync(reciveVoucher);
+                await _userVoucherRepository.SaveAsync();
+                return Ok(new { Message = "Recive Voucher Success" });
+            }
+            catch (Exception ex)
+            {
 
-        
+                return StatusCode(500, ex.Message);
+            }
+        }
+        [HttpGet("list")]
+        public async Task<IActionResult> GetVouchers([FromQuery] bool onlyValid = false)
+        {
+            var vouchersQuery = _voucherRepository.Find(v => !v.isDeleted);
+
+            if (onlyValid)
+            {
+                vouchersQuery = vouchersQuery.Where(v => v.EndDate >= DateTime.UtcNow);
+            }
+
+            var vouchers = await vouchersQuery
+                .Select(v => new
+                {
+                    VoucherID = v.Id,
+                    Code = v.Code,
+                    Description = v.Description,
+                    Discount = v.Discount,
+                    StartDate = v.StartDate,
+                    EndDate = v.EndDate,
+                    Image = v.Image
+                })
+                .ToListAsync();
+
+            if (!vouchers.Any())
+            {
+                return NotFound(new { Message = "No vouchers found" });
+            }
+
+            return Ok(vouchers);
+        }
 
     }
 }
