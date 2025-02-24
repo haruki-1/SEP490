@@ -11,8 +11,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff } from 'lucide-react';
 import { toast } from 'react-toastify';
-import { jwtDecode } from 'jwt-decode';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/components/ui/diaLog';
+import { useAuth } from '@/context/AuthProvider';
 
 
 
@@ -25,6 +25,7 @@ export default function LoginForm() {
 	const [showPassword, setShowPassword] = useState(false);
 	const [showForgotDialog, setShowForgotDialog] = useState(false);
 	const router = useRouter();
+	const { login } = useAuth();
 	
 
 	
@@ -53,15 +54,13 @@ export default function LoginForm() {
 			const responseData = await response.json();
 
 			if (response.ok) {
-				const accessToken = responseData.accessToken;
+				const accessToken = responseData.Data.accessToken;
+				const role = responseData.Data.role;
 				localStorage.setItem('accessToken', accessToken);
-				const decoded = jwtDecode(accessToken);
-				const role = decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+				login({ accessToken });
 				toast.success('Login successful! Redirecting...');
 				reset();
-				setTimeout(() => {
-					role === 'Admin' ? router.push('/admin') : router.push('/');
-				}, 2000);
+				role === 'Manager' ? router.push('/manager') : router.push('/');
 			} else {
 				toast.error(`Login failed: ${responseData.message || 'Unknown error'}`);
 			}
@@ -146,7 +145,7 @@ export default function LoginForm() {
 						<div className='mt-4 text-center'>
 							<Dialog open={showForgotDialog} onOpenChange={setShowForgotDialog}>
 								<DialogTrigger asChild>
-									<button className='text-blue-500 hover:underline text-sm'>Forgot Password?</button>
+									<button className='text-sm text-blue-500 hover:underline'>Forgot Password?</button>
 								</DialogTrigger>
 								<DialogContent>
 									<DialogHeader>

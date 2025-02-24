@@ -9,13 +9,39 @@ import 'react-toastify/dist/ReactToastify.css';
 import { AuthProvider } from '../context/AuthProvider';
 import Provider from '../utils/Provider';
 import { SessionProvider } from 'next-auth/react';
+import { useEffect, useState } from 'react';
 
+// Cấu hình NProgress
 NProgress.configure({ showSpinner: false });
-Router.events.on('routeChangeStart', () => NProgress.start());
-Router.events.on('routeChangeError', () => NProgress.done());
-Router.events.on('routeChangeComplete', () => NProgress.done());
 
-const App = ({ Component, pageProps, session }) => {
+
+
+export default function MyApp({ Component, pageProps, session }) {
+	const [loading, setLoading] = useState(false);
+
+	useEffect(() => {
+		const handleStart = () => {
+			setLoading(true);
+			NProgress.start();
+		};
+		const handleStop = () => {
+			setLoading(false);
+			NProgress.done();
+		};
+
+		Router.events.on('routeChangeStart', handleStart);
+		Router.events.on('routeChangeComplete', handleStop);
+		Router.events.on('routeChangeError', handleStop);
+
+		return () => {
+			Router.events.off('routeChangeStart', handleStart);
+			Router.events.off('routeChangeComplete', handleStop);
+			Router.events.off('routeChangeError', handleStop);
+		};
+	}, []);
+
+
+
 	return (
 		<div className='h-full'>
 			<Head>
@@ -26,16 +52,21 @@ const App = ({ Component, pageProps, session }) => {
 				/>
 				<link rel='icon' href='images/logo.svg' />
 			</Head>
+			{loading && (
+				<div className='fixed top-0 left-0 z-50 flex items-center justify-center w-full h-full bg-white bg-opacity-50'>
+					<div className='w-16 h-16 border-t-4 border-blue-500 rounded-full animate-spin'></div>
+				</div>
+			)}
 			<Provider>
 			<AuthProvider dynamic>
 					<SessionProvider session={session}>
 						<Component {...pageProps} />
+						<ToastContainer />
 					</SessionProvider>
 				</AuthProvider>
 			</Provider>
 			<ToastContainer />
 		</div>
 	);
-};
 
-export default App;
+}

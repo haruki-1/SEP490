@@ -1,4 +1,5 @@
-import api from 'utils/api';
+import api from "@/utils/api";
+
 
 export const updateProfile = async (id, profileData) => {
 	try {

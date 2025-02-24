@@ -2,8 +2,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { getUserInfo } from '../pages/api/auth/getMe';
+
 import Provider from '../utils/Provider';
+import { jwtDecode } from 'jwt-decode';
+import { getUserInfo } from '@/pages/api/auth/getMe';
 
 const AuthContext = createContext(undefined);
 
@@ -31,15 +33,25 @@ export const AuthProvider = ({ children }) => {
 		}
 	};
 
+	const accessToken = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
+	let userId = null;
+	if (accessToken) {
+		try {
+			const decoded = jwtDecode(accessToken);
+			userId = decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'];
+		} catch (error) {
+			console.error('Error decoding token:', error);
+		}
+	}
+
 	const {
 		data: dataProfile,
 		isLoading,
 		error,
-		refetch,
 	} = useQuery({
 		queryKey: ['dataProfile'],
-		queryFn: () => getUserInfo(),
-		refetchOnWindowFocus: true,
+		queryFn: () => getUserInfo(userId),
+		enabled: !!userId,
 	});
 
 	useEffect(() => {
@@ -54,7 +66,7 @@ export const AuthProvider = ({ children }) => {
 
 	return (
 		<Provider>
-			<AuthContext.Provider value={{ isAuthenticated, login, logout, dataProfile, refetch, isLoading }}>
+			<AuthContext.Provider value={{ isAuthenticated, login, logout, dataProfile }}>
 				{children}
 			</AuthContext.Provider>
 		</Provider>
