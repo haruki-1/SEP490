@@ -8,13 +8,14 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import { AuthProvider } from '../context/AuthProvider';
 import Provider from '../utils/Provider';
+import { SessionProvider } from 'next-auth/react';
 
 NProgress.configure({ showSpinner: false });
 Router.events.on('routeChangeStart', () => NProgress.start());
 Router.events.on('routeChangeError', () => NProgress.done());
 Router.events.on('routeChangeComplete', () => NProgress.done());
 
-const App = ({ Component, pageProps }) => {
+const App = ({ Component, pageProps, session }) => {
 	return (
 		<div className='h-full'>
 			<Head>
@@ -26,8 +27,10 @@ const App = ({ Component, pageProps }) => {
 				<link rel='icon' href='images/logo.svg' />
 			</Head>
 			<Provider>
-				<AuthProvider>
-					<Component {...pageProps} />
+			<AuthProvider dynamic>
+					<SessionProvider session={session}>
+						<Component {...pageProps} />
+					</SessionProvider>
 				</AuthProvider>
 			</Provider>
 			<ToastContainer />
