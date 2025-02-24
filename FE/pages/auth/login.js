@@ -11,16 +11,23 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff } from 'lucide-react';
 import { toast } from 'react-toastify';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/components/ui/dialog';
-import { useAuth } from 'context/AuthProvider';
+import { jwtDecode } from 'jwt-decode';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/components/ui/diaLog';
+
+
+
+
+
+
 
 export default function LoginForm() {
 	const [loading, setLoading] = useState(false);
 	const [showPassword, setShowPassword] = useState(false);
 	const [showForgotDialog, setShowForgotDialog] = useState(false);
 	const router = useRouter();
-	const { login } = useAuth();
+	
 
+	
 	const {
 		register,
 		handleSubmit,
@@ -44,19 +51,17 @@ export default function LoginForm() {
 				body: JSON.stringify(data),
 			});
 			const responseData = await response.json();
-			if (response.ok) {
-				const accessToken = responseData.Data.accessToken;
-				const role = responseData.Data.role;
-				localStorage.setItem('accessToken', accessToken);
-				login({ accessToken });
 
+			if (response.ok) {
+				const accessToken = responseData.accessToken;
+				localStorage.setItem('accessToken', accessToken);
+				const decoded = jwtDecode(accessToken);
+				const role = decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
 				toast.success('Login successful! Redirecting...');
 				reset();
-				role === 'Manager'
-					? router.push('/manager')
-					: role === 'Admin'
-					? router.push('/admin')
-					: router.push('/');
+				setTimeout(() => {
+					role === 'Admin' ? router.push('/admin') : router.push('/');
+				}, 2000);
 			} else {
 				toast.error(`Login failed: ${responseData.message || 'Unknown error'}`);
 			}
@@ -85,8 +90,8 @@ export default function LoginForm() {
 			toast.error('An error occurred. Please try again.');
 		}
 	};
-
-	return (
+	
+	return(
 		<div className='relative flex items-center justify-center p-4 bg-gray-100 h-dvh'>
 			<Image src='/images/authen/bg-authen.jpg' fill alt='bg-authen' />
 			<Card className='relative z-50 w-full max-w-xl bg-white/80'>
@@ -117,13 +122,13 @@ export default function LoginForm() {
 									className='pr-10 border border-black'
 									placeholder='*******'
 								/>
-								<button
+								<Button
 									type='button'
 									onClick={() => setShowPassword(!showPassword)}
 									className='absolute inset-y-0 flex items-center right-3'
 								>
 									{showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-								</button>
+								</Button>
 							</div>
 							{errors.password && <p className='text-sm text-red-500'>{errors.password.message}</p>}
 						</div>
@@ -135,13 +140,13 @@ export default function LoginForm() {
 						</div>
 					</CardContent>
 					<CardFooter className='flex flex-col'>
-						<Button type='submit' className='w-full' disabled={loading}>
-							{loading ? 'Logging in...' : 'Login'}
+					<Button type='submit' className='w-full' disabled={loading}>
+						{loading ? 'Logging in...' : 'Login'}
 						</Button>
 						<div className='mt-4 text-center'>
 							<Dialog open={showForgotDialog} onOpenChange={setShowForgotDialog}>
 								<DialogTrigger asChild>
-									<button className='text-sm text-blue-500 hover:underline'>Forgot Password?</button>
+									<button className='text-blue-500 hover:underline text-sm'>Forgot Password?</button>
 								</DialogTrigger>
 								<DialogContent>
 									<DialogHeader>
