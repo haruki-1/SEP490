@@ -2,16 +2,19 @@ import Head from 'next/head';
 import NProgress from 'nprogress';
 import Router from 'next/router';
 import 'nprogress/nprogress.css';
-import { useState, useEffect } from 'react';
-import { ToastContainer } from 'react-toastify';
-import { AuthProvider } from 'context/AuthProvider';
-import Provider from 'utils/Provider';
-import { SessionProvider } from 'next-auth/react';
 import '../styles/globals.css';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
+import { AuthProvider } from '../context/AuthProvider';
+import Provider from '../utils/Provider';
+import { SessionProvider } from 'next-auth/react';
+import { useEffect, useState } from 'react';
 
 // Cấu hình NProgress
 NProgress.configure({ showSpinner: false });
+
+
 
 export default function MyApp({ Component, pageProps, session }) {
 	const [loading, setLoading] = useState(false);
@@ -37,10 +40,12 @@ export default function MyApp({ Component, pageProps, session }) {
 		};
 	}, []);
 
+
+
 	return (
 		<div className='h-full'>
 			<Head>
-				<title>Runa: Incredible Places to Stay and Things to Do</title>
+                <title>Runa: Incredible Places to Stay and Things to Do</title>
 				<meta
 					name='description'
 					content='Find holiday rentals, cabins, beach houses, unique homes and experiences around the world – all made possible by Hosts on Airbnb.'
@@ -53,13 +58,15 @@ export default function MyApp({ Component, pageProps, session }) {
 				</div>
 			)}
 			<Provider>
-				<AuthProvider dynamic>
+			<AuthProvider dynamic>
 					<SessionProvider session={session}>
 						<Component {...pageProps} />
 						<ToastContainer />
 					</SessionProvider>
 				</AuthProvider>
 			</Provider>
+			<ToastContainer />
 		</div>
 	);
+
 }

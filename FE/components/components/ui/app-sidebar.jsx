@@ -1,5 +1,5 @@
 import { usePathname } from 'next/navigation';
-import { Bath, Boxes, ChevronUp, Home, Hotel, Newspaper, User, User2 } from 'lucide-react';
+import { Bath, Boxes, ChevronUp, Home, Hotel, Newspaper, Ticket, User, User2 } from 'lucide-react';
 import {
 	Sidebar,
 	SidebarContent,
@@ -21,6 +21,7 @@ const items = [
 	{ title: 'Facility', url: '/manager/facility', icon: Boxes },
 	{ title: 'Amenity', url: '/manager/amenity', icon: Bath },
 	{ title: 'Posts', url: '/manager/posts', icon: Newspaper },
+	{ title: 'Voucher', url: '/manager/voucher', icon: Ticket },
 	{ title: 'Account', url: '/manager/profile', icon: User },
 ];
 
@@ -39,7 +40,8 @@ export function AppSidebar() {
 						<SidebarMenu>
 							{items.map((item) => {
 								const isActive =
-									pathname === item.url || (item.url !== '/manager' && pathname.startsWith(item.url));
+									pathname === item.url ||
+									(item.url !== '/manager' && pathname?.startsWith(item.url));
 
 								return (
 									<SidebarMenuItem key={item.title}>
