@@ -1,5 +1,5 @@
 import { usePathname } from 'next/navigation';
-import { Calendar, ChevronUp, Home, Cost, Search, Settings, User, User2 } from 'lucide-react';
+import { ChevronUp, Home, Cost, Search, Settings, User, User2, Boxes } from 'lucide-react';
 import {
 	Sidebar,
 	SidebarContent,
@@ -19,8 +19,8 @@ const items = [
 	{ title: 'Home', url: '/manager', icon: Home },
 	{ title: 'Cost', url: '/settings', icon: Settings }, 
 	// quan ly cost
-	{ title: 'Calendar', url: '/calendar', icon: Calendar },
-	{ title: 'Search', url: '/search', icon: Search },
+	{ title: 'Facility', url: '/manager/facility', icon: Boxes },
+	{ title: 'Amenity', url: '/search', icon: Search },
 	{ title: 'Settings', url: '/settings', icon: Settings },
 	{ title: 'Account', url: '/manager/profile', icon: User },
 ];
