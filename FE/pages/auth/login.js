@@ -54,10 +54,12 @@ export default function LoginForm() {
 			const responseData = await response.json();
 
 			if (response.ok) {
-				const accessToken = responseData.Data.accessToken;
-				const role = responseData.Data.role;
+				const accessToken = responseData.accessToken;
+				const refreshToken = responseData.refreshToken;
+				const role = responseData.role;
 				localStorage.setItem('accessToken', accessToken);
-				login({ accessToken });
+				localStorage.setItem('refreshToken', refreshToken);
+				login({ accessToken, refreshToken });
 				toast.success('Login successful! Redirecting...');
 				reset();
 				role === 'Manager' ? router.push('/manager') : router.push('/');
@@ -145,7 +147,7 @@ export default function LoginForm() {
 						<div className='mt-4 text-center'>
 							<Dialog open={showForgotDialog} onOpenChange={setShowForgotDialog}>
 								<DialogTrigger asChild>
-									<button className='text-sm text-blue-500 hover:underline'>Forgot Password?</button>
+								<button className='text-sm text-blue-500 hover:underline'>Forgot Password?</button>
 								</DialogTrigger>
 								<DialogContent>
 									<DialogHeader>

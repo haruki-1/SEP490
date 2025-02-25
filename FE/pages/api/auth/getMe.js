@@ -1,23 +1,21 @@
-export const getUserInfo = async (userId) => {
-	const url = 'https://homestaybooking-001-site1.ntempurl.com/api/Auth/get-me';
-
+export const getUserInfo = async () => {
 	try {
-		const response = await fetch(url, {
-			method: 'GET',
-			headers: {
-				Accept: '*/*',
-				'X-User-Id': userId,
-			},
-		});
+		const response = await api.get('/Auth/get-me');
 
-		if (!response.ok) {
-			throw new Error(`HTTP error! Status: ${response.status}`);
-		}
 
-		const data = await response.json();
-		return data.Data;
+
+
+
+
+
+		return response.data;
+
+
+
+
+
 	} catch (error) {
-		console.error('Error fetching user info:', error);
-		return null;
+		console.error('Error fetching the profile:', error.message);
+		throw error;
 	}
 };
