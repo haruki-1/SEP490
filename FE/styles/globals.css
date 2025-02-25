@@ -23,10 +23,6 @@
 	--containerWidth: 1200px;
 }
 
-html {
-	overflow-y: scroll;
-}
-
 body {
 	font-family: 'Nunito Sans', sans-serif;
 	background: var(--light);
@@ -113,11 +109,6 @@ section h2 {
 }
 
 @media (max-width: 576px) {
-	:root {
-		--sidePadding: 1.5rem;
-		--maxWidth: 100%;
-	}
-
 	::-webkit-scrollbar {
 		display: none;
 	}
@@ -141,12 +132,6 @@ section h2 {
 @media (min-width: 1296px) {
 	html {
 		font-size: 18px;
-	}
-
-	section:not(.hero) {
-		width: 1200px;
-		margin-left: auto;
-		margin-right: auto;
 	}
 }
 
@@ -229,4 +214,32 @@ section h2 {
 	body {
 		@apply bg-background text-foreground;
 	}
+}
+.react-datepicker__time-container {
+	width: 100% !important;
+}
+.react-datepicker__time-container .react-datepicker__time .react-datepicker__time-box {
+	width: 100% !important;
+}
+
+@layer base {
+	* {
+		@apply border-border outline-ring/50;
+	}
+	body {
+		@apply bg-background text-foreground;
+	}
+}
+
+.container-lg {
+	width: 100%;
+	max-width: 1270px;
+	height: 100%;
+	margin: 0 auto;
+	padding: 0 15px;
+	position: relative;
+}
+
+body[data-scroll-locked] {
+	margin-right: 0 !important;
 }
