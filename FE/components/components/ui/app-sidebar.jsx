@@ -1,5 +1,5 @@
 import { usePathname } from 'next/navigation';
-import { ChevronUp, Home, Cost, Search, Settings, User, User2, Boxes } from 'lucide-react';
+import { ChevronUp,Bath, Home, Cost, Search, Settings, User, User2, Boxes } from 'lucide-react';
 import {
 	Sidebar,
 	SidebarContent,
@@ -17,10 +17,10 @@ import { useAuth } from '@/context/AuthProvider';
 
 const items = [
 	{ title: 'Home', url: '/manager', icon: Home },
-	{ title: 'Cost', url: '/settings', icon: Settings }, 
+	{ title: 'Cost', url: '/settings', icon: Search }, 
 	// quan ly cost
 	{ title: 'Facility', url: '/manager/facility', icon: Boxes },
-	{ title: 'Amenity', url: '/search', icon: Search },
+	{ title: 'Amenity', url: '/manager/amenity', icon: Bath },
 	{ title: 'Settings', url: '/settings', icon: Settings },
 	{ title: 'Account', url: '/manager/profile', icon: User },
 ];
@@ -66,7 +66,18 @@ export function AppSidebar() {
 						<DropdownMenu>
 							<DropdownMenuTrigger asChild>
 								<SidebarMenuButton>
-									<User2 /> {dataProfile?.fullName}
+								{dataProfile && dataProfile ? (
+										<Image
+											src={dataProfile.avatar}
+											width={50}
+											height={50}
+											alt='avt'
+											className='object-contain size-8 rounded-md'
+										/>
+									) : (
+										<User2 />
+									)}
+									{dataProfile?.fullName}
 									<ChevronUp className='ml-auto' />
 								</SidebarMenuButton>
 							</DropdownMenuTrigger>

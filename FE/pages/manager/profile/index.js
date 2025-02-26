@@ -16,7 +16,7 @@ import { Eye, EyeOff } from 'lucide-react';
 import { changePassword } from '@/pages/api/auth/changePassword';
 
 import Image from 'next/image';
-import { uploadImage } from '@/pages/api/api/image/uploadImage';
+import { uploadImage } from '@/pages/api/image/uploadImage';
 
 
 export default function ProfilePage() {
