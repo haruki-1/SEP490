@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace BusinessObject.DTO
 {
-    public class AddAmenityDTO
+    public class FeedbackDTO
     {
-        public List<string> AmenityName {  get; set; }
-        public Guid HomeStayID { get; set; }
-
+        public Guid HomestayID { get; set; }
+        public int Rating { get; set; }
+        public string Description { get; set; }
     }
 }

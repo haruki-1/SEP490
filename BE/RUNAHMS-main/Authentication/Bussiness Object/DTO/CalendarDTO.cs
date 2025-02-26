@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace BusinessObject.DTO
 {
-    public class AddAmenityDTO
+    public class CalendarDTO
     {
-        public List<string> AmenityName {  get; set; }
+        public DateTime Date { get; set; }
+        public decimal Price { get; set; }
         public Guid HomeStayID { get; set; }
-
     }
+
 }
