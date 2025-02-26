@@ -4,6 +4,7 @@ using DataAccess.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250217084751_addTable")]
+    partial class addTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -186,15 +189,12 @@ namespace DataAccess.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<DateTime?>("UpdateAt")
+                    b.Property<DateTime>("UpdateAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
@@ -302,9 +302,6 @@ namespace DataAccess.Migrations
 
                     b.Property<Guid>("FacilityID")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
 
                     b.HasKey("HomeStayID", "FacilityID");
 
@@ -485,34 +482,6 @@ namespace DataAccess.Migrations
                         });
                 });
 
-            modelBuilder.Entity("BusinessObject.Entities.Transaction", b =>
-                {
-                    b.Property<long>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<Guid>("BookingID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("PaymentLink")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("BookingID");
-
-                    b.ToTable("Transactions");
-                });
-
             modelBuilder.Entity("BusinessObject.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -583,13 +552,13 @@ namespace DataAccess.Migrations
                         {
                             Id = new Guid("d87b4b72-609b-4979-b758-7771481da883"),
                             Address = "Ninh Kiều, Cần Thơ",
-                            CreatedAt = new DateTime(2025, 2, 19, 18, 55, 30, 275, DateTimeKind.Utc).AddTicks(3676),
+                            CreatedAt = new DateTime(2025, 2, 17, 15, 47, 51, 164, DateTimeKind.Utc).AddTicks(4799),
                             Email = "admin@gmail.com",
                             FullName = "admin",
                             IsDeleted = false,
                             IsEmailConfirmed = true,
-                            LastModifiedAt = new DateTime(2025, 2, 19, 18, 55, 30, 275, DateTimeKind.Utc).AddTicks(3683),
-                            PasswordHash = "$2a$11$QmaoNKpHvSXaH7z.L5JNEu2BqPOqCAA11K3j5fgTSXyZ/DzlH3k9q",
+                            LastModifiedAt = new DateTime(2025, 2, 17, 15, 47, 51, 164, DateTimeKind.Utc).AddTicks(4806),
+                            PasswordHash = "$2a$11$xU54yHoRsEV3uOngdyNrK.JxafbvJCbOKDJSldeyZhzMmhoSMvnZe",
                             Phone = "0987654321",
                             RoleId = 1
                         },
@@ -597,13 +566,13 @@ namespace DataAccess.Migrations
                         {
                             Id = new Guid("4b7b0200-70f9-416a-9a3f-29ccab0deec4"),
                             Address = "Bình Thủy, Cần Thơ",
-                            CreatedAt = new DateTime(2025, 2, 19, 18, 55, 30, 386, DateTimeKind.Utc).AddTicks(7530),
+                            CreatedAt = new DateTime(2025, 2, 17, 15, 47, 51, 277, DateTimeKind.Utc).AddTicks(7839),
                             Email = "staff@gmail.com",
                             FullName = "staff",
                             IsDeleted = false,
                             IsEmailConfirmed = true,
-                            LastModifiedAt = new DateTime(2025, 2, 19, 18, 55, 30, 386, DateTimeKind.Utc).AddTicks(7532),
-                            PasswordHash = "$2a$11$OXNTN3DX/qiCOsb85xT/j.gD3wmhx/HXQbhxiokqYA.YKOfcgpR5e",
+                            LastModifiedAt = new DateTime(2025, 2, 17, 15, 47, 51, 277, DateTimeKind.Utc).AddTicks(7853),
+                            PasswordHash = "$2a$11$HtxffAbvGy228evKWGkWaeB34W4Qqy78DOwvOKDviQAf0X.YIi35W",
                             Phone = "0987654123",
                             RoleId = 2
                         },
@@ -611,13 +580,13 @@ namespace DataAccess.Migrations
                         {
                             Id = new Guid("a85f272f-353e-4ff6-be2b-a15f1e7c0c47"),
                             Address = "Phong Điền, Cần Thơ",
-                            CreatedAt = new DateTime(2025, 2, 19, 18, 55, 30, 498, DateTimeKind.Utc).AddTicks(2447),
+                            CreatedAt = new DateTime(2025, 2, 17, 15, 47, 51, 396, DateTimeKind.Utc).AddTicks(6888),
                             Email = "user@gmail.com",
                             FullName = "user",
                             IsDeleted = false,
                             IsEmailConfirmed = true,
-                            LastModifiedAt = new DateTime(2025, 2, 19, 18, 55, 30, 498, DateTimeKind.Utc).AddTicks(2448),
-                            PasswordHash = "$2a$11$EC6i/JG6s4X3z6S4ZQdiAO2lMDSLJp67YvGMcID9kRLoDXnfITUH6",
+                            LastModifiedAt = new DateTime(2025, 2, 17, 15, 47, 51, 396, DateTimeKind.Utc).AddTicks(6899),
+                            PasswordHash = "$2a$11$s4kKFd77X7Mu8W24n50QheiSjwH9hDa4Ei9VC1z9KIzPKS5mpzYkq",
                             Phone = "0987654312",
                             RoleId = 3
                         });
@@ -719,7 +688,7 @@ namespace DataAccess.Migrations
                         .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("BusinessObject.Entities.Post", "Post")
-                        .WithMany("CommentPosts")
+                        .WithMany()
                         .HasForeignKey("PostID")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
@@ -751,7 +720,7 @@ namespace DataAccess.Migrations
             modelBuilder.Entity("BusinessObject.Entities.FeedBack", b =>
                 {
                     b.HasOne("BusinessObject.Entities.HomeStay", "HomeStay")
-                        .WithMany("FeedBacks")
+                        .WithMany()
                         .HasForeignKey("HomeStayID")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
@@ -780,14 +749,14 @@ namespace DataAccess.Migrations
 
             modelBuilder.Entity("BusinessObject.Entities.HomeStayFacility", b =>
                 {
-                    b.HasOne("BusinessObject.Entities.Facility", "Facility")
+                    b.HasOne("BusinessObject.Entities.HomeStay", "Facility")
                         .WithMany()
                         .HasForeignKey("FacilityID")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("BusinessObject.Entities.HomeStay", "HomeStay")
-                        .WithMany("HomestayFacilities")
+                        .WithMany()
                         .HasForeignKey("HomeStayID")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
@@ -860,17 +829,6 @@ namespace DataAccess.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("BusinessObject.Entities.Transaction", b =>
-                {
-                    b.HasOne("BusinessObject.Entities.Booking", "Booking")
-                        .WithMany()
-                        .HasForeignKey("BookingID")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Booking");
-                });
-
             modelBuilder.Entity("BusinessObject.Entities.User", b =>
                 {
                     b.HasOne("BusinessObject.Entities.Role", "Role")
@@ -920,19 +878,13 @@ namespace DataAccess.Migrations
                 {
                     b.Navigation("Calendars");
 
-                    b.Navigation("FeedBacks");
-
                     b.Navigation("HomestayAmenities");
-
-                    b.Navigation("HomestayFacilities");
 
                     b.Navigation("HomestayImages");
                 });
 
             modelBuilder.Entity("BusinessObject.Entities.Post", b =>
                 {
-                    b.Navigation("CommentPosts");
-
                     b.Navigation("PostImages");
                 });
 

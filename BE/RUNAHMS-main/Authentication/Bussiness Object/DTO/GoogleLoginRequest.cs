@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace BusinessObject.DTO
 {
-    public class AddAmenityDTO
+    public class GoogleLoginRequest
     {
-        public List<string> AmenityName {  get; set; }
-        public Guid HomeStayID { get; set; }
-
+        public string IdToken { get; set; }
     }
 }
