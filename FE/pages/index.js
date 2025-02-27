@@ -1,7 +1,23 @@
-import React from 'react';
+import Explore from '@/components/Explore';
+import Header from '@/components/Header';
+import Main from '@/components/Main';
+import Footer from '@/components/Footor';
+import { discover, live } from '@/data';
+import Banner from '@/components/Banner';
 
-const HomeStay = () => {
-	return <div>HomeStay</div>;
-};
-
-export default HomeStay;
+export default function Home() {
+	return (
+		<>
+			<Header />
+			<main>
+				<Main/>
+				<Explore/>
+				<Banner/>
+				{/* <MediumCards {...live} />
+				<LargeCards {...discover} />
+				<Hosting /> */}
+			</main>
+			<Footer />
+		</>
+	);
+}
