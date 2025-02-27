@@ -5,9 +5,9 @@ const Banner = () => {
   return (
     <BannerSection>
       <span>
-        <h2>Not sure where to go? Perfect.</h2>
+        <h2>Bạn không có nơi nào để đi? Sao ko thử RUNA.</h2>
         <a href="#" className="btn btn-dark">
-          {"I'm flexible"}
+          {"Mọi lúc mọi nơi"}
         </a>
       </span>
     </BannerSection>
