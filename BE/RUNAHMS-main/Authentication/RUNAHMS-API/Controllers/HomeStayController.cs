@@ -39,12 +39,14 @@ namespace RUNAHMS_API.Controllers
                 User = user
             };
             await _homeStayRepository.AddAsync(createHomeStay);
+
             var calendarTask = _calendarRepository.AddAsync(new Calendar
             {
                 Date = request.Date,
                 isDeleted = request.IsDeleted,
                 HomeStay = createHomeStay
             });
+
 
             foreach (var image in request.Images)
             {
@@ -113,6 +115,7 @@ namespace RUNAHMS_API.Controllers
             return NotFound();
         }
 
+
         [HttpPost("get-all-home-stay")]
         public async Task<IActionResult> GetAllHomeStay([FromBody] FilterDTO request)
         {
@@ -136,51 +139,31 @@ namespace RUNAHMS_API.Controllers
             }
 
 
-            if (request.MinPrice.HasValue || request.MaxPrice.HasValue)
+        [HttpGet("filter-home-stay-with-status")]
+        public async Task<IActionResult> FilterHomeStayWithStatus([FromQuery] bool status)
+        {
+            var filter = await _homeStayRepository.Find(x => x.isDeleted == status).ToListAsync();
+            if(filter.Any())
             {
-                query = query.Where(h => h.Calendars!.Any(c =>
-                    (!request.MinPrice.HasValue || c.Price >= request.MinPrice.Value) &&
-                    (!request.MaxPrice.HasValue || c.Price <= request.MaxPrice.Value)
-                ));
+                return Ok(filter);
+
             }
+            return NotFound();
+        }
+    
+    
 
-            var listHomeStay = await query.ToListAsync();
 
-            if (!listHomeStay.Any())
-            {
-                return NotFound();
-            }
+        [HttpPost("add-home-stay-image")]
+        public async Task<IActionResult> AddHomeStayImage([FromBody]HomeStayImageDTO request)
+        {
+            var getHomeStay = await _homeStayRepository.GetByIdAsync(request.HomeStayID);
+            foreach (var item in request.Images) {
 
-            var response = listHomeStay.Select(h => new
-            {
-                h.Id,
-                h.Name,
-                h.MainImage,
-                h.Address,
-                h.City,
-                h.CheckInTime,
-                h.CheckOutTime,
-                h.OpenIn,
-                h.Description,
-                h.Standar,
-                h.isDeleted,
-                h.isBooked,
-
-                Calendar = h.Calendars!.Select(c => new
+                Guid imageID = Guid.NewGuid();
+                HomeStayImage addImage = new HomeStayImage
                 {
-                    c.Id,
-                    c.Date,
-                    c.Price
-                }).ToList(),
 
-                Amenities = h.HomestayAmenities!
-                    .Select(ha => new
-                    {
-                        ha.Amenity.Id,
-                        ha.Amenity.Name
-                    }).ToList(),
-                Facility = h.HomestayFacilities!.Select(hf => new
-                {
                     hf.FacilityID,
                     hf.Facility.Name,
                     hf.Facility.Description
@@ -188,11 +171,23 @@ namespace RUNAHMS_API.Controllers
             }).ToList();
 
             return Ok(response);
+
+                    Id = imageID,
+                    Image = item,
+                    HomeStay = getHomeStay,
+                    isDeleted = false
+                };
+                await _homeStayImageRepository.AddAsync(addImage);
+            }
+            await _homeStayImageRepository.SaveAsync();
+            return Ok(new {Message = "Add Image Success"});
+
         }
 
-        [HttpGet("get-home-stay-detail")]
-        public async Task<IActionResult> GetHomeStayDetail([FromQuery] Guid homeStayID)
+        [HttpDelete("delete-home-stay-image")]
+        public async Task<IActionResult> DeleteHomeStayImage([FromBody] DeleteHomeStayImageDTO request)
         {
+
             var getDetail = await _homeStayRepository
                 .FindWithInclude(h => h.Calendars)
                 .Include(h => h.HomestayAmenities!)
@@ -202,12 +197,19 @@ namespace RUNAHMS_API.Controllers
                 .FirstOrDefaultAsync(h => h.Id == homeStayID);
 
             if (getDetail == null)
-            {
-                return NotFound();
-            }
 
-            var response = new
+            if (request == null || request.ImageIds == null || !request.ImageIds.Any())
+
             {
+                return BadRequest(new { Message = "Invalid request data." });
+            }
+            var imagesToDelete = await _homeStayImageRepository
+                .Find(h => request.ImageIds.Contains(h.Id))
+                .ToListAsync();
+
+            if (!imagesToDelete.Any())
+            {
+
                 getDetail.Id,
                 getDetail.Name,
                 getDetail.MainImage,
@@ -251,9 +253,16 @@ namespace RUNAHMS_API.Controllers
             {
                 return Ok(filter);
 
+                return NotFound(new { Message = "No matching images found." });
             }
-            return NotFound();
+
+            _homeStayImageRepository.DeleteRange(imagesToDelete);
+            await _homeStayImageRepository.SaveAsync();
+
+
+            return Ok(new { Message = "Images deleted successfully" });
         }
+
 
         [HttpPost("add-home-stay-image")]
         public async Task<IActionResult> AddHomeStayImage([FromBody] HomeStayImageDTO request)
@@ -324,6 +333,9 @@ namespace RUNAHMS_API.Controllers
             }
             return NotFound();
         }
+
     }
 
 }
+
+
