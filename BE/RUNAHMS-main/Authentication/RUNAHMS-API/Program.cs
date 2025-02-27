@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
@@ -125,8 +125,8 @@ builder.Services.AddCors(options =>
 });
 var app = builder.Build();
 
-app.UseSwagger();
-app.UseSwaggerUI();
+ app.UseSwagger();
+ app.UseSwaggerUI();
 app.UseCors("AllowAllOrigins");
 app.UseStaticFiles(new StaticFileOptions
 {
@@ -145,6 +145,6 @@ app.UseCors(MyAllowSpecificOrigins);
 
 //app.UseMiddleware<ApiKeyMiddleware>();
 app.UseMiddleware<ApiUserIdMiddleware>();
-app.UseMiddleware<ApiResponseMiddleware>();
+//app.UseMiddleware<ApiResponseMiddleware>();
 
 app.Run();

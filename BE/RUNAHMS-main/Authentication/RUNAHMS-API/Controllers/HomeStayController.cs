@@ -42,7 +42,6 @@ namespace RUNAHMS_API.Controllers
             var calendarTask = _calendarRepository.AddAsync(new Calendar
             {
                 Date = request.Date,
-                Price = request.Price,
                 isDeleted = request.IsDeleted,
                 HomeStay = createHomeStay
             });
