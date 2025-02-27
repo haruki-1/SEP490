@@ -15,9 +15,12 @@ import { updateProfile } from '@/pages/api/auth/updateProfile';
 import { Eye, EyeOff } from 'lucide-react';
 import { changePassword } from '@/pages/api/auth/changePassword';
 
+import Image from 'next/image';
+import { uploadImage } from '@/pages/api/image/uploadImage';
+
 
 export default function ProfilePage() {
-	const { dataProfile } = useAuth();
+	const { dataProfile, refetch } = useAuth();
 	const queryClient = useQueryClient();
 
 	const [profile, setProfile] = useState({
@@ -26,6 +29,7 @@ export default function ProfilePage() {
 		phone: '',
 		address: '',
 		roleId: '',
+		avatar: '',
 	});
 
 	useEffect(() => {
@@ -36,6 +40,7 @@ export default function ProfilePage() {
 				phone: dataProfile.phone || '',
 				address: dataProfile.address || '',
 				roleId: dataProfile.roleId || '',
+				avatar: dataProfile.avatar || '',
 			});
 		}
 	}, [dataProfile]);
@@ -63,6 +68,7 @@ export default function ProfilePage() {
 			return response;
 		},
 		onSuccess: () => {
+			refetch();
 			queryClient.invalidateQueries({ queryKey: ['dataProfile'] });
 			Swal.fire({
 				title: 'Success!',
@@ -86,6 +92,21 @@ export default function ProfilePage() {
 	const handleProfileChange = (e) => {
 		setProfile({ ...profile, [e.target.name]: e.target.value });
 	};
+
+	const handleImageChange = async (e) => {
+		const file = e.target.files[0];
+		if (!file) return;
+
+		try {
+			const imageUrl = await uploadImage(file);
+			const avatar = imageUrl?.url;
+			setProfile((prev) => ({ ...prev, avatar: avatar }));
+			toast.success('Image uploaded successfully!');
+		} catch {
+			toast.error('Image upload failed.');
+		}
+	};
+
 
 	const toggleShowPassword = (field) => {
 		setShowPassword((prev) => ({ ...prev, [field]: !prev[field] }));
@@ -148,6 +169,27 @@ export default function ProfilePage() {
 						</CardHeader>
 						<CardContent>
 							<form onSubmit={handleProfileSubmit} className='space-y-4'>
+							<div className='space-y-2'>
+									<Label htmlFor='avatar'>Avatar</Label>
+									<div className='flex flex-col items-center gap-2 w-full'>
+										{profile.avatar && (
+											<Image
+												src={profile.avatar}
+												width={200}
+												height={200}
+												alt='Avatar'
+												className='rounded-md h-44 object-cover'
+											/>
+										)}
+										<Input
+											id='avatar'
+											type='file'
+											accept='image/*'
+											onChange={handleImageChange}
+											disabled={!isEditing}
+										/>
+									</div>
+								</div>
 								<div className='space-y-2'>
 									<Label htmlFor='fullName'>Full Name</Label>
 									<Input

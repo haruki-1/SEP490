@@ -1,5 +1,5 @@
 import { usePathname } from 'next/navigation';
-import { Bath, Boxes, ChevronUp, Home, Hotel, Newspaper, User, User2 } from 'lucide-react';
+import { ChevronUp, Bath, Home, Cost, Search, Settings, User, User2, Boxes } from 'lucide-react';
 import {
 	Sidebar,
 	SidebarContent,
@@ -17,10 +17,11 @@ import Image from 'next/image';
 
 const items = [
 	{ title: 'Home', url: '/manager', icon: Home },
-	{ title: 'Homestay', url: '/manager/homestay', icon: Hotel },
+	{ title: 'Cost', url: '/settings', icon: Search },
+	// quan ly cost
 	{ title: 'Facility', url: '/manager/facility', icon: Boxes },
 	{ title: 'Amenity', url: '/manager/amenity', icon: Bath },
-	{ title: 'Posts', url: '/manager/posts', icon: Newspaper },
+	{ title: 'Settings', url: '/settings', icon: Settings },
 	{ title: 'Account', url: '/manager/profile', icon: User },
 ];
 
@@ -29,7 +30,6 @@ export function AppSidebar() {
 	const pathname = usePathname();
 
 	console.log(dataProfile);
-
 	return (
 		<Sidebar className='z-0'>
 			<SidebarContent>
@@ -41,15 +41,13 @@ export function AppSidebar() {
 								const isActive =
 									pathname === item.url ||
 									(item.url !== '/manager' && pathname?.startsWith(item.url));
-
 								return (
 									<SidebarMenuItem key={item.title}>
 										<SidebarMenuButton asChild>
 											<a
 												href={item.url}
-												className={`flex items-center gap-2 p-2 rounded-md transition ${
-													isActive ? 'bg-gray-200 font-semibold' : 'hover:bg-gray-100'
-												}`}
+												className={`flex items-center gap-2 p-2 rounded-md transition ${isActive ? 'bg-gray-200 font-semibold' : 'hover:bg-gray-100'
+													}`}
 											>
 												<item.icon />
 												<span>{item.title}</span>
@@ -68,22 +66,17 @@ export function AppSidebar() {
 						<DropdownMenu>
 							<DropdownMenuTrigger asChild>
 								<SidebarMenuButton>
-									{dataProfile ? (
-										dataProfile.avatar ? (
-											<Image
-												src={dataProfile.avatar}
-												width={50}
-												height={50}
-												alt='avt'
-												className='object-contain rounded-md size-8'
-											/>
-										) : (
-											<User2 className='size-8' />
-										)
+									{dataProfile && dataProfile ? (
+										<Image
+											src={dataProfile.avatar}
+											width={50}
+											height={50}
+											alt='avt'
+											className='object-contain size-8 rounded-md'
+										/>
 									) : (
-										<User2 className='size-8' />
+										<User2 />
 									)}
-
 									{dataProfile?.fullName}
 									<ChevronUp className='ml-auto' />
 								</SidebarMenuButton>
