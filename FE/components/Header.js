@@ -3,9 +3,6 @@ import styled from 'styled-components';
 import { Search, Globe, Menu, User } from 'react-feather';
 import { useRouter } from 'next/router';
 import { useMediaQuery } from '@react-hook/media-query';
-import MobileNav from './MobileNav';
-import ThemeToggle from './ThemeToggle';
-import DatePicker from './DatePicker';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -24,6 +21,8 @@ import { Button } from './components/ui/button';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthProvider';
+import ThemeToggle from './ThemeToggle';
+import MobileNav from './MobileNav';
 
 
 const Header = ({ placeholder }) => {
