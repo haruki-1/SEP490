@@ -24,63 +24,6 @@ namespace API.Controllers
     {
 
 
-        [HttpPost("add-home-stay-facility")]
-        public async Task<IActionResult> AddHomeStayFacility(AddHomeStayFacilityDTO request)
-        {
-            try
-            {
-                HomeStayFacility addFacility = new HomeStayFacility
-                {
-                    FacilityID = request.FacilityID,
-                    HomeStayID = request.HomeStayID,
-                };
-                await _homestayFacility.AddAsync(addFacility);
-                await _homestayFacility.SaveAsync();
-                return Ok(new { Message = "Add Facility Success" });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex);
-            }
-        }
-
-        [HttpDelete("delete-home-stay-facility")]
-        public async Task<IActionResult> DeleteHomeStayFacility([FromQuery] Guid HomeStayID, Guid FacilityID)
-        {
-            var checkDelete = await _homestayFacility.Find(h => h.HomeStayID == HomeStayID && h.FacilityID == FacilityID)
-                                                    .FirstOrDefaultAsync();
-            if (checkDelete != null)
-            {
-                await _homestayFacility.DeleteAsync(checkDelete);
-                await _homestayFacility.SaveAsync();
-                return Ok(new { Message = "Delete Amenity Success" });
-            }
-            return NotFound();
-        }
-
-        [HttpGet("search-autocomplete-agoda")]
-        public async Task<IActionResult> GetBookingHotel([FromQuery] String city)
-        {
-            var request = new HttpRequestMessage
-            {
-                Method = HttpMethod.Get,
-                RequestUri = new Uri($"https://agoda-com.p.rapidapi.com/hotels/auto-complete?query={city}"),
-                Headers =
-            {
-                { "x-rapidapi-key", "52bcd7f98bmsh281c68c3f9d7c44p169949jsn21d2e2049b30" },
-                { "x-rapidapi-host", "agoda-com.p.rapidapi.com" },
-            },
-            };
-
-            using (var response = await _httpClient.SendAsync(request))
-            {
-                response.EnsureSuccessStatusCode();
-                var body = await response.Content.ReadAsStringAsync();
-                return Ok(body);
-            }
-
-        }
-
         [HttpPost("add-home-stay")]
         public async Task<IActionResult> AddHomeStay([FromHeader(Name = "X-User-Id")] Guid userID, [FromBody] AddHomeStayRequest request)
         {
@@ -443,56 +386,6 @@ namespace API.Controllers
             return Ok(new { Message = "Images deleted successfully" });
         }
 
-
-        [HttpGet("get-city-list")]
-        public async Task<IActionResult> GetAllCity()
-        {
-            var homeStayList = await _homeStayRepository.GetAllAsync();
-            var city = homeStayList.Select(c => c.City).Distinct().ToList();
-            return Ok(city);
-
-        }
-
-        [HttpGet("search-by-city")]
-        public async Task<IActionResult> SearchByCity([FromQuery] string city)
-        {
-            var getHomeStay = await _homeStayRepository
-                                    .FindWithInclude(h => h.Calendars!)
-                                    .Include(h => h.HomestayAmenities!)
-                                    .ThenInclude(ha => ha.Amenity)
-                                    .Where(x => x.City.Equals(city)).ToListAsync();
-            var response = getHomeStay.Select(h => new
-            {
-                h.Id,
-                h.Name,
-                h.MainImage,
-                h.Address,
-                h.City,
-                h.CheckInTime,
-                h.CheckOutTime,
-                h.OpenIn,
-                h.Description,
-                h.Standar,
-                h.isDeleted,
-                h.isBooked,
-
-                Calendar = h.Calendars!.Select(c => new
-                {
-                    c.Id,
-                    c.Date,
-                    c.Price
-                }).ToList(),
-
-                Amenities = h.HomestayAmenities!
-                 .Select(ha => new
-                 {
-                     ha.Amenity.Id,
-                     ha.Amenity.Name
-                 }).ToList()
-            }).ToList();
-
-            return Ok(response);
-        }
 
     }
 }
