@@ -23,6 +23,29 @@ namespace RUNAHMS_API.Controllers
                                    IConfiguration _configuration,
                                    IRepository<Calendar> _calendarRepository) : ControllerBase
     {
+        [HttpGet("history")]
+        public async Task<IActionResult> GetBookingHistory([FromHeader(Name = "X-User-Id")] Guid userId)
+        {
+            var user = await _userRepository.GetByIdAsync(userId);
+            if (user == null)
+                return NotFound(new { Message = "User not found" });
+
+            var bookings = await _bookingRepository.GetHistory(userId);
+
+            if (!bookings.Any())
+                return Ok(new { Message = "No booking history found." });
+
+            var bookingHistory = bookings.Select(b => new
+            {
+                BookingID = b.Id,
+                CheckInDate = b.CheckInDate.ToString("dd/MM/yyyy HH:mm"),
+                CheckOutDate = b.CheckOutDate.ToString("dd/MM/yyyy HH:mm"),
+                TotalPrice = b.TotalPrice.ToString("C", new System.Globalization.CultureInfo("vi-VN")),
+                Status = b.Status
+            }).OrderByDescending(b => b.CheckInDate).ToList();
+
+            return Ok(bookingHistory);
+        }
         [HttpPost("create")]
         public async Task<IActionResult> CreateBooking(
     [FromHeader(Name = "X-User-Id")] Guid userId,
