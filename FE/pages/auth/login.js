@@ -55,14 +55,16 @@ export default function LoginForm() {
 
 			if (response.ok) {
 				const accessToken = responseData.accessToken;
-				const refreshToken = responseData.refreshToken;
 				const role = responseData.role;
 				localStorage.setItem('accessToken', accessToken);
-				localStorage.setItem('refreshToken', refreshToken);
 				login({ accessToken, refreshToken });
 				toast.success('Login successful! Redirecting...');
 				reset();
-				role === 'Manager' ? router.push('/manager') : router.push('/');
+				role === 'Manager'
+					? router.push('/manager')
+					: role === 'Admin'
+					? router.push('/admin')
+					: router.push('/');
 			} else {
 				toast.error(`Login failed: ${responseData.message || 'Unknown error'}`);
 			}
@@ -123,13 +125,13 @@ export default function LoginForm() {
 									className='pr-10 border border-black'
 									placeholder='*******'
 								/>
-								<Button
+								<button
 									type='button'
 									onClick={() => setShowPassword(!showPassword)}
 									className='absolute inset-y-0 flex items-center right-3'
 								>
 									{showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-								</Button>
+								</button>
 							</div>
 							{errors.password && <p className='text-sm text-red-500'>{errors.password.message}</p>}
 						</div>
