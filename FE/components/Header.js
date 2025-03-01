@@ -23,6 +23,7 @@ import Link from 'next/link';
 import { useAuth } from '@/context/AuthProvider';
 import ThemeToggle from './ThemeToggle';
 import MobileNav from './MobileNav';
+import DatePicker from './DatePicker';
 
 
 const Header = ({ placeholder }) => {
