@@ -407,6 +407,65 @@ namespace RUNAHMS_API.Controllers
             }
             return NotFound();
         }
+
+
+        [HttpGet("search-home-stay")]
+        public async Task<IActionResult> SearchHomeStay([FromQuery] SearchHomeStayDTO request)
+        {
+            var homeStays = await _homeStayRepository
+                .FindWithInclude()
+                .Include(h => h.Calendars!)
+                    .ThenInclude(c => c.Booking)
+                .Include(h => h.HomestayAmenities!)
+                    .ThenInclude(ha => ha.Amenity)
+                .Include(h => h.HomestayFacilities!)
+                    .ThenInclude(fa => fa.Facility)
+                .Where(h => h.Calendars.All(c =>
+                    c.Booking == null ||
+                    c.Booking.CheckOutDate < request.CheckInDate ||
+                    c.Booking.CheckInDate > request.CheckOutDate
+                ))
+                .ToListAsync();
+
+            var response = homeStays.Select(h => new
+            {
+                h.Id,
+                h.Name,
+                h.MainImage,
+                h.Address,
+                h.City,
+                h.CheckInTime,
+                h.CheckOutTime,
+                h.OpenIn,
+                h.Description,
+                h.Standar,
+                h.isDeleted,
+                h.isBooked,
+
+                Calendar = h.Calendars!.Select(c => new
+                {
+                    c.Id,
+                    c.Date,
+                    c.Price
+                }).ToList(),
+
+                Amenities = h.HomestayAmenities!
+                   .Select(ha => new
+                   {
+                       ha.Amenity.Id,
+                       ha.Amenity.Name
+                   }).ToList(),
+                Facility = h.HomestayFacilities!.Select(hf => new
+                {
+                    hf.FacilityID,
+                    hf.Facility.Name,
+                    hf.Facility.Description
+                }).ToList()
+            }).ToList();
+
+            return Ok(response);
+
+        }
     }
 
 }
