@@ -2,6 +2,6 @@
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ActiveDebugProfile>https</ActiveDebugProfile>
-    <NameOfLastUsedPublishProfile>D:\Home Stay Booking\HomStayBooking_BE\RUNAHMS\RUNAHMS-API\Properties\PublishProfiles\homestaybooking-001-site1 - Web Deploy.pubxml</NameOfLastUsedPublishProfile>
+    <NameOfLastUsedPublishProfile>D:\SEP490\SEP490\BE\RUNAHMS-main\Authentication\RUNAHMS-API\Properties\PublishProfiles\homestaybooking-001-site1 - Web Deploy.pubxml</NameOfLastUsedPublishProfile>
   </PropertyGroup>
 </Project>

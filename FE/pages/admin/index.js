@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ManagerLayout from './layout';
-import { useAuth } from 'context/AuthProvider';
+import { useAuth } from '@/context/AuthProvider';
 
 const Admin = () => {
 	const { isAuthenticated, dataProfile } = useAuth();
