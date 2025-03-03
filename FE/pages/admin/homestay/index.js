@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import ManagerLayout from '../layout';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getAllHomeStay } from 'pages/api/homestay/getAllHomeStay';
 import { Button } from '@/components/components/ui/button';
-import { Checkbox } from '@/components/components/ui/checkbox';
 import { Slider } from '@/components/components/ui/slider';
 import { Car, Star, Wifi, PocketIcon as Pool, Trash2, Pencil } from 'lucide-react';
 import { Label } from '@/components/components/ui/label';
 import Link from 'next/link';
 import { deleteHomeStay } from 'pages/api/homestay/deleteHomeStay';
 import Swal from 'sweetalert2';
+import { getAllHomeStay } from '@/pages/api/homestay/getAllHomeStay';
+import { Checkbox } from '@radix-ui/react-checkbox';
 
 const Homestay = () => {
 	const queryClient = useQueryClient();

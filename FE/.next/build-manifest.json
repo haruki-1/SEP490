@@ -26,6 +26,11 @@
       "static/chunks/webpack.js",
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
+    ],
+    "/manager/facility": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/manager/facility.js"
     ]
   },
   "ampFirstPages": []

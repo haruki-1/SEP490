@@ -46,7 +46,7 @@ export default function LoginForm() {
 	const onSubmit = async (data) => {
 		setLoading(true);
 		try {
-			const response = await fetch('https://homestaybooking-001-site1.ntempurl.com/api/Auth/login', {
+			const response = await fetch('https://localhost:7194/api/Auth/login', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify(data),
@@ -77,7 +77,7 @@ export default function LoginForm() {
 
 	const handleForgotPassword = async (data) => {
 		try {
-			const response = await fetch('https://homestaybooking-001-site1.ntempurl.com/api/Auth/forgot-password', {
+			const response = await fetch('https://localhost:7194/api/Auth/forgot-password', {
 				method: 'PUT',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify(data),

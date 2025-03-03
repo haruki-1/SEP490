@@ -4,8 +4,8 @@ import Header from '@/components/Header';
 import Main from '@/components/Main';
 import Footer from '@/components/Footor';
 import { discover, live } from '@/data';
-import Banner from '@/components/Banner';
 import ListHomeStay from '@/components/ListHomeStay';
+import Banner from '@/components/Banner';
 
 export default function Home() {
 	return (
