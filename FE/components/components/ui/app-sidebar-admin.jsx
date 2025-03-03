@@ -12,8 +12,8 @@ import {
 	SidebarMenuItem,
 } from './sidebar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './dropdown-menu';
+import { useAuth } from 'context/AuthProvider';
 import Image from 'next/image';
-import { useAuth } from '@/context/AuthProvider';
 
 const items = [
 	{ title: 'Home', url: '/admin', icon: Home },

@@ -1,10 +1,10 @@
 'use client';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
+import AdminLayout from 'pages/admin/layout';
+import { getHomeStayDetail } from 'pages/api/homestay/getHomeStayDetail';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
 import 'react-photo-view/dist/react-photo-view.css';
-import AdminLayout from '../../layout';
-import { getHomeStayDetail } from '@/pages/api/homestay/getHomeStayDetail';
 
 const getPriceForToday = (calendar) => {
 	const currentDate = new Date().toISOString().slice(0, 10);

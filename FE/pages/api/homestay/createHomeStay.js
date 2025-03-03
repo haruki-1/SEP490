@@ -1,5 +1,5 @@
 export const createHomeStay = async (userId, homeStayData) => {
-	const url = 'https://localhost:7049/api';
+	const url = 'https://homestaybooking-001-site1.ntempurl.com/api/HomeStay/add-home-stay';
 
 	try {
 		const response = await fetch(url, {
