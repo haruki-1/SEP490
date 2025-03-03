@@ -5,6 +5,7 @@ import Main from '@/components/Main';
 import Footer from '@/components/Footor';
 import { discover, live } from '@/data';
 import Banner from '@/components/Banner';
+import ListHomeStay from '@/components/ListHomeStay';
 
 export default function Home() {
 	return (
@@ -13,6 +14,7 @@ export default function Home() {
 			<main>
 				<Main/>
 				<Explore/>
+				<ListHomeStay/>
 				<Banner/>
 				{/* <MediumCards {...live} />
 				<LargeCards {...discover} />
