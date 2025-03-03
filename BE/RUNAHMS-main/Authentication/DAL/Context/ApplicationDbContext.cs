@@ -27,14 +27,18 @@ namespace DataAccess.Context
         public DbSet<Calendar> Calendars {  get; set; }
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<Amenity> Amennities {  get; set; } 
-        
+        public DbSet<Transaction> Transactions { get; set; }    
+        public DbSet<HomeStayFacility> HomeStayFacilities { get; set; }
+        public DbSet<Facility> Facilities { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
             builder.Entity<UserVoucher>().HasKey(u => new { u.UserID, u.VoucherID });
             builder.Entity<HomestayAmenity>().HasKey(ha => new { ha.HomeStayID, ha.AmenityId });
-              
+            builder.Entity<HomeStayFacility>().HasKey(hf => new { hf.HomeStayID, hf.FacilityID });
+            
             builder.Entity<Booking>()
             .Property(b => b.TotalPrice)
             .HasPrecision(18, 4);
@@ -45,7 +49,14 @@ namespace DataAccess.Context
 
             builder.Entity<Calendar>()
                 .Property(c => c.Price)
-            .HasPrecision(18, 4);
+            .HasPrecision(18, 4); 
+            
+            foreach (var relationship in builder.Model.GetEntityTypes()
+            .SelectMany(e => e.GetForeignKeys()))
+                    {
+                        relationship.DeleteBehavior = DeleteBehavior.NoAction;
+                    }
+
 
             base.OnModelCreating(builder);
             builder.Entity<Role>()

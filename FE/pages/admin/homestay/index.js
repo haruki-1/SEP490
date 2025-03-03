@@ -92,11 +92,11 @@ const Homestay = () => {
 					<Button>Create Homestay</Button>
 				</Link>
 			</div>
-			<div className='mb-6 p-6 bg-white shadow-md rounded-lg'>
-				<h2 className='text-xl font-semibold mb-4'>Filters</h2>
+			<div className='p-6 mb-6 bg-white rounded-lg shadow-md'>
+				<h2 className='mb-4 text-xl font-semibold'>Filters</h2>
 				<div className='space-y-6'>
 					<div>
-						<h3 className='text-lg font-medium mb-2'>Price Range</h3>
+						<h3 className='mb-2 text-lg font-medium'>Price Range</h3>
 						<Slider
 							min={0}
 							max={1000}
@@ -111,8 +111,8 @@ const Homestay = () => {
 						</div>
 					</div>
 					<div>
-						<h3 className='text-lg font-medium mb-2'>Amenities</h3>
-						<div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2'>
+						<h3 className='mb-2 text-lg font-medium'>Amenities</h3>
+						<div className='grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3'>
 							{[
 								{ name: 'WiFi', icon: <Wifi className='w-4 h-4' /> },
 								{ name: 'Parking', icon: <Car className='w-4 h-4' /> },
@@ -136,7 +136,7 @@ const Homestay = () => {
 						</div>
 					</div>
 					<div>
-						<h3 className='text-lg font-medium mb-2'>Standard</h3>
+						<h3 className='mb-2 text-lg font-medium'>Standard</h3>
 						<div className='flex flex-wrap gap-2'>
 							{[1, 2, 3, 4, 5].map((std) => (
 								<Label
@@ -182,7 +182,7 @@ const Homestay = () => {
 												className='object-cover w-full h-full rounded-lg shadow-lg cursor-pointer'
 											/>
 											{homeStay?.isDeleted === true && (
-												<div className='absolute top-3 left-3 bg-rose-500 px-2 py-1 rounded-md'>
+												<div className='absolute px-2 py-1 rounded-md top-3 left-3 bg-rose-500'>
 													<span className='text-sm [text-shadow:2px_2px_4px_rgba(0,0,0,0.9)] font-bold text-white'>
 														<span>Deleted</span>
 													</span>
@@ -248,7 +248,7 @@ const Homestay = () => {
 											</div>
 											<div className='flex items-center gap-3'>
 												<Link href={`/admin/homestay/edit/${homeStay.id}`} className='w-1/2'>
-													<Button className='w-full bg-green-500'>
+													<Button className='w-full bg-green-500 hover:bg-green-700'>
 														<Pencil />
 													</Button>
 												</Link>
