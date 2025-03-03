@@ -4,15 +4,16 @@ import { Input } from '@/components/components/ui/input';
 import { Label } from '@/components/components/ui/label';
 import { Textarea } from '@/components/components/ui/textarea';
 import { ImagePlus, X } from 'lucide-react';
+import ManagerLayout from 'pages/manager/layout';
 import React, { useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { useAuth } from 'context/AuthProvider';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createHomeStay } from '@/pages/api/homestay/createHomeStay';
-import AdminLayout from '../../layout';
-import { useAuth } from '@/context/AuthProvider';
-import { uploadImage } from '@/pages/api/image/uploadImage';
+import { createHomeStay } from 'pages/api/homestay/createHomeStay';
+import { uploadImage } from 'pages/api/image/uploadImage';
+import { uploadImages } from 'pages/api/homestay/uploadImageHomeStay';
 
 const MAX_IMAGES = 8;
 
@@ -92,7 +93,7 @@ const CreateHomeStay = () => {
 		const file = e.target.files[0];
 		if (file) {
 			try {
-				const uploadedImageUrl = await uploadImagese(file);
+				const uploadedImageUrl = await uploadImage(file);
 				setFormData((prev) => ({ ...prev, mainImage: uploadedImageUrl.url }));
 				toast.success('Main image uploaded successfully!');
 			} catch (error) {
@@ -152,7 +153,7 @@ const CreateHomeStay = () => {
 	};
 
 	return (
-		<AdminLayout>
+		<ManagerLayout>
 			<div className='p-4 space-y-4'>
 				<h2 className='text-xl font-bold'>Create Homestay</h2>
 				<div className='grid grid-cols-1 xl:grid-cols-2 gap-4'>
@@ -312,7 +313,7 @@ const CreateHomeStay = () => {
 					</Button>
 				</div>
 			</div>
-		</AdminLayout>
+		</ManagerLayout>
 	);
 };
 
