@@ -87,7 +87,7 @@ namespace DataAccess.Repositories
             user.Address = u.Address;
             user.Email = u.Email;
             user.RoleId = u.RoleId;
-
+            user.Avatar = u.Avatar;
             return true;
         }
 
@@ -172,7 +172,8 @@ namespace DataAccess.Repositories
                     IsEmailConfirmed = u.IsEmailConfirmed,
                     IsDeleted = u.IsDeleted,
                     RoleId = u.RoleId,
-                    Role = u.Role.Name
+                    Role = u.Role.Name,
+                    Avatar = u.Avatar
                 })
                 .FirstOrDefaultAsync();
 

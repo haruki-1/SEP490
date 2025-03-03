@@ -10,5 +10,6 @@ namespace BusinessObject.DTO
     {
         public List<string> AmenityName {  get; set; }
         public Guid HomeStayID { get; set; }
+
     }
 }
