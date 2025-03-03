@@ -30,7 +30,7 @@ export default function RegisterForm() {
 	const onSubmit = async (data) => {
 		setLoading(true);
 		try {
-			const response = await fetch('https://localhost:7194/api/Auth/register', {
+			const response = await fetch('https://homestaybooking-001-site1.ntempurl.com/api/Auth/register', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
