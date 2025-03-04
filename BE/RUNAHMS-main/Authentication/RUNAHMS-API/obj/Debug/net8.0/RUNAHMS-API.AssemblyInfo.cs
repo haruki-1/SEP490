@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("RUNAHMS-API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+633e0a3d901bdd0c467c55be0da642fe4b6f9f0f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+95fe03b54706d2fec20f172bdea97236b8a6d0d5")]
 [assembly: System.Reflection.AssemblyProductAttribute("RUNAHMS-API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RUNAHMS-API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

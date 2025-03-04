@@ -87,3 +87,13 @@ C:\Users\Administrator\Documents\GitHub\SEP490\BE\RUNAHMS-main\Authentication\RU
 C:\Users\Administrator\Documents\GitHub\SEP490\BE\RUNAHMS-main\Authentication\RUNAHMS-API\obj\Debug\net8.0\RUNAHMS-API.pdb
 C:\Users\Administrator\Documents\GitHub\SEP490\BE\RUNAHMS-main\Authentication\RUNAHMS-API\obj\Debug\net8.0\RUNAHMS-API.genruntimeconfig.cache
 C:\Users\Administrator\Documents\GitHub\SEP490\BE\RUNAHMS-main\Authentication\RUNAHMS-API\obj\Debug\net8.0\ref\RUNAHMS-API.dll
+C:\Users\Administrator\Documents\GitHub\SEP490\BE\RUNAHMS-main\Authentication\RUNAHMS-API\bin\Debug\net8.0\Microsoft.Extensions.Configuration.FileExtensions.dll
+C:\Users\Administrator\Documents\GitHub\SEP490\BE\RUNAHMS-main\Authentication\RUNAHMS-API\bin\Debug\net8.0\Microsoft.Extensions.DependencyInjection.dll
+C:\Users\Administrator\Documents\GitHub\SEP490\BE\RUNAHMS-main\Authentication\RUNAHMS-API\bin\Debug\net8.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\Users\Administrator\Documents\GitHub\SEP490\BE\RUNAHMS-main\Authentication\RUNAHMS-API\bin\Debug\net8.0\Microsoft.Extensions.Diagnostics.Abstractions.dll
+C:\Users\Administrator\Documents\GitHub\SEP490\BE\RUNAHMS-main\Authentication\RUNAHMS-API\bin\Debug\net8.0\Microsoft.Extensions.Hosting.Abstractions.dll
+C:\Users\Administrator\Documents\GitHub\SEP490\BE\RUNAHMS-main\Authentication\RUNAHMS-API\bin\Debug\net8.0\Microsoft.Extensions.Logging.dll
+C:\Users\Administrator\Documents\GitHub\SEP490\BE\RUNAHMS-main\Authentication\RUNAHMS-API\bin\Debug\net8.0\Microsoft.Extensions.Logging.Abstractions.dll
+C:\Users\Administrator\Documents\GitHub\SEP490\BE\RUNAHMS-main\Authentication\RUNAHMS-API\bin\Debug\net8.0\Microsoft.Extensions.Logging.Debug.dll
+C:\Users\Administrator\Documents\GitHub\SEP490\BE\RUNAHMS-main\Authentication\RUNAHMS-API\bin\Debug\net8.0\Microsoft.Extensions.ObjectPool.dll
+C:\Users\Administrator\Documents\GitHub\SEP490\BE\RUNAHMS-main\Authentication\RUNAHMS-API\bin\Debug\net8.0\Microsoft.Extensions.Options.dll
