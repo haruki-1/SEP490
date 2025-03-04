@@ -74,6 +74,8 @@ namespace RUNAHMS_API.Controllers
             var sortedDates = calendars.Select(c => c.Date).OrderBy(d => d).ToList();
             var firstDate = sortedDates.First();
             var lastDate = sortedDates.Last();
+            var replaceCheckInDate = homeStay.CheckInTime.Replace("PM", "").Replace("AM", "");
+            var replaceCheckOutDate = homeStay.CheckInTime.Replace("PM", "").Replace("AM", "");
 
             DateTime checkInDate = firstDate.Date.Add(TimeSpan.Parse(homeStay.CheckInTime));
             DateTime checkOutDate = lastDate.AddDays(1).Date.Add(TimeSpan.Parse(homeStay.CheckOutTime));
@@ -112,6 +114,11 @@ namespace RUNAHMS_API.Controllers
                 calendar.BookingID = booking.Id;
             }
 
+            // After booking change isBooked in home stay table is true
+            var getHomeStay = await _homeStayRepository.GetByIdAsync(calendars.FirstOrDefault()?.HomeStayID);
+            getHomeStay.isBooked = true;
+
+            await _homeStayRepository.UpdateAsync(getHomeStay);
             await _bookingRepository.AddAsync(booking);
             await _calendarRepository.SaveAsync();
             await _bookingRepository.SaveAsync();
