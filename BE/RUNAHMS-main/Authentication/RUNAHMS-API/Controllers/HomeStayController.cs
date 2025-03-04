@@ -1,10 +1,12 @@
-﻿using BusinessObject.DTO;
+using System.Drawing;
+using BusinessObject.DTO;
 using BusinessObject.Entities;
 using BusinessObject.Interfaces;
+using BusinessObject.Shares;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace RUNAHMS_API.Controllers
+namespace API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -20,6 +22,7 @@ namespace RUNAHMS_API.Controllers
         IRepository<Facility> _facilityRepository
             ) : ControllerBase
     {
+
 
         [HttpPost("add-home-stay")]
         public async Task<IActionResult> AddHomeStay([FromHeader(Name = "X-User-Id")] Guid userID, [FromBody] AddHomeStayRequest request)
@@ -61,6 +64,41 @@ namespace RUNAHMS_API.Controllers
 
 
             return Ok(new { message = "Add Home Stay Success." });
+        }
+
+
+        [HttpPost("add-home-stay-amenity")]
+        public async Task<IActionResult> AddHomeStayAmennity([FromBody] AddAmenityDTO request)
+        {
+            try
+            {
+                var getHomeStay = await _homeStayRepository.GetByIdAsync(request.HomeStayID);
+                if (getHomeStay == null) return NotFound();
+                foreach (var amenity in request.AmenityName)
+                {
+                    var getAmenity = await _amenityRepository.Find(n => n.Name.Equals(amenity)).FirstOrDefaultAsync();
+                    var existingAmenity = await _homeStayAmenity
+                                               .Find(x => x.HomeStayID == getHomeStay.Id && x.AmenityId == getAmenity.Id)
+                                               .FirstOrDefaultAsync();
+                    if (existingAmenity != null)
+                    {
+                        return Conflict();
+
+                    }
+                    HomestayAmenity addAmenity = new HomestayAmenity
+                    {
+                        AmenityId = getAmenity.Id,
+                        HomeStayID = getHomeStay.Id,
+                    };
+                    await _homeStayAmenity.AddAsync(addAmenity);
+                    await _homeStayAmenity.SaveAsync();
+                }
+                return Ok(new { Message = "Add Amentity Success" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "An error occurred", Error = ex.Message });
+            }
         }
 
 
@@ -109,6 +147,22 @@ namespace RUNAHMS_API.Controllers
                 await _homeStayRepository.UpdateAsync(checkDelete);
                 await _homeStayRepository.SaveAsync();
                 return Ok(new { Message = "Restore Home Stay Success" });
+            }
+            return NotFound();
+        }
+
+
+        [HttpDelete("delete-home-stay-amenity")]
+        public async Task<IActionResult> DeleteHomeStayAmenity([FromQuery] Guid HomeStayID, Guid AmenityID)
+        {
+            var checkDelete = await _homeStayAmenity.Find(h => h.HomeStayID == HomeStayID && h.AmenityId == AmenityID)
+                                                    .FirstOrDefaultAsync();
+            if (checkDelete != null)
+            {
+                checkDelete.isDeleted = true;
+                await _homeStayAmenity.DeleteAsync(checkDelete);
+                await _homeStayAmenity.SaveAsync();
+                return Ok(new { Message = "Delete Amenity Success" });
             }
             return NotFound();
         }
@@ -194,12 +248,13 @@ namespace RUNAHMS_API.Controllers
         public async Task<IActionResult> GetHomeStayDetail([FromQuery] Guid homeStayID)
         {
             var getDetail = await _homeStayRepository
-                .FindWithInclude(h => h.Calendars)
+                .FindWithInclude(h => h.Calendars!)
                 .Include(h => h.HomestayAmenities!)
                 .ThenInclude(ha => ha.Amenity)
-                .Include(hs => hs.HomestayImages!)
-                .Include(h => h.HomestayFacilities!)
-                .ThenInclude(h => h.Facility)
+                .Include(img => img.HomestayImages!)
+                .Include(f => f.FeedBacks!)
+                .Include(hf => hf.HomestayFacilities)
+                .ThenInclude(fa => fa.Facility)
                 .FirstOrDefaultAsync(h => h.Id == homeStayID);
 
             if (getDetail == null)
@@ -240,12 +295,22 @@ namespace RUNAHMS_API.Controllers
                     ha.Amenity.Id,
                     ha.Amenity.Name
                 }).ToList(),
-                Facility = getDetail.HomestayFacilities!.Select(hf => new
+
+                FeedBack = getDetail.FeedBacks.Where(f => !f.isDeleted).Select(f => new
                 {
-                    hf.FacilityID,
+                    f.Id,
+                    Fullname = f.User.FullName,
+                    f.Description,
+                    f.Rating
+                }),
+
+                Facilities = getDetail.HomestayFacilities.Select(hf => new
+                {
                     hf.Facility.Name,
                     hf.Facility.Description
+
                 }).ToList()
+
             };
             return Ok(response);
         }
@@ -324,90 +389,64 @@ namespace RUNAHMS_API.Controllers
             return Ok(new { Message = "Images deleted successfully" });
         }
 
-        [HttpPost("add-home-stay-amenity")]
-        public async Task<IActionResult> AddHomeStayAmennity([FromBody] AddAmenityDTO request)
+        [HttpGet("get-city-list")]
+        public async Task<IActionResult> GetAllCity()
         {
-            try
+            var homeStayList = await _homeStayRepository.GetAllAsync();
+            var city = homeStayList.Select(c => c.City).Distinct().ToList();
+            return Ok(city);
+
+        }
+
+        [HttpGet("search-by-city")]
+        public async Task<IActionResult> SearchByCity([FromQuery] string city)
+        {
+            var getHomeStay = await _homeStayRepository
+                                    .FindWithInclude(h => h.Calendars!)
+                                    .Include(h => h.HomestayAmenities!)
+                                    .ThenInclude(ha => ha.Amenity)
+                                    .Include(f => f.HomestayFacilities!)
+                                    .ThenInclude(hf => hf.Facility)
+                                    .Include(f => f.FeedBacks)
+                                    .Where(x => x.City.Equals(city)).ToListAsync();
+            var response = getHomeStay.Select(h => new
             {
-                var getHomeStay = await _homeStayRepository.GetByIdAsync(request.HomeStayID);
-                if (getHomeStay == null) return NotFound();
-                foreach (var amenity in request.AmenityName)
+                h.Id,
+                h.Name,
+                h.MainImage,
+                h.Address,
+                h.City,
+                h.CheckInTime,
+                h.CheckOutTime,
+                h.OpenIn,
+                h.Description,
+                h.Standar,
+                h.isDeleted,
+                h.isBooked,
+
+                Calendar = h.Calendars!.Select(c => new
                 {
-                    var getAmenity = await _amenityRepository.Find(n => n.Name.Equals(amenity)).FirstOrDefaultAsync();
-                    var existingAmenity = await _homeStayAmenity
-                                               .Find(x => x.HomeStayID == getHomeStay.Id && x.AmenityId == getAmenity.Id)
-                                               .FirstOrDefaultAsync();
-                    if (existingAmenity != null)
-                    {
-                        return Conflict();
+                    c.Id,
+                    c.Date,
+                    c.Price
+                }).ToList(),
 
-                    }
-                    HomestayAmenity addAmenity = new HomestayAmenity
-                    {
-                        AmenityId = getAmenity.Id,
-                        HomeStayID = getHomeStay.Id,
-                    };
-                    await _homeStayAmenity.AddAsync(addAmenity);
-                    await _homeStayAmenity.SaveAsync();
-                }
-                return Ok(new { Message = "Add Amentity Success" });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { Message = "An error occurred", Error = ex.Message });
-            }
-        }
-
-
-        [HttpDelete("delete-home-stay-amenity")]
-        public async Task<IActionResult> DeleteHomeStayAmenity([FromQuery] Guid HomeStayID, Guid AmenityID)
-        {
-            var checkDelete = await _homeStayAmenity.Find(h => h.HomeStayID == HomeStayID && h.AmenityId == AmenityID)
-                                                    .FirstOrDefaultAsync();
-            if (checkDelete != null)
-            {
-                checkDelete.isDeleted = true;
-                await _homeStayAmenity.DeleteAsync(checkDelete);
-                await _homeStayAmenity.SaveAsync();
-                return Ok(new { Message = "Delete Amenity Success" });
-            }
-            return NotFound();
-        }
-
-        [HttpPost("add-home-stay-facility")]
-        public async Task<IActionResult> AddHomeStayFacility(AddHomeStayFacilityDTO request)
-        {
-            try
-            {
-                HomeStayFacility addFacility = new HomeStayFacility
+                Amenities = h.HomestayAmenities!
+                 .Select(ha => new
+                 {
+                     ha.Amenity.Id,
+                     ha.Amenity.Name
+                 }).ToList(),
+                Facility = h.HomestayFacilities!.Select(hf => new
                 {
-                    FacilityID = request.FacilityID,
-                    HomeStayID = request.HomeStayID,
-                };
-                await _homestayFacility.AddAsync(addFacility);
-                await _homestayFacility.SaveAsync();
-                return Ok(new { Message = "Add Facility Success" });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex);
-            }
-        }
+                    hf.FacilityID,
+                    hf.Facility.Name,
+                    hf.Facility.Description
+                }).ToList()
+            }).ToList();
 
-        [HttpDelete("delete-home-stay-facility")]
-        public async Task<IActionResult> DeleteHomeStayFacility([FromQuery] Guid HomeStayID, Guid FacilityID)
-        {
-            var checkDelete = await _homestayFacility.Find(h => h.HomeStayID == HomeStayID && h.FacilityID == FacilityID)
-                                                    .FirstOrDefaultAsync();
-            if (checkDelete != null)
-            {
-                await _homestayFacility.DeleteAsync(checkDelete);
-                await _homestayFacility.SaveAsync();
-                return Ok(new { Message = "Delete Amenity Success" });
-            }
-            return NotFound();
+            return Ok(response);
         }
-
 
         [HttpGet("search-home-stay")]
         public async Task<IActionResult> SearchHomeStay([FromQuery] SearchHomeStayDTO request)
@@ -467,7 +506,5 @@ namespace RUNAHMS_API.Controllers
 
         }
     }
-
 }
-
 

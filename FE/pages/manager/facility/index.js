@@ -20,6 +20,9 @@ import { Pencil, Trash2 } from 'lucide-react';
 import Swal from 'sweetalert2';
 import { createFacility } from '@/pages/api/facility/createFacility';
 import { getAllFacility } from '@/pages/api/facility/getFacility';
+import { Textarea } from '@/components/components/ui/textarea';
+import { deleteFacility } from '@/pages/api/facility/deleteFacility';
+import { updateFacility } from '@/pages/api/facility/updateFacility';
 
 
 const Facility = () => {
@@ -58,6 +61,50 @@ const Facility = () => {
 			});
 		},
 	});
+	const updateFacilityMutation = useMutation({
+		mutationFn: updateFacility,
+		onSuccess: () => {
+			queryClient.invalidateQueries(['facilities']);
+			setDialogOpen(false);
+			setFormData({ facilityID: '', name: '', description: '' });
+			Swal.fire({
+				icon: 'success',
+				title: 'Facility Updated',
+				text: 'The facility has been updated successfully.',
+				timer: 2000,
+				showConfirmButton: false,
+			});
+		},
+		onError: (error) => {
+			console.error('Failed to update facility:', error);
+			Swal.fire({
+				icon: 'error',
+				title: 'Update Failed',
+				text: 'There was an error updating the facility.',
+			});
+		},
+	});
+
+	const deleteFacilityMutation = useMutation({
+		mutationFn: (id) => deleteFacility(id),
+		onSuccess: () => {
+			queryClient.invalidateQueries(['facilities']);
+			Swal.fire({
+				icon: 'success',
+				title: 'Facility Deleted',
+				text: 'The facility has been deleted successfully.',
+				timer: 2000,
+				showConfirmButton: false,
+			});
+		},
+		onError: () => {
+			Swal.fire({
+				icon: 'error',
+				title: 'Deletion Failed',
+				text: 'There was an error deleting the facility.',
+			});
+		},
+	});
 
 	const handleFormChange = (e) => {
 		const { name, value } = e.target;
@@ -67,10 +114,28 @@ const Facility = () => {
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		if (!formData.name || !formData.description) return;
-		createFacilityMutation.mutate(formData);
+		isEditMode
+			? updateFacilityMutation.mutate(formData)
+			: createFacilityMutation.mutate({ name: formData.name, description: formData.description });
 	};
 
-	const dataFacility = data?.Data || [];
+	const handleDelete = (facilityId) => {
+		Swal.fire({
+			title: 'Are you sure?',
+			text: "You won't be able to revert this!",
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#3085d6',
+			cancelButtonColor: '#d33',
+			confirmButtonText: 'Yes, delete it!',
+		}).then((result) => {
+			if (result.isConfirmed) {
+				deleteFacilityMutation.mutate(facilityId);
+			}
+		});
+	};
+
+	const dataFacility = data || [];
 	const totalPages = Math.ceil(dataFacility.length / itemsPerPage);
 
 	const handlePrevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
@@ -88,6 +153,11 @@ const Facility = () => {
 
 	const openEditDialog = (facility) => {
 		setIsEditMode(true);
+		setFormData({
+			facilityID: facility.id,
+			name: facility.name,
+			description: facility.description,
+		});
 		setDialogOpen(true);
 	};
 
@@ -127,7 +197,7 @@ const Facility = () => {
 										<Label htmlFor='description' className='text-right'>
 											Description
 										</Label>
-										<Input
+										<Textarea
 											id='description'
 											name='description'
 											value={formData.description}
@@ -147,7 +217,9 @@ const Facility = () => {
 					</Dialog>
 				</div>
 				{isLoading ? (
-					<p>Loading...</p>
+					<div className='fixed top-0 left-0 flex items-center justify-center w-full h-full bg-white bg-opacity-50 z-50'>
+					<div className='w-16 h-16 border-t-4 border-blue-500 rounded-full animate-spin'></div>
+				</div>
 				) : error ? (
 					<p>Error: {error.message}</p>
 				) : (
