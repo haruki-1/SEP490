@@ -94,7 +94,7 @@ const Amenity = () => {
 										<TableHead className='w-1/6'>Name</TableHead>
 										<TableHead className='w-2/6'>Home Stay Amenities</TableHead>
 										<TableHead className='w-1/6'>isDeleted</TableHead>
-										<TableHead className='w-1/6'>Actions</TableHead>
+										{/* <TableHead className='w-1/6'>Actions</TableHead> */}
 									</TableRow>
 								</TableHeader>
 								<TableBody>
@@ -110,7 +110,7 @@ const Amenity = () => {
 												<TableCell>
 													{facility.isDeleted === false && <span>false</span>}
 												</TableCell>
-												<TableCell className='flex items-center gap-1'>
+												{/* <TableCell className='flex items-center gap-1'> */}
 													<Button size='sm' onClick={() => openEditDialog(facility)}>
 														<Pencil />
 													</Button>
@@ -121,7 +121,7 @@ const Amenity = () => {
 													>
 														<Trash2 />
 													</Button>
-												</TableCell>
+												{/* </TableCell> */}
 											</TableRow>
 										))
 									) : (

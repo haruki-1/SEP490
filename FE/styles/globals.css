@@ -23,10 +23,6 @@
 	--containerWidth: 1200px;
 }
 
-html {
-	overflow-y: scroll;
-}
-
 body {
 	font-family: 'Nunito Sans', sans-serif;
 	background: var(--light);
@@ -34,74 +30,6 @@ body {
 	line-height: 1.5;
 	-webkit-tap-highlight-color: transparent;
 	font-size: 1rem;
-}
-
-body.dark {
-	--dark: #fafafc;
-	--white: #112;
-	--light: #1e1e38;
-	--gray: #002;
-}
-
-body.dark section.light {
-	--light: #fafafc;
-	--dark: #2e2e48;
-}
-
-body.dark .mapboxgl-popup {
-	--dark: #2e2e48;
-	--white: #fff;
-}
-
-body.dark .mapgl-container {
-	filter: invert(100%) hue-rotate(180deg);
-}
-
-::selection {
-	color: var(--light);
-	background: var(--pink);
-}
-
-input,
-a,
-button {
-	font-family: inherit;
-	color: inherit;
-	text-decoration: inherit;
-}
-
-.btn {
-	--color: var(--dark);
-	--bgcolor: var(--light);
-	display: inline-block;
-	white-space: nowrap;
-	padding: 0.75rem 1.5rem;
-	font-size: 1.15rem;
-	font-weight: 600;
-	color: var(--color);
-	background: var(--bgcolor);
-	border-radius: 0.66rem;
-	transition: all 0.2s;
-	box-shadow: 0 0.5rem 1.5rem -0.5rem currentColor;
-}
-
-.btn.btn-dark {
-	--color: var(--light);
-	--bgcolor: var(--dark);
-}
-
-.btn:hover,
-.btn:focus {
-	box-shadow: 0 0 0 2px var(--color), 0 0 0 4px var(--bgcolor);
-}
-
-.btn:active {
-	transform: scale(0.95);
-}
-
-section h2 {
-	font-weight: 800;
-	font-size: 1.75rem;
 }
 
 #nprogress .bar {
@@ -113,11 +41,6 @@ section h2 {
 }
 
 @media (max-width: 576px) {
-	:root {
-		--sidePadding: 1.5rem;
-		--maxWidth: 100%;
-	}
-
 	::-webkit-scrollbar {
 		display: none;
 	}
@@ -141,12 +64,6 @@ section h2 {
 @media (min-width: 1296px) {
 	html {
 		font-size: 18px;
-	}
-
-	section:not(.hero) {
-		width: 1200px;
-		margin-left: auto;
-		margin-right: auto;
 	}
 }
 
@@ -225,6 +142,42 @@ section h2 {
 @layer base {
 	* {
 		@apply border-border;
+	}
+	body {
+		@apply bg-background text-foreground;
+	}
+}
+
+.container-lg {
+	width: 100%;
+	max-width: 1270px;
+	height: 100%;
+	margin: 0 auto;
+	padding: 0 15px;
+	position: relative;
+}
+
+.sec-com {
+	--padding-section: 24px;
+	--padding-section-tl: 12px;
+	--padding-section-mobile: 8px;
+
+	padding: var(--padding-section) 0;
+}
+@media screen and (max-width: 1200px) {
+	.sec-com {
+		padding: var(--padding-section-tl) 0;
+	}
+}
+@media screen and (max-width: 576px) {
+	.sec-com {
+		padding: var(--padding-section-mobile) 0;
+	}
+}
+
+@layer base {
+	* {
+		@apply border-border outline-ring/50;
 	}
 	body {
 		@apply bg-background text-foreground;

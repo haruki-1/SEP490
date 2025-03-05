@@ -11,14 +11,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff } from 'lucide-react';
 import { toast } from 'react-toastify';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/components/ui/diaLog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/components/ui/dialog';
 import { useAuth } from '@/context/AuthProvider';
-
-
-
-
-
-
 
 export default function LoginForm() {
 	const [loading, setLoading] = useState(false);
@@ -26,9 +20,7 @@ export default function LoginForm() {
 	const [showForgotDialog, setShowForgotDialog] = useState(false);
 	const router = useRouter();
 	const { login } = useAuth();
-	
 
-	
 	const {
 		register,
 		handleSubmit,
@@ -52,12 +44,14 @@ export default function LoginForm() {
 				body: JSON.stringify(data),
 			});
 			const responseData = await response.json();
-
 			if (response.ok) {
 				const accessToken = responseData.accessToken;
+				const refreshToken = responseData.refreshToken;
 				const role = responseData.role;
 				localStorage.setItem('accessToken', accessToken);
+				localStorage.setItem('refreshToken', refreshToken);
 				login({ accessToken, refreshToken });
+
 				toast.success('Login successful! Redirecting...');
 				reset();
 				role === 'Manager'
@@ -93,8 +87,8 @@ export default function LoginForm() {
 			toast.error('An error occurred. Please try again.');
 		}
 	};
-	
-	return(
+
+	return (
 		<div className='relative flex items-center justify-center p-4 bg-gray-100 h-dvh'>
 			<Image src='/images/authen/bg-authen.jpg' fill alt='bg-authen' />
 			<Card className='relative z-50 w-full max-w-xl bg-white/80'>
@@ -143,13 +137,13 @@ export default function LoginForm() {
 						</div>
 					</CardContent>
 					<CardFooter className='flex flex-col'>
-					<Button type='submit' className='w-full' disabled={loading}>
-						{loading ? 'Logging in...' : 'Login'}
+						<Button type='submit' className='w-full' disabled={loading}>
+							{loading ? 'Logging in...' : 'Login'}
 						</Button>
 						<div className='mt-4 text-center'>
 							<Dialog open={showForgotDialog} onOpenChange={setShowForgotDialog}>
 								<DialogTrigger asChild>
-								<button className='text-sm text-blue-500 hover:underline'>Forgot Password?</button>
+									<button className='text-sm text-blue-500 hover:underline'>Forgot Password?</button>
 								</DialogTrigger>
 								<DialogContent>
 									<DialogHeader>
