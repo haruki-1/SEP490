@@ -24,6 +24,20 @@ namespace API.Controllers
     {
 
 
+        [HttpDelete("delete-home-stay-facility")]
+        public async Task<IActionResult> DeleteHomeStayFacility([FromQuery] Guid HomeStayID, Guid FacilityID)
+        {
+            var checkDelete = await _homestayFacility.Find(h => h.HomeStayID == HomeStayID && h.FacilityID == FacilityID)
+                                                    .FirstOrDefaultAsync();
+            if (checkDelete != null)
+            {
+                await _homestayFacility.DeleteAsync(checkDelete);
+                await _homestayFacility.SaveAsync();
+                return Ok(new { Message = "Delete Amenity Success" });
+            }
+            return NotFound();
+        }
+
         [HttpPost("add-home-stay")]
         public async Task<IActionResult> AddHomeStay([FromHeader(Name = "X-User-Id")] Guid userID, [FromBody] AddHomeStayRequest request)
         {
