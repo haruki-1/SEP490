@@ -43,6 +43,20 @@ namespace API.Controllers
             }
         }
 
+        [HttpDelete("delete-home-stay-facility")]
+        public async Task<IActionResult> DeleteHomeStayFacility([FromQuery] Guid HomeStayID, Guid FacilityID)
+        {
+            var checkDelete = await _homestayFacility.Find(h => h.HomeStayID == HomeStayID && h.FacilityID == FacilityID)
+                                                    .FirstOrDefaultAsync();
+            if (checkDelete != null)
+            {
+                await _homestayFacility.DeleteAsync(checkDelete);
+                await _homestayFacility.SaveAsync();
+                return Ok(new { Message = "Delete Amenity Success" });
+            }
+            return NotFound();
+        }
+
         [HttpPost("add-home-stay")]
         public async Task<IActionResult> AddHomeStay([FromHeader(Name = "X-User-Id")] Guid userID, [FromBody] AddHomeStayRequest request)
         {
@@ -264,13 +278,12 @@ namespace API.Controllers
         public async Task<IActionResult> GetHomeStayDetail([FromQuery] Guid homeStayID)
         {
             var getDetail = await _homeStayRepository
-                .FindWithInclude(h => h.Calendars!)
+                .FindWithInclude(h => h.Calendars)
                 .Include(h => h.HomestayAmenities!)
                 .ThenInclude(ha => ha.Amenity)
-                .Include(img => img.HomestayImages!)
-                .Include(f => f.FeedBacks!)
-                .Include(hf => hf.HomestayFacilities)
-                .ThenInclude(fa => fa.Facility)
+                .Include(hs => hs.HomestayImages!)
+                .Include(h => h.HomestayFacilities!)
+                .ThenInclude(h => h.Facility)
                 .FirstOrDefaultAsync(h => h.Id == homeStayID);
 
             if (getDetail == null)
@@ -299,7 +312,8 @@ namespace API.Controllers
                     {
                         c.Id,
                         c.Date,
-                        c.Price
+                        c.Price,
+                        c.isDeleted
                     }).ToList(),
                 HomeStayImage = getDetail.HomestayImages!.Select(image => new
                 {
@@ -310,24 +324,13 @@ namespace API.Controllers
                     ha.Amenity.Id,
                     ha.Amenity.Name
                 }).ToList(),
-
-                FeedBack = getDetail.FeedBacks.Where(f => !f.isDeleted).Select(f => new
+                Facility = getDetail.HomestayFacilities!.Select(hf => new
                 {
-                    f.Id,
-                    Fullname = f.User.FullName,
-                    f.Description,
-                    f.Rating
-                }),
-
-                Facilities = getDetail.HomestayFacilities.Select(hf => new
-                {
+                    hf.FacilityID,
                     hf.Facility.Name,
                     hf.Facility.Description
-
                 }).ToList()
-
             };
-
             return Ok(response);
         }
 
