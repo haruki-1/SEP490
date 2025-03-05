@@ -248,13 +248,12 @@ namespace API.Controllers
         public async Task<IActionResult> GetHomeStayDetail([FromQuery] Guid homeStayID)
         {
             var getDetail = await _homeStayRepository
-                .FindWithInclude(h => h.Calendars!)
+                .FindWithInclude(h => h.Calendars)
                 .Include(h => h.HomestayAmenities!)
                 .ThenInclude(ha => ha.Amenity)
-                .Include(img => img.HomestayImages!)
-                .Include(f => f.FeedBacks!)
-                .Include(hf => hf.HomestayFacilities)
-                .ThenInclude(fa => fa.Facility)
+                .Include(hs => hs.HomestayImages!)
+                .Include(h => h.HomestayFacilities!)
+                .ThenInclude(h => h.Facility)
                 .FirstOrDefaultAsync(h => h.Id == homeStayID);
 
             if (getDetail == null)
@@ -295,22 +294,12 @@ namespace API.Controllers
                     ha.Amenity.Id,
                     ha.Amenity.Name
                 }).ToList(),
-
-                FeedBack = getDetail.FeedBacks.Where(f => !f.isDeleted).Select(f => new
+                Facility = getDetail.HomestayFacilities!.Select(hf => new
                 {
-                    f.Id,
-                    Fullname = f.User.FullName,
-                    f.Description,
-                    f.Rating
-                }),
-
-                Facilities = getDetail.HomestayFacilities.Select(hf => new
-                {
+                    hf.FacilityID,
                     hf.Facility.Name,
                     hf.Facility.Description
-
                 }).ToList()
-
             };
             return Ok(response);
         }
