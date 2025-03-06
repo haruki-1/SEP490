@@ -3,10 +3,10 @@ import ManagerLayout from '../layout';
 import { Button } from '@/components/components/ui/button';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
-import { deletePost } from 'pages/api/posts/deletePost';
 import Swal from 'sweetalert2';
 import { Pencil, Trash2 } from 'lucide-react';
 import { getAllPost } from '@/pages/api/posts/getPosts';
+import { deletePost } from '@/pages/api/posts/deletePost';
 
 const Post = () => {
 	const queryClient = useQueryClient();

@@ -169,6 +169,7 @@ const UpdateHomeStay = () => {
 							dateFormat='yyyy'
 							placeholderText='Select Year'
 							className='w-full px-2 py-1 border rounded'
+							withPortal
 						/>
 					</div>
 
