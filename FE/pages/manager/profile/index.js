@@ -14,7 +14,6 @@ import { useAuth } from '@/context/AuthProvider';
 import { updateProfile } from '@/pages/api/auth/updateProfile';
 import { Eye, EyeOff } from 'lucide-react';
 import { changePassword } from '@/pages/api/auth/changePassword';
-
 import Image from 'next/image';
 import { uploadImage } from '@/pages/api/image/uploadImage';
 

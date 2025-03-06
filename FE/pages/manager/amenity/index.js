@@ -32,7 +32,7 @@ const Amenity = () => {
 		setDialogOpen(true);
 	};
 
-	const dataAmenity = data?.Data || [];
+	const dataAmenity = data || [];
 	const totalPages = Math.ceil(dataAmenity?.length / itemsPerPage);
 
 	const handlePrevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
@@ -80,7 +80,9 @@ const Amenity = () => {
 					</Dialog>
 				</div>
 				{isLoading ? (
-					<p>Loading...</p>
+					<div className='fixed top-0 left-0 flex items-center justify-center w-full h-full bg-white bg-opacity-50 z-50'>
+					<div className='w-16 h-16 border-t-4 border-blue-500 rounded-full animate-spin'></div>
+				</div>
 				) : error ? (
 					<p>Error: {error.message}</p>
 				) : (
@@ -92,7 +94,7 @@ const Amenity = () => {
 										<TableHead className='w-1/6'>Name</TableHead>
 										<TableHead className='w-2/6'>Home Stay Amenities</TableHead>
 										<TableHead className='w-1/6'>isDeleted</TableHead>
-										<TableHead className='w-1/6'>Actions</TableHead>
+										{/* <TableHead className='w-1/6'>Actions</TableHead> */}
 									</TableRow>
 								</TableHeader>
 								<TableBody>
@@ -108,7 +110,7 @@ const Amenity = () => {
 												<TableCell>
 													{facility.isDeleted === false && <span>false</span>}
 												</TableCell>
-												<TableCell className='flex items-center gap-1'>
+												{/* <TableCell className='flex items-center gap-1'> */}
 													<Button size='sm' onClick={() => openEditDialog(facility)}>
 														<Pencil />
 													</Button>
@@ -119,7 +121,7 @@ const Amenity = () => {
 													>
 														<Trash2 />
 													</Button>
-												</TableCell>
+												{/* </TableCell> */}
 											</TableRow>
 										))
 									) : (

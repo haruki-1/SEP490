@@ -11,14 +11,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff } from 'lucide-react';
 import { toast } from 'react-toastify';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/components/ui/diaLog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/components/ui/dialog';
 import { useAuth } from '@/context/AuthProvider';
-
-
-
-
-
-
 
 export default function LoginForm() {
 	const [loading, setLoading] = useState(false);
@@ -26,9 +20,7 @@ export default function LoginForm() {
 	const [showForgotDialog, setShowForgotDialog] = useState(false);
 	const router = useRouter();
 	const { login } = useAuth();
-	
 
-	
 	const {
 		register,
 		handleSubmit,
@@ -46,13 +38,12 @@ export default function LoginForm() {
 	const onSubmit = async (data) => {
 		setLoading(true);
 		try {
-			const response = await fetch('https://homestaybooking-001-site1.ntempurl.com/api/Auth/login', {
+			const response = await fetch('https://localhost:7194/api/Auth/login', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify(data),
 			});
 			const responseData = await response.json();
-
 			if (response.ok) {
 				const accessToken = responseData.accessToken;
 				const refreshToken = responseData.refreshToken;
@@ -60,9 +51,14 @@ export default function LoginForm() {
 				localStorage.setItem('accessToken', accessToken);
 				localStorage.setItem('refreshToken', refreshToken);
 				login({ accessToken, refreshToken });
+
 				toast.success('Login successful! Redirecting...');
 				reset();
-				role === 'Manager' ? router.push('/manager') : router.push('/');
+				role === 'Manager'
+					? router.push('/manager')
+					: role === 'Admin'
+					? router.push('/admin')
+					: router.push('/');
 			} else {
 				toast.error(`Login failed: ${responseData.message || 'Unknown error'}`);
 			}
@@ -75,7 +71,7 @@ export default function LoginForm() {
 
 	const handleForgotPassword = async (data) => {
 		try {
-			const response = await fetch('https://homestaybooking-001-site1.ntempurl.com/api/Auth/forgot-password', {
+			const response = await fetch('https://localhost:7194/api/Auth/forgot-password', {
 				method: 'PUT',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify(data),
@@ -91,8 +87,8 @@ export default function LoginForm() {
 			toast.error('An error occurred. Please try again.');
 		}
 	};
-	
-	return(
+
+	return (
 		<div className='relative flex items-center justify-center p-4 bg-gray-100 h-dvh'>
 			<Image src='/images/authen/bg-authen.jpg' fill alt='bg-authen' />
 			<Card className='relative z-50 w-full max-w-xl bg-white/80'>
@@ -123,13 +119,13 @@ export default function LoginForm() {
 									className='pr-10 border border-black'
 									placeholder='*******'
 								/>
-								<Button
+								<button
 									type='button'
 									onClick={() => setShowPassword(!showPassword)}
 									className='absolute inset-y-0 flex items-center right-3'
 								>
 									{showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-								</Button>
+								</button>
 							</div>
 							{errors.password && <p className='text-sm text-red-500'>{errors.password.message}</p>}
 						</div>
@@ -141,13 +137,13 @@ export default function LoginForm() {
 						</div>
 					</CardContent>
 					<CardFooter className='flex flex-col'>
-					<Button type='submit' className='w-full' disabled={loading}>
-						{loading ? 'Logging in...' : 'Login'}
+						<Button type='submit' className='w-full' disabled={loading}>
+							{loading ? 'Logging in...' : 'Login'}
 						</Button>
 						<div className='mt-4 text-center'>
 							<Dialog open={showForgotDialog} onOpenChange={setShowForgotDialog}>
 								<DialogTrigger asChild>
-								<button className='text-sm text-blue-500 hover:underline'>Forgot Password?</button>
+									<button className='text-sm text-blue-500 hover:underline'>Forgot Password?</button>
 								</DialogTrigger>
 								<DialogContent>
 									<DialogHeader>

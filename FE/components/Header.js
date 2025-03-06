@@ -23,12 +23,20 @@ import Link from 'next/link';
 import { useAuth } from '@/context/AuthProvider';
 import ThemeToggle from './ThemeToggle';
 import MobileNav from './MobileNav';
+import DatePicker from './DatePicker';
+
+// Define the navigation items with their paths
+const NAV_ITEMS = [
+	{ href: '/home-stay', label: 'Homestay' },
+	{ href: '/posts', label: 'Posts' },
+	{ href: '/online-experiences', label: 'Online Experiences' },
+];
+
 
 
 const Header = ({ placeholder }) => {
 	const router = useRouter();
 	const { dataProfile, logout } = useAuth();
-
 	const navRef = useRef(null);
 	const headerRef = useRef(null);
 	const [scrolled, setScrolled] = useState(false);
@@ -37,6 +45,12 @@ const Header = ({ placeholder }) => {
 	const secondaryLocationRef = useRef(null);
 
 	const isSmallScreen = useMediaQuery('(max-width: 576px)');
+	const isActivePath = (path) => {
+		// Exact match or nested routes (e.g., /home-stay/details)
+		return router.pathname === path || router.pathname.startsWith(`${path}/`);
+	};
+
+
 
 	// form data
 	const [location, setLocation] = useState('');
@@ -204,6 +218,7 @@ const Header = ({ placeholder }) => {
 						}}
 					/>
 				)}
+				
 
 				<div className='profile'>
 					<ThemeToggle icon />

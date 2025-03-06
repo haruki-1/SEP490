@@ -16,6 +16,7 @@ using DataAccess.Repositories;
 using BusinessObject.Settings;
 using DataAccess.EmailHandler;
 using Microsoft.Extensions.FileProviders;
+using BusinessObject.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,7 +55,7 @@ builder.Services.AddSwaggerGen(opt =>
 });
 
 builder.Services.AddHttpContextAccessor();
-
+builder.Services.AddHttpClient();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
