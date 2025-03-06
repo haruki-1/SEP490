@@ -20,8 +20,6 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
-import { getHomeStayDetail } from 'pages/api/homestay/getHomeStayDetail';
-import MainLayout from 'pages/layout';
 import React, { useState } from 'react';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
 import 'react-photo-view/dist/react-photo-view.css';
@@ -31,9 +29,11 @@ import 'swiper/css/navigation';
 import { Navigation } from 'swiper/modules';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
-import { createBooking } from 'pages/api/booking/createBooking';
-import { useAuth } from 'context/AuthProvider';
 import { toast } from 'sonner';
+import { getHomeStayDetail } from '@/pages/api/homestay/getHomeStayDetail';
+import MainLayout from '@/pages/layout';
+import { createBooking } from '@/pages/api/booking/createBooking';
+import { useAuth } from '@/context/AuthProvider';
 
 // Helper function to format dates consistently for comparison
 const formatDateForComparison = (dateInput) => {
