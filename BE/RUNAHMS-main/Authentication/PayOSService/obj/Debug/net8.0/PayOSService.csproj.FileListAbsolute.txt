@@ -1,0 +1,13 @@
+C:\Users\Administrator\Documents\GitHub\HomeStayBookingV2\PayOSService\bin\Debug\net8.0\PayOSService.deps.json
+C:\Users\Administrator\Documents\GitHub\HomeStayBookingV2\PayOSService\bin\Debug\net8.0\PayOSService.dll
+C:\Users\Administrator\Documents\GitHub\HomeStayBookingV2\PayOSService\bin\Debug\net8.0\PayOSService.pdb
+C:\Users\Administrator\Documents\GitHub\HomeStayBookingV2\PayOSService\obj\Debug\net8.0\PayOSService.csproj.AssemblyReference.cache
+C:\Users\Administrator\Documents\GitHub\HomeStayBookingV2\PayOSService\obj\Debug\net8.0\PayOSService.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Administrator\Documents\GitHub\HomeStayBookingV2\PayOSService\obj\Debug\net8.0\PayOSService.AssemblyInfoInputs.cache
+C:\Users\Administrator\Documents\GitHub\HomeStayBookingV2\PayOSService\obj\Debug\net8.0\PayOSService.AssemblyInfo.cs
+C:\Users\Administrator\Documents\GitHub\HomeStayBookingV2\PayOSService\obj\Debug\net8.0\PayOSService.csproj.CoreCompileInputs.cache
+C:\Users\Administrator\Documents\GitHub\HomeStayBookingV2\PayOSService\obj\Debug\net8.0\PayOSService.sourcelink.json
+C:\Users\Administrator\Documents\GitHub\HomeStayBookingV2\PayOSService\obj\Debug\net8.0\PayOSService.dll
+C:\Users\Administrator\Documents\GitHub\HomeStayBookingV2\PayOSService\obj\Debug\net8.0\refint\PayOSService.dll
+C:\Users\Administrator\Documents\GitHub\HomeStayBookingV2\PayOSService\obj\Debug\net8.0\PayOSService.pdb
+C:\Users\Administrator\Documents\GitHub\HomeStayBookingV2\PayOSService\obj\Debug\net8.0\ref\PayOSService.dll

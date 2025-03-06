@@ -74,6 +74,8 @@ namespace API.Controllers
             return Ok(new { Message = "Voucher updated successfully" });
         }
 
+
+
         [HttpPost("receive")]
         public async Task<IActionResult> ReceiveVoucher([FromBody] ReceiveVoucherRequest request)
         {
@@ -86,7 +88,7 @@ namespace API.Controllers
                                                                     .FirstOrDefaultAsync();
                 if (checkAlready != null)
                 {
-                    return Conflict(new { Message = "You have already received this voucher" });
+                    return Conflict(new {Message = "You have already received this voucher" });
                 }
                 UserVoucher reciveVoucher = new UserVoucher
                 {
@@ -98,11 +100,10 @@ namespace API.Controllers
                 };
                 await _userVoucherRepository.AddAsync(reciveVoucher);
                 await _userVoucherRepository.SaveAsync();
-                return Ok(new { Message = "Recive Voucher Success" });
+                return Ok(new {Message = "Recive Voucher Success" });
             }
-            catch (Exception ex)
-            {
-
+            catch (Exception ex) { 
+            
                 return StatusCode(500, ex.Message);
             }
         }
@@ -137,6 +138,7 @@ namespace API.Controllers
             return Ok(vouchers);
         }
 
+
         [HttpGet("user-vouchers")]
         public async Task<IActionResult> GetUserVouchers([FromHeader(Name = "X-User-Id")] Guid userId)
         {
@@ -168,5 +170,6 @@ namespace API.Controllers
 
             return Ok(userVouchers);
         }
+
     }
 }

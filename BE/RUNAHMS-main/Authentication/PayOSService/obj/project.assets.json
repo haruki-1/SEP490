@@ -253,11 +253,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Administrator\\Documents\\GitHub\\SEP490\\BE\\RUNAHMS-main\\Authentication\\PayOSService\\PayOSService.csproj",
+      "projectUniqueName": "C:\\Users\\Administrator\\Documents\\GitHub\\HomeStayBookingV2\\PayOSService\\PayOSService.csproj",
       "projectName": "PayOSService",
-      "projectPath": "C:\\Users\\Administrator\\Documents\\GitHub\\SEP490\\BE\\RUNAHMS-main\\Authentication\\PayOSService\\PayOSService.csproj",
+      "projectPath": "C:\\Users\\Administrator\\Documents\\GitHub\\HomeStayBookingV2\\PayOSService\\PayOSService.csproj",
       "packagesPath": "C:\\Users\\Administrator\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Administrator\\Documents\\GitHub\\SEP490\\BE\\RUNAHMS-main\\Authentication\\PayOSService\\obj\\",
+      "outputPath": "C:\\Users\\Administrator\\Documents\\GitHub\\HomeStayBookingV2\\PayOSService\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "D:\\visual tools\\NuGetPackages"
