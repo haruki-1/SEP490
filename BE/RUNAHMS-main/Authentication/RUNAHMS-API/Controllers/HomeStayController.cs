@@ -22,7 +22,25 @@ namespace API.Controllers
         IRepository<Facility> _facilityRepository
             ) : ControllerBase
     {
-
+        [HttpPost("add-home-stay-facility")]
+        public async Task<IActionResult> AddHomeStayFacility(AddHomeStayFacilityDTO request)
+        {
+            try
+            {
+                HomeStayFacility addFacility = new HomeStayFacility
+                {
+                    FacilityID = request.FacilityID,
+                    HomeStayID = request.HomeStayID,
+                };
+                await _homestayFacility.AddAsync(addFacility);
+                await _homestayFacility.SaveAsync();
+                return Ok(new { Message = "Add Facility Success" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
+        }
 
         [HttpDelete("delete-home-stay-facility")]
         public async Task<IActionResult> DeleteHomeStayFacility([FromQuery] Guid HomeStayID, Guid FacilityID)
