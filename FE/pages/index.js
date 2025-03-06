@@ -6,11 +6,11 @@ import Footer from '@/components/Footor';
 import { discover, live } from '@/data';
 import ListHomeStay from '@/components/ListHomeStay';
 import Banner from '@/components/Banner';
+import MainLayout from './layout';
 
 export default function Home() {
 	return (
-		<>
-			<Header />
+			<MainLayout>
 			<main>
 				<Main/>
 				<Explore/>
@@ -21,6 +21,6 @@ export default function Home() {
 				<Hosting /> */}
 			</main>
 			<Footer />
-		</>
+		</MainLayout>
 	);
 }
