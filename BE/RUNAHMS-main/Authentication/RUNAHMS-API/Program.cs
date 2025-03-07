@@ -16,6 +16,9 @@ using DataAccess.Repositories;
 using BusinessObject.Settings;
 using DataAccess.EmailHandler;
 using Microsoft.Extensions.FileProviders;
+using BusinessObject.Entities;
+using PayOSService.Services;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -72,6 +75,9 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 builder.Services.AddScoped<IEmailSender, EmailSender>();
+
+builder.Services.AddScoped<IPayOSService, PayOSService.Services.PayOSService>();
+
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

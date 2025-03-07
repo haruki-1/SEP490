@@ -1,8 +1,0 @@
-C:\Users\Administrator\Documents\GitHub\SEP490\BE\RUNAHMS-main\Authentication\RUNAHMS-API\obj\Debug\net8.0\RUNAHMS-API.csproj.AssemblyReference.cache
-C:\Users\Administrator\Documents\GitHub\SEP490\BE\RUNAHMS-main\Authentication\RUNAHMS-API\obj\Debug\net8.0\RUNAHMS-API.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\Administrator\Documents\GitHub\SEP490\BE\RUNAHMS-main\Authentication\RUNAHMS-API\obj\Debug\net8.0\RUNAHMS-API.AssemblyInfoInputs.cache
-C:\Users\Administrator\Documents\GitHub\SEP490\BE\RUNAHMS-main\Authentication\RUNAHMS-API\obj\Debug\net8.0\RUNAHMS-API.AssemblyInfo.cs
-C:\Users\Administrator\Documents\GitHub\SEP490\BE\RUNAHMS-main\Authentication\RUNAHMS-API\obj\Debug\net8.0\RUNAHMS-API.csproj.CoreCompileInputs.cache
-C:\Users\Administrator\Documents\GitHub\SEP490\BE\RUNAHMS-main\Authentication\RUNAHMS-API\obj\Debug\net8.0\RUNAHMS-API.MvcApplicationPartsAssemblyInfo.cs
-C:\Users\Administrator\Documents\GitHub\SEP490\BE\RUNAHMS-main\Authentication\RUNAHMS-API\obj\Debug\net8.0\RUNAHMS-API.MvcApplicationPartsAssemblyInfo.cache
-C:\Users\Administrator\Documents\GitHub\SEP490\BE\RUNAHMS-main\Authentication\RUNAHMS-API\obj\Debug\net8.0\RUNAHMS-API.sourcelink.json

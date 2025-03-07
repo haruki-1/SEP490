@@ -7,12 +7,8 @@
       "RelativeMoniker": "D:0:0:{52236E07-E991-4F4B-93B6-C31A131470E0}|RUNAHMS-API\\RUNAHMS-API.csproj|solutionrelative:runahms-api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{52236E07-E991-4F4B-93B6-C31A131470E0}|RUNAHMS-API\\RUNAHMS-API.csproj|c:\\users\\administrator\\documents\\github\\sep490\\be\\runahms-main\\authentication\\runahms-api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{52236E07-E991-4F4B-93B6-C31A131470E0}|RUNAHMS-API\\RUNAHMS-API.csproj|solutionrelative:runahms-api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{52236E07-E991-4F4B-93B6-C31A131470E0}|RUNAHMS-API\\RUNAHMS-API.csproj|c:\\users\\administrator\\documents\\github\\sep490\\be\\runahms-main\\authentication\\runahms-api\\runahms-api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{52236E07-E991-4F4B-93B6-C31A131470E0}|RUNAHMS-API\\RUNAHMS-API.csproj|solutionrelative:runahms-api\\runahms-api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+      "AbsoluteMoniker": "D:0:0:{52236E07-E991-4F4B-93B6-C31A131470E0}|RUNAHMS-API\\RUNAHMS-API.csproj|c:\\users\\administrator\\documents\\github\\sep490\\be\\runahms-main\\authentication\\runahms-api\\controllers\\paymentcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{52236E07-E991-4F4B-93B6-C31A131470E0}|RUNAHMS-API\\RUNAHMS-API.csproj|solutionrelative:runahms-api\\controllers\\paymentcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -22,34 +18,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 1,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "appsettings.json",
-              "DocumentMoniker": "C:\\Users\\Administrator\\Documents\\GitHub\\SEP490\\BE\\RUNAHMS-main\\Authentication\\RUNAHMS-API\\appsettings.json",
-              "RelativeDocumentMoniker": "RUNAHMS-API\\appsettings.json",
-              "ToolTip": "C:\\Users\\Administrator\\Documents\\GitHub\\SEP490\\BE\\RUNAHMS-main\\Authentication\\RUNAHMS-API\\appsettings.json",
-              "RelativeToolTip": "RUNAHMS-API\\appsettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-03-06T15:47:53.11Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "RUNAHMS-API",
-              "DocumentMoniker": "C:\\Users\\Administrator\\Documents\\GitHub\\SEP490\\BE\\RUNAHMS-main\\Authentication\\RUNAHMS-API\\RUNAHMS-API.csproj",
-              "RelativeDocumentMoniker": "RUNAHMS-API\\RUNAHMS-API.csproj",
-              "ToolTip": "C:\\Users\\Administrator\\Documents\\GitHub\\SEP490\\BE\\RUNAHMS-main\\Authentication\\RUNAHMS-API\\RUNAHMS-API.csproj",
-              "RelativeToolTip": "RUNAHMS-API\\RUNAHMS-API.csproj",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2025-03-06T15:44:10.664Z",
-              "EditorCaption": ""
-            },
             {
               "$type": "Bookmark",
               "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
@@ -62,10 +32,22 @@
               "RelativeDocumentMoniker": "RUNAHMS-API\\Program.cs",
               "ToolTip": "C:\\Users\\Administrator\\Documents\\GitHub\\SEP490\\BE\\RUNAHMS-main\\Authentication\\RUNAHMS-API\\Program.cs",
               "RelativeToolTip": "RUNAHMS-API\\Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAADUAAAADAAAAAAAAAA==",
+              "ViewState": "AgIAAH4AAAAAAAAAAAAAAJoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-06T15:41:14.405Z",
+              "WhenOpened": "2025-03-07T16:26:04.778Z",
               "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "PaymentController.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\Documents\\GitHub\\SEP490\\BE\\RUNAHMS-main\\Authentication\\RUNAHMS-API\\Controllers\\PaymentController.cs",
+              "RelativeDocumentMoniker": "RUNAHMS-API\\Controllers\\PaymentController.cs",
+              "ToolTip": "C:\\Users\\Administrator\\Documents\\GitHub\\SEP490\\BE\\RUNAHMS-main\\Authentication\\RUNAHMS-API\\Controllers\\PaymentController.cs",
+              "RelativeToolTip": "RUNAHMS-API\\Controllers\\PaymentController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-07T16:25:47.947Z"
             }
           ]
         }

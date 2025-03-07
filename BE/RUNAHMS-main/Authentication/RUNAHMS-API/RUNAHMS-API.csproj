@@ -21,6 +21,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Bussiness Object\Bussiness Object.csproj" />
     <ProjectReference Include="..\DAL\DAL.csproj" />
+    <ProjectReference Include="..\PayOSService\PayOSService.csproj" />
   </ItemGroup>
 
 </Project>
