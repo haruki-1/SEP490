@@ -1,8 +1,4 @@
-<<<<<<< Updated upstream
-import api from 'utils/api';
-=======
 import api from '@/utils/api';
->>>>>>> Stashed changes
 
 export const updateCalendarEntry = async (calendarId, calendarData) => {
 	try {
