@@ -1,5 +1,4 @@
 import { Badge } from '@/components/components/ui/badge';
-import { Button } from '@/components/components/ui/button';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import {
 	ArrowLeft,
@@ -34,6 +33,8 @@ import { getHomeStayDetail } from '@/pages/api/homestay/getHomeStayDetail';
 import MainLayout from '@/pages/layout';
 import { createBooking } from '@/pages/api/booking/createBooking';
 import { useAuth } from '@/context/AuthProvider';
+import { Button } from '@/components/components/ui/button';
+import Link from 'next/link';
 
 // Helper function to format dates consistently for comparison
 const formatDateForComparison = (dateInput) => {
@@ -402,7 +403,7 @@ const HomeStayDetail = () => {
 										This homestay is already booked and not available for reservation.
 									</div>
 								)}
-
+								<Link href={`/payment/`}>	
 								<Button
 									className='w-full bg-blue-600 hover:bg-blue-700 text-white'
 									onClick={handleBookNow}
@@ -419,6 +420,7 @@ const HomeStayDetail = () => {
 										'Book Now'
 									)}
 								</Button>
+								</Link>
 							</div>
 						</div>
 					</div>

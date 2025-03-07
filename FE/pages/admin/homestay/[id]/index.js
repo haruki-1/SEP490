@@ -23,7 +23,7 @@ const getPriceForToday = (calendar) => {
 	const currentDate = formatDateForComparison(new Date());
 
 	// Find today's price entry
-	const todayPrice = calendar?.find((item) => formatDateForComparison(item.date) === currentDate);
+	const todayPrice = calendar?.find((item) => formatDateForComparison(item.date) === currentDate && !item.isDeleted);
 
 	// If there's no calendar entry for today, check if all calendar entries are expired
 	if (!todayPrice) {
@@ -33,7 +33,7 @@ const getPriceForToday = (calendar) => {
 			entryDate.setHours(0, 0, 0, 0);
 			const today = new Date();
 			today.setHours(0, 0, 0, 0);
-			return entryDate < today;
+			return entryDate < today || item.isDeleted;
 		});
 
 		// If all entries are expired, return null (Decommission)
@@ -47,7 +47,7 @@ const getPriceForToday = (calendar) => {
 				entryDate.setHours(0, 0, 0, 0);
 				const today = new Date();
 				today.setHours(0, 0, 0, 0);
-				return entryDate >= today;
+				return entryDate >= today && !item.isDeleted;
 			})
 			.sort((a, b) => new Date(a.date) - new Date(b.date));
 
@@ -216,25 +216,46 @@ const DetailHomeStay = () => {
 												const isToday =
 													formatDateForComparison(date) ===
 													formatDateForComparison(new Date());
+												const isDeleted = calendarItem.isDeleted;
+
 												return (
 													<div
 														key={calendarItem.id}
 														className={`p-2 border rounded-md text-center ${
-															isToday
-																? 'bg-green-100 border-green-300'
-																: 'bg-gray-50 border-gray-200'
+															isDeleted
+																? 'bg-gray-300 border-gray-400 opacity-60 cursor-not-allowed'
+																: isToday
+																? 'bg-green-100 border-green-300 cursor-pointer'
+																: 'bg-gray-50 border-gray-200 cursor-pointer'
 														}`}
 													>
-														<p className='text-sm font-medium'>
+														<p
+															className={`text-sm font-medium ${
+																isDeleted ? 'text-gray-500' : ''
+															}`}
+														>
 															{date.toLocaleDateString('en-GB', {
 																day: '2-digit',
 																month: '2-digit',
 																year: 'numeric',
 															})}
 														</p>
-														<p className='text-green-600 font-semibold'>
-															${calendarItem.price}
-														</p>
+														<div className='flex justify-between items-center'>
+															<p
+																className={`${
+																	isDeleted
+																		? 'text-gray-500 line-through'
+																		: 'text-green-600'
+																} font-semibold`}
+															>
+																${calendarItem.price}
+															</p>
+															{isDeleted && (
+																<span className='text-xs text-red-500 font-medium'>
+																	Deleted
+																</span>
+															)}
+														</div>
 													</div>
 												);
 											})}
