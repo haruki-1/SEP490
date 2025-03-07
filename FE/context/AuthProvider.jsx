@@ -32,22 +32,20 @@ export const AuthProvider = ({ children }) => {
 		}
 	};
 
-	
 	const {
 		data: dataProfile,
 		isLoading,
 		error,
 		refetch,
-
 	} = useQuery({
 		queryKey: ['dataProfile'],
-		queryFn: () => getUserInfo(userId),
+		queryFn: () => getUserInfo(),
 		refetchOnWindowFocus: true,
 	});
 
 	useEffect(() => {
 		if (isAuthenticated && !isLoading && dataProfile) {
-			if (dataProfile.role === 'Admin' || dataProfile.role === 'Manager' || dataProfile.role === 'User') { 
+			if (dataProfile.role === 'Admin' || dataProfile.role === 'Manager' || dataProfile.role === 'User') {
 				return;
 			}
 			toast.error('Bạn không có quyền truy cập vào trang này!');
@@ -57,7 +55,7 @@ export const AuthProvider = ({ children }) => {
 
 	return (
 		<Provider>
-			<AuthContext.Provider value={{ isAuthenticated, login, logout, dataProfile, refetch }}>
+			<AuthContext.Provider value={{ isAuthenticated, login, logout, dataProfile, refetch, isLoading }}>
 				{children}
 			</AuthContext.Provider>
 		</Provider>

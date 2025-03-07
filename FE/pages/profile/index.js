@@ -6,16 +6,16 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/component
 import { Label } from '@/components/components/ui/label';
 import { Input } from '@/components/components/ui/input';
 import { Button } from '@/components/components/ui/button';
-import { useAuth } from 'context/AuthProvider';
 import { Textarea } from '@/components/components/ui/textarea';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import Swal from 'sweetalert2';
-import { updateProfile } from 'pages/api/auth/updateProfile';
 import { Eye, EyeOff } from 'lucide-react';
-import { changePassword } from 'pages/api/auth/changePassword';
 import Image from 'next/image';
-import { uploadImage } from 'pages/api/image/uploadImage';
 import MainLayout from '../layout';
+import { useAuth } from '@/context/AuthProvider';
+import { updateProfile } from '../api/auth/updateProfile';
+import { changePassword } from '../api/auth/changePassword';
+import { uploadImage } from '../api/image/uploadImage';
 
 export default function ProfilePage() {
 	const { dataProfile, refetch } = useAuth();
