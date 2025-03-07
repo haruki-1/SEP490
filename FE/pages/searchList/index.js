@@ -4,9 +4,15 @@ import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { format } from 'date-fns';
 import { CalendarIcon, MapPin } from 'lucide-react';
+<<<<<<< Updated upstream
 import { Button } from '@/components/components/ui/button';
 import { searchHomeStayByCity } from '../api/city/searchHomeStayByCity';
 import MainLayout from '../layout';
+=======
+import { searchHomeStayByCity } from 'pages/api/city/searchHomeStayByCity';
+import { Button } from '@/components/components/ui/button';
+import MainLayout from 'pages/layout';
+>>>>>>> Stashed changes
 
 export default function SearchList() {
 	const router = useRouter();

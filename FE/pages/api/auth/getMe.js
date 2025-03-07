@@ -1,3 +1,5 @@
+import api from "@/utils/api";
+
 export const getUserInfo = async () => {
 	try {
 		const response = await api.get('/Auth/get-me');
