@@ -1,0 +1,13 @@
+C:\Users\Administrator\Documents\GitHub\SEP490\BE\RUNAHMS-main\Authentication\Bussiness Object\bin\Debug\net8.0\Bussiness Object.deps.json
+C:\Users\Administrator\Documents\GitHub\SEP490\BE\RUNAHMS-main\Authentication\Bussiness Object\bin\Debug\net8.0\Bussiness Object.dll
+C:\Users\Administrator\Documents\GitHub\SEP490\BE\RUNAHMS-main\Authentication\Bussiness Object\bin\Debug\net8.0\Bussiness Object.pdb
+C:\Users\Administrator\Documents\GitHub\SEP490\BE\RUNAHMS-main\Authentication\Bussiness Object\obj\Debug\net8.0\Bussiness Object.csproj.AssemblyReference.cache
+C:\Users\Administrator\Documents\GitHub\SEP490\BE\RUNAHMS-main\Authentication\Bussiness Object\obj\Debug\net8.0\Bussiness Object.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Administrator\Documents\GitHub\SEP490\BE\RUNAHMS-main\Authentication\Bussiness Object\obj\Debug\net8.0\Bussiness Object.AssemblyInfoInputs.cache
+C:\Users\Administrator\Documents\GitHub\SEP490\BE\RUNAHMS-main\Authentication\Bussiness Object\obj\Debug\net8.0\Bussiness Object.AssemblyInfo.cs
+C:\Users\Administrator\Documents\GitHub\SEP490\BE\RUNAHMS-main\Authentication\Bussiness Object\obj\Debug\net8.0\Bussiness Object.csproj.CoreCompileInputs.cache
+C:\Users\Administrator\Documents\GitHub\SEP490\BE\RUNAHMS-main\Authentication\Bussiness Object\obj\Debug\net8.0\Bussiness Object.sourcelink.json
+C:\Users\Administrator\Documents\GitHub\SEP490\BE\RUNAHMS-main\Authentication\Bussiness Object\obj\Debug\net8.0\Bussiness Object.dll
+C:\Users\Administrator\Documents\GitHub\SEP490\BE\RUNAHMS-main\Authentication\Bussiness Object\obj\Debug\net8.0\refint\Bussiness Object.dll
+C:\Users\Administrator\Documents\GitHub\SEP490\BE\RUNAHMS-main\Authentication\Bussiness Object\obj\Debug\net8.0\Bussiness Object.pdb
+C:\Users\Administrator\Documents\GitHub\SEP490\BE\RUNAHMS-main\Authentication\Bussiness Object\obj\Debug\net8.0\ref\Bussiness Object.dll
