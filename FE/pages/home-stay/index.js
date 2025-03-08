@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
-import { getAllAmenity } from 'pages/api/amenity/getAmenity';
-import { getAllHomeStay } from 'pages/api/homestay/getAllHomeStay';
-import MainLayout from 'pages/layout';
 import React, { useState, useEffect } from 'react';
+import { getAllHomeStay } from '../api/homestay/getAllHomeStay';
+import { getAllAmenity } from '../api/amenity/getAmenity';
+import MainLayout from '../layout';
 
 const HomeStay = () => {
 	const [searchParams, setSearchParams] = useState({

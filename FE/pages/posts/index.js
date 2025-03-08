@@ -1,9 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
-import { getAllPost } from 'pages/api/posts/getPosts';
-import MainLayout from 'pages/layout';
+import { getAllPost } from '@/pages/api/posts/getPosts';
+import MainLayout from '@/pages/layout';
 import React, { useState } from 'react';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
+import Link from 'next/link';
 
 const PostCard = ({ post }) => {
 	const formattedDate = format(new Date(post.publishDate), 'dd MMMM, yyyy', { locale: vi });
@@ -29,23 +30,25 @@ const PostCard = ({ post }) => {
 			</div>
 			<div className='p-4'>
 				<p className='text-gray-600 line-clamp-3'>{post.description}</p>
-				<button className='mt-4 inline-flex items-center text-blue-600 hover:text-blue-800 font-medium'>
-					See more
-					<svg
-						xmlns='http://www.w3.org/2000/svg'
-						className='h-4 w-4 ml-1'
-						fill='none'
-						viewBox='0 0 24 24'
-						stroke='currentColor'
-					>
-						<path
-							strokeLinecap='round'
-							strokeLinejoin='round'
-							strokeWidth={2}
-							d='M14 5l7 7m0 0l-7 7m7-7H3'
-						/>
-					</svg>
-				</button>
+				<Link href={`/posts/${post.id}`}>
+					<button className='mt-4 inline-flex items-center text-blue-600 hover:text-blue-800 font-medium'>
+						See more
+						<svg
+							xmlns='http://www.w3.org/2000/svg'
+							className='h-4 w-4 ml-1'
+							fill='none'
+							viewBox='0 0 24 24'
+							stroke='currentColor'
+						>
+							<path
+								strokeLinecap='round'
+								strokeLinejoin='round'
+								strokeWidth={2}
+								d='M14 5l7 7m0 0l-7 7m7-7H3'
+							/>
+						</svg>
+					</button>
+				</Link>
 			</div>
 		</div>
 	);
@@ -67,28 +70,30 @@ const FeaturedPost = ({ post }) => {
 					)}
 					<div className='absolute inset-0 bg-gradient-to-tr from-black/60 via-black/30 to-transparent md:hidden'></div>
 				</div>
-				<div className='md:w-1/3 lg:w-1/4 p-6 flex flex-col justify-center'>
-					<span className='text-blue-600 font-semibold mb-2'>{post.location}</span>
-					<h2 className='text-2xl md:text-3xl font-bold mb-3'>{post.title}</h2>
-					<p className='text-gray-600 mb-4'>{post.description}</p>
-					<div className='mb-4 text-gray-500 text-sm'>{formattedDate}</div>
-					<button className='inline-flex items-center text-blue-600 hover:text-blue-800 font-medium mt-auto'>
-						Read the article
-						<svg
-							xmlns='http://www.w3.org/2000/svg'
-							className='h-4 w-4 ml-1'
-							fill='none'
-							viewBox='0 0 24 24'
-							stroke='currentColor'
-						>
-							<path
-								strokeLinecap='round'
-								strokeLinejoin='round'
-								strokeWidth={2}
-								d='M14 5l7 7m0 0l-7 7m7-7H3'
-							/>
-						</svg>
-					</button>
+				<div className='md:w-1/3 lg:w-1/4 p-6 flex flex-col gap-3'>
+					<span className='text-blue-600 font-semibold'>{post.location}</span>
+					<h2 className='text-2xl md:text-3xl font-bold'>{post.title}</h2>
+					<p className='text-gray-600 line-clamp-5'>{post.description}</p>
+					<div className='text-gray-500 text-sm'>{formattedDate}</div>
+					<Link href={`/posts/${post.id}`}>
+						<button className='inline-flex items-center text-blue-600 hover:text-blue-800 font-medium mt-auto'>
+							Read the article
+							<svg
+								xmlns='http://www.w3.org/2000/svg'
+								className='h-4 w-4 ml-1'
+								fill='none'
+								viewBox='0 0 24 24'
+								stroke='currentColor'
+							>
+								<path
+									strokeLinecap='round'
+									strokeLinejoin='round'
+									strokeWidth={2}
+									d='M14 5l7 7m0 0l-7 7m7-7H3'
+								/>
+							</svg>
+						</button>
+					</Link>
 				</div>
 			</div>
 		</div>

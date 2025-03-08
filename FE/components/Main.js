@@ -2,6 +2,7 @@ import { useAuth } from "@/context/AuthProvider";
 import Link from "next/link";
 import styled from "styled-components";
 import { Button } from "./components/ui/button";
+import SearchForm from "./SearchForm";
 
 const Main = () => {
   const { dataProfile } = useAuth();
@@ -14,6 +15,7 @@ const Main = () => {
           
         </span>
       </div>
+      <SearchForm/>
     </MainSection>
   );
 };

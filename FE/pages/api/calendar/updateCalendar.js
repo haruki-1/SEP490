@@ -1,4 +1,4 @@
-import api from 'utils/api';
+import api from '@/utils/api';
 
 export const updateCalendarEntry = async (calendarId, calendarData) => {
 	try {
@@ -8,4 +8,4 @@ export const updateCalendarEntry = async (calendarId, calendarData) => {
 		console.error('Error updating calendar entry:', error);
 		throw error;
 	}
-};
+}
