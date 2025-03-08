@@ -8,4 +8,4 @@ export const updateCalendarEntry = async (calendarId, calendarData) => {
 		console.error('Error updating calendar entry:', error);
 		throw error;
 	}
-}
+};
