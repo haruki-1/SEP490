@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getAllHomeStay } from 'pages/api/homestay/getAllHomeStay';
+import { getAllHomeStay } from '@/pages/api/homestay/getAllHomeStay';
 import { Button } from '@/components/components/ui/button';
 import { Checkbox } from '@/components/components/ui/checkbox';
 import { Slider } from '@/components/components/ui/slider';
@@ -23,7 +23,7 @@ import {
 } from 'lucide-react';
 import { Label } from '@/components/components/ui/label';
 import Link from 'next/link';
-import { deleteHomeStay } from 'pages/api/homestay/deleteHomeStay';
+import { deleteHomeStay } from '@/pages/api/homestay/deleteHomeStay';
 import Swal from 'sweetalert2';
 import AdminLayout from '../layout';
 import {
@@ -36,13 +36,11 @@ import {
 } from '@/components/components/ui/dialog';
 import { Input } from '@/components/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/components/ui/select';
-import { getAllFacility } from 'pages/api/facility/getFacility';
-import { addHomeStayFacility } from 'pages/api/homestay/createHomeStayFacility';
-import { deleteHomeStayFacility } from 'pages/api/homestay/deleteHomeStayFacility';
-import { getAllAmenity } from 'pages/api/amenity/getAmenity';
-import { addHomeStayAmenity } from 'pages/api/homestay/createHomeStayAmenity';
-import { deleteHomeStayAmenity } from 'pages/api/homestay/deleteHomeStayAmenity';
-import { getHomeStayDetail } from 'pages/api/homestay/getHomeStayDetail';
+import { getAllFacility } from '@/pages/api/facility/getFacility';
+import { addHomeStayFacility } from '@/pages/api/homestay/createHomeStayFacility';
+import { deleteHomeStayFacility } from '@/pages/api/homestay/deleteHomeStayFacility';
+import { getAllAmenity } from '@/pages/api/amenity/getAmenity';
+import { getHomeStayDetail } from '@/pages/api/homestay/getHomeStayDetail';
 import { Badge } from '@/components/components/ui/badge';
 
 const Homestay = () => {
@@ -255,50 +253,50 @@ const Homestay = () => {
 		},
 	});
 
-	const amenityMutation = useMutation({
-		mutationFn: addHomeStayAmenity,
-		onSuccess: () => {
-			queryClient.invalidateQueries(['homeStays']);
-			queryClient.invalidateQueries(['homeStayDetail', amenityDialog.homestayId]);
-			setAmenityDialog({ isOpen: false, homestayId: null, selectedAmenities: [] });
-			Swal.fire({
-				icon: 'success',
-				title: 'Added!',
-				text: 'Amenities have been added to the homestay.',
-				timer: 1500,
-				showConfirmButton: false,
-			});
-		},
-		onError: (error) => {
-			Swal.fire({
-				icon: 'error',
-				title: 'Error',
-				text: `Failed to add amenities: ${error.message || 'Please try again.'}`,
-			});
-		},
-	});
+	// const amenityMutation = useMutation({
+	// 	mutationFn: addHomeStayAmenity,
+	// 	onSuccess: () => {
+	// 		queryClient.invalidateQueries(['homeStays']);
+	// 		queryClient.invalidateQueries(['homeStayDetail', amenityDialog.homestayId]);
+	// 		setAmenityDialog({ isOpen: false, homestayId: null, selectedAmenities: [] });
+	// 		Swal.fire({
+	// 			icon: 'success',
+	// 			title: 'Added!',
+	// 			text: 'Amenities have been added to the homestay.',
+	// 			timer: 1500,
+	// 			showConfirmButton: false,
+	// 		});
+	// 	},
+	// 	onError: (error) => {
+	// 		Swal.fire({
+	// 			icon: 'error',
+	// 			title: 'Error',
+	// 			text: `Failed to add amenities: ${error.message || 'Please try again.'}`,
+	// 		});
+	// 	},
+	// });
 
-	const deleteAmenityMutation = useMutation({
-		mutationFn: ({ homeStayID, amenityID }) => deleteHomeStayAmenity(homeStayID, amenityID),
-		onSuccess: () => {
-			queryClient.invalidateQueries(['homeStays']);
-			queryClient.invalidateQueries(['homeStayDetail', manageAmenitiesDialog.homestayId]);
-			Swal.fire({
-				icon: 'success',
-				title: 'Deleted!',
-				text: 'Amenity has been removed from the homestay.',
-				timer: 1500,
-				showConfirmButton: false,
-			});
-		},
-		onError: (error) => {
-			Swal.fire({
-				icon: 'error',
-				title: 'Error',
-				text: `Failed to delete amenity: ${error.message || 'Please try again.'}`,
-			});
-		},
-	});
+	// const deleteAmenityMutation = useMutation({
+	// 	mutationFn: ({ homeStayID, amenityID }) => deleteHomeStayAmenity(homeStayID, amenityID),
+	// 	onSuccess: () => {
+	// 		queryClient.invalidateQueries(['homeStays']);
+	// 		queryClient.invalidateQueries(['homeStayDetail', manageAmenitiesDialog.homestayId]);
+	// 		Swal.fire({
+	// 			icon: 'success',
+	// 			title: 'Deleted!',
+	// 			text: 'Amenity has been removed from the homestay.',
+	// 			timer: 1500,
+	// 			showConfirmButton: false,
+	// 		});
+	// 	},
+	// 	onError: (error) => {
+	// 		Swal.fire({
+	// 			icon: 'error',
+	// 			title: 'Error',
+	// 			text: `Failed to delete amenity: ${error.message || 'Please try again.'}`,
+	// 		});
+	// 	},
+	// });
 
 	const handleDelete = (homeStayID) => {
 		Swal.fire({
@@ -923,9 +921,9 @@ const Homestay = () => {
 						</div>
 					</div>
 					<DialogFooter>
-						<Button type='submit' onClick={handleAmenitySubmit} disabled={amenityMutation.isLoading}>
+						{/* <Button type='submit' onClick={handleAmenitySubmit} disabled={amenityMutation.isLoading}>
 							{amenityMutation.isLoading ? 'Adding...' : 'Add Amenities'}
-						</Button>
+						</Button> */}
 					</DialogFooter>
 				</DialogContent>
 			</Dialog>
