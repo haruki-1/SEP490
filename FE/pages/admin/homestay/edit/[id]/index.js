@@ -1,8 +1,7 @@
 'use client';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
-import AdminLayout from 'pages/admin/layout';
-import { getHomeStayDetail } from 'pages/api/homestay/getHomeStayDetail';
+import { getHomeStayDetail } from '@/pages/api/homestay/getHomeStayDetail';
 import { Button } from '@/components/components/ui/button';
 import { Input } from '@/components/components/ui/input';
 import { Label } from '@/components/components/ui/label';
@@ -13,9 +12,10 @@ import DatePicker from 'react-datepicker';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
 import 'react-photo-view/dist/react-photo-view.css';
 import 'react-datepicker/dist/react-datepicker.css';
-import { editHomeStayInformation } from 'pages/api/homestay/updateHomeStay';
-import { uploadImage } from 'pages/api/image/uploadImage';
-import { uploadImages } from 'pages/api/homestay/uploadImageHomeStay';
+import { editHomeStayInformation } from '@/pages/api/homestay/updateHomeStay';
+import { uploadImages } from '@/pages/api/homestay/uploadImageHomeStay';
+import AdminLayout from '@/pages/admin/layout';
+import { uploadImage } from '@/pages/api/image/uploadImage';
 
 const UpdateHomeStay = () => {
 	const { id } = useParams() ?? {};
@@ -169,6 +169,7 @@ const UpdateHomeStay = () => {
 							dateFormat='yyyy'
 							placeholderText='Select Year'
 							className='w-full px-2 py-1 border rounded'
+							withPortal
 						/>
 					</div>
 

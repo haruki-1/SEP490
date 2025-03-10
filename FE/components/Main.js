@@ -1,16 +1,21 @@
+import { useAuth } from "@/context/AuthProvider";
+import Link from "next/link";
 import styled from "styled-components";
+import { Button } from "./components/ui/button";
+import SearchForm from "./SearchForm";
 
 const Main = () => {
+  const { dataProfile } = useAuth();
   return (
     <MainSection className="light Main">
       <div className="mainInner">
         <span>
           <h1>Du lịch &amp; ở Đâu hôm nay</h1>
-          <a href="#" className="btn btn-light">
-            Khám phá ngay
-          </a>
+            <Button className='w-fit'> Khám phá ngay</Button>
+          
         </span>
       </div>
+      <SearchForm/>
     </MainSection>
   );
 };
@@ -29,6 +34,9 @@ const MainSection = styled.section`
     display: flex;
     max-width: var(--containerWidth);
     margin: 0 auto;
+  }
+  .mainInner h1 {
+    color: black !important;
   }
   span {
     max-width: var(--maxWidth);

@@ -2,18 +2,18 @@
 import Explore from '@/components/Explore';
 import Header from '@/components/Header';
 import Main from '@/components/Main';
-import Footer from '@/components/Footor';
+import Footer from '@/components/Footer';
 import { discover, live } from '@/data';
-import Banner from '@/components/Banner';
 import ListHomeStay from '@/components/ListHomeStay';
+import Banner from '@/components/Banner';
+import MainLayout from './layout';
 
 export default function Home() {
 	return (
-		<>
-			<Header />
+			<MainLayout>
 			<main>
 				<Main/>
-				<Explore/>
+				{/* <Explore/> */}
 				<ListHomeStay/>
 				<Banner/>
 				{/* <MediumCards {...live} />
@@ -21,6 +21,6 @@ export default function Home() {
 				<Hosting /> */}
 			</main>
 			<Footer />
-		</>
+		</MainLayout>
 	);
 }

@@ -10,13 +10,12 @@ import { Button } from '@/components/components/ui/button';
 import { Textarea } from '@/components/components/ui/textarea';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import Swal from 'sweetalert2';
+import { Eye, EyeOff } from 'lucide-react';
+import Image from 'next/image';
 import { useAuth } from '@/context/AuthProvider';
 import { updateProfile } from '@/pages/api/auth/updateProfile';
-import { Eye, EyeOff } from 'lucide-react';
 import { changePassword } from '@/pages/api/auth/changePassword';
-import Image from 'next/image';
 import { uploadImage } from '@/pages/api/image/uploadImage';
-
 
 export default function ProfilePage() {
 	const { dataProfile, refetch } = useAuth();
@@ -106,11 +105,9 @@ export default function ProfilePage() {
 		}
 	};
 
-
 	const toggleShowPassword = (field) => {
 		setShowPassword((prev) => ({ ...prev, [field]: !prev[field] }));
 	};
-
 
 	const handlePasswordChange = (e) => {
 		setPasswordData({ ...passwordData, [e.target.name]: e.target.value });
@@ -124,7 +121,6 @@ export default function ProfilePage() {
 			return;
 		}
 
-		// Call the mutate function from useMutation
 		mutateUpdateProfile(profile);
 	};
 
@@ -141,8 +137,6 @@ export default function ProfilePage() {
 			toast.error(errorMessage);
 		},
 	});
-
-
 
 	const handlePasswordSubmit = (e) => {
 		e.preventDefault();
@@ -168,7 +162,7 @@ export default function ProfilePage() {
 						</CardHeader>
 						<CardContent>
 							<form onSubmit={handleProfileSubmit} className='space-y-4'>
-							<div className='space-y-2'>
+								<div className='space-y-2'>
 									<Label htmlFor='avatar'>Avatar</Label>
 									<div className='flex flex-col items-center gap-2 w-full'>
 										{profile.avatar && (

@@ -30,7 +30,7 @@ export default function RegisterForm() {
 	const onSubmit = async (data) => {
 		setLoading(true);
 		try {
-			const response = await fetch('https://homestaybooking-001-site1.ntempurl.com/api/Auth/register', {
+			const response = await fetch('https://localhost:7194/api/Auth/register', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
@@ -62,7 +62,7 @@ export default function RegisterForm() {
 		const password = watch('password');
 
 	return (
-		<div className='sec-com'>
+		<div>
 			<div className='relative flex items-center justify-center p-4 h-screen bg-gray-100'>
 				<Image src='/images/authen/bg-authen.jpg' fill alt='bg-authen' />
 				<Card className='relative z-50 w-full max-w-xl bg-white/80'>
