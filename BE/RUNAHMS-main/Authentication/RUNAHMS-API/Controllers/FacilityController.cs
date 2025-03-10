@@ -50,6 +50,47 @@ namespace API.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+        [HttpPut("edit-facility")]
+        public async Task<IActionResult> EditFacility([FromBody] UpdateFacilityDTO request)
+        {
+            var getFacility = await _facilityRepository.Find(x => x.Id == request.FacilityID).FirstOrDefaultAsync();
+
+            if (getFacility == null) return NotFound();
+
+            getFacility.Name = request.Name ?? getFacility.Name;
+            getFacility.Description = request.Description ?? getFacility.Description;
+            getFacility.CreateAt = getFacility.CreateAt;
+            getFacility.UpdateAt = getFacility.UpdateAt;
+            await _facilityRepository.UpdateAsync(getFacility);
+            await _facilityRepository.SaveAsync();
+            return Ok(new { Message = "Update Facility Success" });
+        }
+
+        [HttpGet("get-all")]
+        public async Task<IActionResult> GetAll()
+        {
+            var listFacility = await _facilityRepository.Find(x => x.IsDeleted != true).ToListAsync();
+            return Ok(listFacility);
+        }
+
+        [HttpDelete("delete-facility")]
+        public async Task<IActionResult> DeleteFacility([FromBody] DeleteListDTO request)
+        {
+            var delete = await _facilityRepository
+               .Find(h => request.ID.Contains(h.Id))
+               .ToListAsync();
+
+            if (!delete.Any()) return NotFound();
+
+            foreach (var facility in delete)
+            {
+
+                facility.IsDeleted = true;
+            }
+            await _facilityRepository.SaveAsync();
+            return Ok(new { Message = "Delete Facility Success" });
+        }
+
 
     }
 }
