@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
-import { getPostDetail } from 'pages/api/posts/getPostDetail';
-import { getUserById } from 'pages/api/user/getUserById';
-import ManagerLayout from 'pages/manager/layout';
+import { getPostDetail } from '@/pages/api/posts/getPostDetail';
+import { getUserById } from '@/pages/api/user/getUserById';
 import React from 'react';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
 import 'react-photo-view/dist/react-photo-view.css';
+import ManagerLayout from '../../layout';
 
 const PostDetail = () => {
 	const { id } = useParams() ?? {};
