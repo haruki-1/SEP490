@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="..\build\RUNAHMS-API.props" />
-</Project>
