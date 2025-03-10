@@ -42,6 +42,8 @@ import { deleteHomeStayFacility } from '@/pages/api/homestay/deleteHomeStayFacil
 import { getAllAmenity } from '@/pages/api/amenity/getAmenity';
 import { getHomeStayDetail } from '@/pages/api/homestay/getHomeStayDetail';
 import { Badge } from '@/components/components/ui/badge';
+import { addHomeStayAmenity } from '@/pages/api/homestay/createHomeStayAmenity';
+import { deleteHomeStayAmenity } from '@/pages/api/homestay/deleteHomeStayAmenity';
 
 const Homestay = () => {
 	const queryClient = useQueryClient();
@@ -253,50 +255,50 @@ const Homestay = () => {
 		},
 	});
 
-	// const amenityMutation = useMutation({
-	// 	mutationFn: addHomeStayAmenity,
-	// 	onSuccess: () => {
-	// 		queryClient.invalidateQueries(['homeStays']);
-	// 		queryClient.invalidateQueries(['homeStayDetail', amenityDialog.homestayId]);
-	// 		setAmenityDialog({ isOpen: false, homestayId: null, selectedAmenities: [] });
-	// 		Swal.fire({
-	// 			icon: 'success',
-	// 			title: 'Added!',
-	// 			text: 'Amenities have been added to the homestay.',
-	// 			timer: 1500,
-	// 			showConfirmButton: false,
-	// 		});
-	// 	},
-	// 	onError: (error) => {
-	// 		Swal.fire({
-	// 			icon: 'error',
-	// 			title: 'Error',
-	// 			text: `Failed to add amenities: ${error.message || 'Please try again.'}`,
-	// 		});
-	// 	},
-	// });
+	const amenityMutation = useMutation({
+		mutationFn: addHomeStayAmenity,
+		onSuccess: () => {
+			queryClient.invalidateQueries(['homeStays']);
+			queryClient.invalidateQueries(['homeStayDetail', amenityDialog.homestayId]);
+			setAmenityDialog({ isOpen: false, homestayId: null, selectedAmenities: [] });
+			Swal.fire({
+				icon: 'success',
+				title: 'Added!',
+				text: 'Amenities have been added to the homestay.',
+				timer: 1500,
+				showConfirmButton: false,
+			});
+		},
+		onError: (error) => {
+			Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: `Failed to add amenities: ${error.message || 'Please try again.'}`,
+			});
+		},
+	});
 
-	// const deleteAmenityMutation = useMutation({
-	// 	mutationFn: ({ homeStayID, amenityID }) => deleteHomeStayAmenity(homeStayID, amenityID),
-	// 	onSuccess: () => {
-	// 		queryClient.invalidateQueries(['homeStays']);
-	// 		queryClient.invalidateQueries(['homeStayDetail', manageAmenitiesDialog.homestayId]);
-	// 		Swal.fire({
-	// 			icon: 'success',
-	// 			title: 'Deleted!',
-	// 			text: 'Amenity has been removed from the homestay.',
-	// 			timer: 1500,
-	// 			showConfirmButton: false,
-	// 		});
-	// 	},
-	// 	onError: (error) => {
-	// 		Swal.fire({
-	// 			icon: 'error',
-	// 			title: 'Error',
-	// 			text: `Failed to delete amenity: ${error.message || 'Please try again.'}`,
-	// 		});
-	// 	},
-	// });
+	const deleteAmenityMutation = useMutation({
+		mutationFn: ({ homeStayID, amenityID }) => deleteHomeStayAmenity(homeStayID, amenityID),
+		onSuccess: () => {
+			queryClient.invalidateQueries(['homeStays']);
+			queryClient.invalidateQueries(['homeStayDetail', manageAmenitiesDialog.homestayId]);
+			Swal.fire({
+				icon: 'success',
+				title: 'Deleted!',
+				text: 'Amenity has been removed from the homestay.',
+				timer: 1500,
+				showConfirmButton: false,
+			});
+		},
+		onError: (error) => {
+			Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: `Failed to delete amenity: ${error.message || 'Please try again.'}`,
+			});
+		},
+	});
 
 	const handleDelete = (homeStayID) => {
 		Swal.fire({
@@ -921,9 +923,9 @@ const Homestay = () => {
 						</div>
 					</div>
 					<DialogFooter>
-						{/* <Button type='submit' onClick={handleAmenitySubmit} disabled={amenityMutation.isLoading}>
+						<Button type='submit' onClick={handleAmenitySubmit} disabled={amenityMutation.isLoading}>
 							{amenityMutation.isLoading ? 'Adding...' : 'Add Amenities'}
-						</Button> */}
+						</Button>
 					</DialogFooter>
 				</DialogContent>
 			</Dialog>
