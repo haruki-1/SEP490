@@ -23,5 +23,6 @@ namespace BusinessObject.Entities
         public Booking? Booking { get; set; }
 
         public bool isDeleted {  get; set; } = false;
+        public bool isBooked { get; set; }
     }
 }
