@@ -4,6 +4,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Toaster } from '@/components/components/ui/sonner';
 import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 
 const MainLayout = ({ children }) => {
 	return (
@@ -20,8 +21,9 @@ const MainLayout = ({ children }) => {
 				<div>
 					<Header />
 					{children}
+					<Footer />
 				</div>
-				<Toaster />
+				<Toaster position='top-right' richColors />
 				<ToastContainer />
 			</main>
 		</div>
