@@ -112,13 +112,9 @@ namespace RUNAHMS_API.Controllers
             foreach (var calendar in calendars)
             {
                 calendar.BookingID = booking.Id;
+                calendar.IsBooked = true;
             }
 
-            // After booking change isBooked in home stay table is true
-            var getHomeStay = await _homeStayRepository.GetByIdAsync(calendars.FirstOrDefault()?.HomeStayID);
-            getHomeStay.isBooked = true;
-
-            await _homeStayRepository.UpdateAsync(getHomeStay);
             await _bookingRepository.AddAsync(booking);
             await _calendarRepository.SaveAsync();
             await _bookingRepository.SaveAsync();
