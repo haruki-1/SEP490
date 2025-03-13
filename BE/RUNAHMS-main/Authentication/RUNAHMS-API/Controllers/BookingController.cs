@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using OfficeOpenXml;
+using OfficeOpenXml.Style;
+using PayOSService.Services;
 
 
 
@@ -240,7 +243,126 @@ namespace RUNAHMS_API.Controllers
             return NotFound();
         }
 
-        
+
+        [HttpGet("statistics-revenue-home-stay")]
+        public async Task<IActionResult> HomeStayRevenueStatistics([FromQuery] Guid homeStayID, [FromQuery] int year)
+        {
+            var calendars = await _calendarRepository
+                .FindWithInclude(c => c.Booking)
+                .Include(h => h.HomeStay)
+                .Where(c => c.HomeStayID == homeStayID && c.Booking != null)
+                .ToListAsync();
+
+            var bookingList = calendars
+                .Select(c => c.Booking)
+                .Where(b => b.CheckInDate.Year == year && b.Status == "Payment Completed")
+                .Distinct()
+                .ToList();
+
+            var totalWithMonth = new Dictionary<int, (decimal TotalRevenue, int BookingCount)>();
+
+            for (int i = 1; i <= 12; i++)
+            {
+                totalWithMonth[i] = (0, 0);
+            }
+
+            foreach (var booking in bookingList)
+            {
+                var checkInMonth = booking.CheckInDate.Month;
+                var currentData = totalWithMonth[checkInMonth];
+                totalWithMonth[checkInMonth] = (currentData.TotalRevenue + booking.TotalPrice, currentData.BookingCount + 1);
+            }
+
+            var monthNames = new[]
+            {
+                "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+             };
+
+            var result = totalWithMonth.Select(entry => new
+            {
+                Month = monthNames[entry.Key - 1],
+                Booking = entry.Value.BookingCount,
+                Revenue = entry.Value.TotalRevenue
+            }).ToList();
+
+            return Ok(result);
+        }
+
+
+        [HttpGet("export")]
+        public async Task<IActionResult> ExportBookingByHomeStayID([FromQuery] Guid homeStayID)
+        {
+            var calendars = await _calendarRepository
+                .FindWithInclude(c => c.Booking, c => c.HomeStay)
+                .Where(c => c.HomeStayID == homeStayID && c.Booking != null)
+                .ToListAsync();
+
+            var bookings = calendars
+                .Select(c => new
+                {
+                    c.Booking.Id,
+                    c.Booking.CheckInDate,
+                    c.Booking.CheckOutDate,
+                    c.Booking.UnitPrice,
+                    c.Booking.TotalPrice,
+                    c.Booking.Status,
+                    c.Booking.ReasonCancel,
+                    HomeStayName = c.HomeStay.Name
+                })
+                .ToList();
+
+            if (!bookings.Any())
+            {
+                return NotFound(new { Message = "No bookings found for this homestay." });
+            }
+
+            ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
+            using var pck = new ExcelPackage();
+            var ws = pck.Workbook.Worksheets.Add("Booking List");
+
+            // Header row
+            string[] headers = {
+            "Booking ID", "Check-in Date", "Check-out Date", "Unit Price", "Total Price", "Status",
+            "Cancellation Reason", "HomeStay Name"
+        };
+
+            for (int i = 0; i < headers.Length; i++)
+            {
+                ws.Cells[1, i + 1].Value = headers[i];
+            }
+
+            ws.Cells[1, 1, 1, headers.Length].Style.Font.Bold = true;
+            ws.Cells[1, 1, 1, headers.Length].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+            ws.Cells[1, 1, 1, headers.Length].Style.Fill.PatternType = ExcelFillStyle.Solid;
+            ws.Cells[1, 1, 1, headers.Length].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGray);
+
+            // ADdData row
+            int row = 2;
+            foreach (var booking in bookings)
+            {
+                ws.Cells[row, 1].Value = booking.Id.ToString();
+                ws.Cells[row, 2].Value = booking.CheckInDate.ToString("dd-MM-yyyy");
+                ws.Cells[row, 3].Value = booking.CheckOutDate.ToString("dd-MM-yyyy");
+                ws.Cells[row, 4].Value = $"{booking.UnitPrice} VND";
+                ws.Cells[row, 5].Value = $"{booking.TotalPrice} VND";
+                ws.Cells[row, 6].Value = booking.Status;
+                ws.Cells[row, 7].Value = booking.ReasonCancel;
+                ws.Cells[row, 8].Value = booking.HomeStayName;
+                row++;
+            }
+
+            ws.Cells.AutoFitColumns();
+
+            // Save to memory stream
+            var stream = new MemoryStream();
+            pck.SaveAs(stream);
+            stream.Position = 0; // 🔹 Đảm bảo stream bắt đầu từ đaauf
+
+            var fileName = $"BookingList_{homeStayID}.xlsx";
+            return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+        }
+
         }
     }
 
