@@ -1,5 +1,5 @@
 import { usePathname } from 'next/navigation';
-import { Bath, Boxes, ChevronUp, Home, Hotel, Newspaper, Ticket, User, User2 } from 'lucide-react';
+import { Bath, Boxes, ChevronUp, Currency, Home, Hotel, Newspaper, Ticket, User, User2 } from 'lucide-react';
 import {
 	Sidebar,
 	SidebarContent,
@@ -20,6 +20,7 @@ const items = [
 	{ title: 'Homestay', url: '/manager/homestay', icon: Hotel },
 	{ title: 'Facility', url: '/manager/facility', icon: Boxes },
 	{ title: 'Amenity', url: '/manager/amenity', icon: Bath },
+	{ title: 'Cost', url: '/manager/cost', icon: Currency },
 	{ title: 'Posts', url: '/manager/posts', icon: Newspaper },
 	{ title: 'Voucher', url: '/manager/voucher', icon: Ticket },
 	{ title: 'Account', url: '/manager/profile', icon: User },

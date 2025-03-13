@@ -33,7 +33,10 @@ import 'swiper/css/navigation';
 import { Navigation } from 'swiper/modules';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
+import { createBooking } from '@/pages/api/booking/createBooking';
+import { useAuth } from '@/context/AuthProvider';
 import { toast } from 'sonner';
+import { getUserVouchers } from '@/pages/api/voucher/getUserVouchers';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -42,10 +45,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from '@/components/components/ui/dropdown-menu';
-import { createBooking } from '@/pages/api/booking/createBooking';
 import MainLayout from '@/pages/layout';
-import { useAuth } from '@/context/AuthProvider';
-import { getUserVouchers } from '@/pages/api/voucher/getUserVouchers';
 
 // Helper function to format dates consistently for comparison
 const formatDateForComparison = (dateInput) => {
@@ -481,7 +481,7 @@ const HomeStayDetail = () => {
 										/>
 										<span className='text-sm'>Online Payment</span>
 									</label>
-									<label className='flex items-center space-x-2 cursor-pointer'>
+									{/* <label className='flex items-center space-x-2 cursor-pointer'>
 										<input
 											type='radio'
 											checked={!isOnline}
@@ -489,7 +489,7 @@ const HomeStayDetail = () => {
 											className='form-radio h-4 w-4 text-blue-600'
 										/>
 										<span className='text-sm'>Cash on Arrival</span>
-									</label>
+									</label> */}
 								</div>
 							</div>
 

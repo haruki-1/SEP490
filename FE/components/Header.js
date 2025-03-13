@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Menu, User, Search } from 'lucide-react';
+import { Menu, User, Search, Globe } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
 import MobileNav from './MobileNav';
 import { Sheet, SheetContent, SheetTrigger } from './components/ui/sheet';
@@ -14,6 +14,8 @@ import {
 } from './components/ui/dropdown-menu';
 import { Button } from './components/ui/button';
 import { useAuth } from '@/context/AuthProvider';
+import { Popover, PopoverContent, PopoverTrigger } from './components/ui/popover';
+import LanguageCurrencySelector from './LanguageCurrency';
 
 // Define the navigation items with their paths
 const NAV_ITEMS = [
@@ -69,6 +71,17 @@ const Header = () => {
 
 				<div className='flex items-center gap-3'>
 					<ThemeToggle />
+					    {/* Thêm Language & Currency Selector */}
+							<Popover>
+								<PopoverTrigger asChild>
+									<Button variant='ghost' size='icon'>
+										<Globe className='w-5 h-5 text-gray-600' />
+									</Button>
+								</PopoverTrigger>
+								<PopoverContent className='w-72'>
+									<LanguageCurrencySelector />
+								</PopoverContent>
+							</Popover>
 					{dataProfile ? (
 						<DropdownMenu>
 							<DropdownMenuTrigger asChild>
