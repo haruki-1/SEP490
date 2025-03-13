@@ -51,6 +51,7 @@ namespace API.Controllers
             }
         }
 
+
         [HttpPut("edit-facility")]
         public async Task<IActionResult> EditFacility([FromBody] UpdateFacilityDTO request)
         {
@@ -90,6 +91,7 @@ namespace API.Controllers
             await _facilityRepository.SaveAsync();
             return Ok(new { Message = "Delete Facility Success" });
         }
+
 
     }
 }
