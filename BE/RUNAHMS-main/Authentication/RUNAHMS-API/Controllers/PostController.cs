@@ -172,6 +172,71 @@ namespace API.Controllers
 
             return Ok(new { Message = "Post deleted successfully" });
         }
+        [HttpPost("create-comment")]
+        public async Task<IActionResult> CreateComment(
+        [FromHeader(Name = "X-User-Id")] Guid userId,
+        [FromBody] CreateCommentDTO commentDTO)
+        {
+            if (string.IsNullOrWhiteSpace(commentDTO.Comment))
+                return BadRequest(new { Message = "Comment cannot be empty" });
+
+            var newComment = new CommentPost
+            {
+                Id = Guid.NewGuid(),
+                Comment = commentDTO.Comment,
+                CommontDate = DateTime.UtcNow,
+                PostID = commentDTO.PostID,
+                UserID = userId,
+                ParrentID = commentDTO.ParentID
+            };
+
+            await _commentRepository.AddAsync(newComment);
+            await _commentRepository.SaveAsync();
+
+            return Ok(new { Message = "Comment created successfully", CommentID = newComment.Id });
+        }
+
+        [HttpPut("edit-comment/{id}")]
+        public async Task<IActionResult> EditComment(
+            [FromHeader(Name = "X-User-Id")] Guid userId,
+            Guid id,
+            [FromBody] EditCommentDTO commentDTO)
+        {
+            var existingComment = await _commentRepository.Find(c => c.Id == id).FirstOrDefaultAsync();
+
+            if (existingComment == null)
+                return NotFound(new { Message = "Comment not found" });
+
+            if (existingComment.UserID != userId)
+                return Forbid(); // Không cho sửa comment của người khác
+
+            existingComment.Comment = commentDTO.Comment ?? existingComment.Comment;
+            await _commentRepository.UpdateAsync(existingComment);
+            await _commentRepository.SaveAsync();
+
+            return Ok(new { Message = "Comment updated successfully" });
+        }
+
+        [HttpDelete("delete-comment/{id}")]
+        public async Task<IActionResult> DeleteComment(
+            [FromHeader(Name = "X-User-Id")] Guid userId,
+            Guid id)
+        {
+            var comment = await _commentRepository.Find(c => c.Id == id).FirstOrDefaultAsync();
+
+            if (comment == null)
+                return NotFound(new { Message = "Comment not found" });
+
+            if (comment.UserID != userId)
+                return Forbid(); // Không cho xóa comment của người khác
+
+            comment.isDeleted = true;
+            await _commentRepository.UpdateAsync(comment);
+            await _commentRepository.SaveAsync();
+
+            return Ok(new { Message = "Comment deleted successfully" });
+        }
+
 
        
     }
