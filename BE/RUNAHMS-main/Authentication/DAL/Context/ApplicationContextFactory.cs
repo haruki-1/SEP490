@@ -12,9 +12,10 @@ namespace DAL.DBContext
         {
             // Load configuration từ file appsettings.json của API
             var configuration = new ConfigurationBuilder()
-                .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../API"))
+                .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../RUNAHMS-API"))
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .Build();
+
 
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
             var connectionString = configuration.GetConnectionString("DefaultConnection");

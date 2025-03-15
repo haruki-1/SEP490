@@ -43,5 +43,34 @@ namespace API.Controllers
 
             return Ok(new { url = url });
         }
+
+        [HttpPost("upload-file-list")]
+        public IActionResult UploadList([FromForm] UploadListDTO uploads)
+        {
+            if (uploads.Files == null || uploads.Files.Count == 0 || _enviroment == null)
+            {
+                return BadRequest("Invalid files or enviroment setting");
+            }
+
+            List<string> urlFile = new List<string>();
+            string uploadsFolder = Path.Combine(_enviroment.ContentRootPath, "images");
+            foreach (var file in uploads.Files)
+            {
+                if (file != null && file.Length > 0)
+                {
+                    string uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(file.FileName);
+                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        file.CopyTo(fileStream);
+                    }
+
+                    string url = _configuration["Base:Url"] + "/images/" + uniqueFileName;
+                    urlFile.Add(url);
+                }
+            }
+            return Ok(new { urls = urlFile });
+        }
     }
 }

@@ -40,6 +40,55 @@ namespace API.Controllers
 
             return Ok(sortedCalendars);
         }
+        [HttpPost("create")]
+        public async Task<IActionResult> Create([FromBody] List<CalendarDTO> calendarDTOs)
+        {
+            if (calendarDTOs == null || !calendarDTOs.Any())
+                return BadRequest(new { Message = "Invalid data" });
+
+            var homeStayIds = calendarDTOs.Select(dto => dto.HomeStayID).Distinct().ToList();
+
+            var existingCalendars = await _calendarRepository
+                .FindAsync(c => homeStayIds.Contains(c.HomeStay.Id));
+
+            var calendarsToAdd = new List<Calendar>();
+
+            foreach (var dto in calendarDTOs)
+            {
+                var homeStay = await _homeStayRepository.GetByIdAsync(dto.HomeStayID);
+                if (homeStay == null)
+                    return BadRequest(new { Message = $"HomeStay {dto.HomeStayID} not found" });
+
+                var existingCalendar = existingCalendars
+                    .FirstOrDefault(c => c.HomeStay.Id == dto.HomeStayID && c.Date.Date == dto.Date.Date);
+
+                if (existingCalendar != null)
+                {
+                    existingCalendar.Price = dto.Price;
+                }
+                else
+                {
+                    calendarsToAdd.Add(new Calendar
+                    {
+                        Id = Guid.NewGuid(),
+                        Date = dto.Date,
+                        Price = dto.Price,
+                        HomeStay = homeStay,
+                        Booking = null,
+                        isDeleted = false,
+                        IsBooked = false
+                    });
+                }
+            }
+
+            if (calendarsToAdd.Any())
+                await _calendarRepository.AddRangeAsync(calendarsToAdd);
+
+            await _calendarRepository.SaveAsync();
+
+            return Ok(new { Message = "Calendars processed successfully!" });
+        }
+
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] CalendarDTO dto)
@@ -62,7 +111,7 @@ namespace API.Controllers
             return Ok(new { Message = "Calendar updated successfully!" });
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<IActionResult> SoftDelete(Guid id)
         {
             var calendar = await _calendarRepository.GetByIdAsync(id);

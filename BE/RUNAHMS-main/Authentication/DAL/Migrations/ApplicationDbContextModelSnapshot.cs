@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace DataAccess.Migrations
+namespace DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot
@@ -17,7 +17,7 @@ namespace DataAccess.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.12")
+                .HasAnnotation("ProductVersion", "7.0.20")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -94,6 +94,9 @@ namespace DataAccess.Migrations
 
                     b.Property<Guid>("HomeStayID")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsBooked")
+                        .HasColumnType("bit");
 
                     b.Property<decimal>("Price")
                         .HasPrecision(18, 4)
@@ -583,13 +586,13 @@ namespace DataAccess.Migrations
                         {
                             Id = new Guid("d87b4b72-609b-4979-b758-7771481da883"),
                             Address = "Ninh Kiều, Cần Thơ",
-                            CreatedAt = new DateTime(2025, 2, 19, 18, 55, 30, 275, DateTimeKind.Utc).AddTicks(3676),
+                            CreatedAt = new DateTime(2025, 3, 12, 22, 46, 19, 179, DateTimeKind.Utc).AddTicks(2517),
                             Email = "admin@gmail.com",
                             FullName = "admin",
                             IsDeleted = false,
                             IsEmailConfirmed = true,
-                            LastModifiedAt = new DateTime(2025, 2, 19, 18, 55, 30, 275, DateTimeKind.Utc).AddTicks(3683),
-                            PasswordHash = "$2a$11$QmaoNKpHvSXaH7z.L5JNEu2BqPOqCAA11K3j5fgTSXyZ/DzlH3k9q",
+                            LastModifiedAt = new DateTime(2025, 3, 12, 22, 46, 19, 179, DateTimeKind.Utc).AddTicks(2528),
+                            PasswordHash = "$2a$11$ICPnFykYdqMborU8/pTgbO8IT2Hw8V3lXOoKX/OxMaL5KbT8627eu",
                             Phone = "0987654321",
                             RoleId = 1
                         },
@@ -597,13 +600,13 @@ namespace DataAccess.Migrations
                         {
                             Id = new Guid("4b7b0200-70f9-416a-9a3f-29ccab0deec4"),
                             Address = "Bình Thủy, Cần Thơ",
-                            CreatedAt = new DateTime(2025, 2, 19, 18, 55, 30, 386, DateTimeKind.Utc).AddTicks(7530),
+                            CreatedAt = new DateTime(2025, 3, 12, 22, 46, 19, 297, DateTimeKind.Utc).AddTicks(4140),
                             Email = "staff@gmail.com",
                             FullName = "staff",
                             IsDeleted = false,
                             IsEmailConfirmed = true,
-                            LastModifiedAt = new DateTime(2025, 2, 19, 18, 55, 30, 386, DateTimeKind.Utc).AddTicks(7532),
-                            PasswordHash = "$2a$11$OXNTN3DX/qiCOsb85xT/j.gD3wmhx/HXQbhxiokqYA.YKOfcgpR5e",
+                            LastModifiedAt = new DateTime(2025, 3, 12, 22, 46, 19, 297, DateTimeKind.Utc).AddTicks(4150),
+                            PasswordHash = "$2a$11$wV2G5K9MAtIFJX39HWQbxuCBaDn2X8BqtYNCXDuyVMewnzQLE/CuS",
                             Phone = "0987654123",
                             RoleId = 2
                         },
@@ -611,13 +614,13 @@ namespace DataAccess.Migrations
                         {
                             Id = new Guid("a85f272f-353e-4ff6-be2b-a15f1e7c0c47"),
                             Address = "Phong Điền, Cần Thơ",
-                            CreatedAt = new DateTime(2025, 2, 19, 18, 55, 30, 498, DateTimeKind.Utc).AddTicks(2447),
+                            CreatedAt = new DateTime(2025, 3, 12, 22, 46, 19, 421, DateTimeKind.Utc).AddTicks(2562),
                             Email = "user@gmail.com",
                             FullName = "user",
                             IsDeleted = false,
                             IsEmailConfirmed = true,
-                            LastModifiedAt = new DateTime(2025, 2, 19, 18, 55, 30, 498, DateTimeKind.Utc).AddTicks(2448),
-                            PasswordHash = "$2a$11$EC6i/JG6s4X3z6S4ZQdiAO2lMDSLJp67YvGMcID9kRLoDXnfITUH6",
+                            LastModifiedAt = new DateTime(2025, 3, 12, 22, 46, 19, 421, DateTimeKind.Utc).AddTicks(2572),
+                            PasswordHash = "$2a$11$CV2y4gVuzulOPezDgP1sw.nIVxbW0cqmz.A1lYrE5yiKuuRG/r7L2",
                             Phone = "0987654312",
                             RoleId = 3
                         });
