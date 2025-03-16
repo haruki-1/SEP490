@@ -12,9 +12,7 @@ using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using PayOSService.Services;
 
-
-
-namespace RUNAHMS_API.Controllers
+namespace API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -23,6 +21,7 @@ namespace RUNAHMS_API.Controllers
                                    IUserRepository _userRepository,
                                    IRepository<HomeStay> _homeStayRepository,
                                    IEmailSender _emailSender,
+                                   IPayOSService _payOSService,
                                    IConfiguration _configuration,
                                    IRepository<Calendar> _calendarRepository) : ControllerBase
     {
@@ -49,10 +48,11 @@ namespace RUNAHMS_API.Controllers
 
             return Ok(bookingHistory);
         }
+
         [HttpPost("create")]
         public async Task<IActionResult> CreateBooking(
-    [FromHeader(Name = "X-User-Id")] Guid userId,
-    [FromBody] BookingDTO bookingDTO)
+      [FromHeader(Name = "X-User-Id")] Guid userId,
+      [FromBody] BookingDTO bookingDTO)
         {
             if (bookingDTO == null || !bookingDTO.Calenders.Any())
                 return BadRequest(new { Message = "Invalid booking data" });
@@ -80,11 +80,11 @@ namespace RUNAHMS_API.Controllers
             var replaceCheckInDate = homeStay.CheckInTime.Replace("PM", "").Replace("AM", "");
             var replaceCheckOutDate = homeStay.CheckInTime.Replace("PM", "").Replace("AM", "");
 
-            DateTime checkInDate = firstDate.Date.Add(TimeSpan.Parse(homeStay.CheckInTime));
-            DateTime checkOutDate = lastDate.AddDays(1).Date.Add(TimeSpan.Parse(homeStay.CheckOutTime));
+            DateTime checkInDate = firstDate.Date.Add(TimeSpan.Parse(replaceCheckInDate));
+            DateTime checkOutDate = lastDate.AddDays(1).Date.Add(TimeSpan.Parse(replaceCheckOutDate));
 
             if (firstDate == lastDate)
-                checkOutDate = firstDate.Date.AddDays(1).Add(TimeSpan.Parse(homeStay.CheckOutTime));
+                checkOutDate = firstDate.Date.AddDays(1).Add(TimeSpan.Parse(homeStay.CheckOutTime.Replace("PM", "").Replace("AM", "")));
 
             decimal totalPrice = calendars.Sum(c => c.Price);
 
@@ -115,9 +115,11 @@ namespace RUNAHMS_API.Controllers
             foreach (var calendar in calendars)
             {
                 calendar.BookingID = booking.Id;
-                calendar.IsBooked = true;
+                calendar.isBooked = true;
+                await _calendarRepository.UpdateAsync(calendar);
             }
 
+            // After booking change isBooked in home stay table is true
             await _bookingRepository.AddAsync(booking);
             await _calendarRepository.SaveAsync();
             await _bookingRepository.SaveAsync();
@@ -227,6 +229,8 @@ namespace RUNAHMS_API.Controllers
 
             return Ok(new { Message = "Booking successfully canceled!" });
         }
+
+
         [HttpPut("confirm-booking-status")]
         public async Task<IActionResult> ConfirmBookingStatus([FromQuery] Guid bookingID)
         {
@@ -242,7 +246,6 @@ namespace RUNAHMS_API.Controllers
 
             return NotFound();
         }
-
 
         [HttpGet("statistics-revenue-home-stay")]
         public async Task<IActionResult> HomeStayRevenueStatistics([FromQuery] Guid homeStayID, [FromQuery] int year)
@@ -337,7 +340,7 @@ namespace RUNAHMS_API.Controllers
             ws.Cells[1, 1, 1, headers.Length].Style.Fill.PatternType = ExcelFillStyle.Solid;
             ws.Cells[1, 1, 1, headers.Length].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGray);
 
-            // ADdData row
+            // Add data rows
             int row = 2;
             foreach (var booking in bookings)
             {
@@ -357,7 +360,7 @@ namespace RUNAHMS_API.Controllers
             // Save to memory stream
             var stream = new MemoryStream();
             pck.SaveAs(stream);
-            stream.Position = 0; // 🔹 Đảm bảo stream bắt đầu từ đaauf
+            stream.Position = 0; // 🔹 Đảm bảo stream bắt đầu từ đầu
 
             var fileName = $"BookingList_{homeStayID}.xlsx";
             return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
@@ -416,5 +419,5 @@ namespace RUNAHMS_API.Controllers
         }
 
     }
-    }
+}
 

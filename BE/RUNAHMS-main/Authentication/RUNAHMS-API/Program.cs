@@ -79,6 +79,7 @@ builder.Services.AddScoped<IEmailSender, EmailSender>();
 
 builder.Services.AddScoped<IPayOSService, PayOSService.Services.PayOSService>();
 
+builder.Services.AddScoped<IBookingRepository,BookingRepository>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

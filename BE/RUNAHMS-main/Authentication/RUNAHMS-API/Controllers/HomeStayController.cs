@@ -22,6 +22,8 @@ namespace API.Controllers
         IRepository<Facility> _facilityRepository
             ) : ControllerBase
     {
+
+
         [HttpPost("add-home-stay-facility")]
         public async Task<IActionResult> AddHomeStayFacility(AddHomeStayFacilityDTO request)
         {
@@ -97,7 +99,6 @@ namespace API.Controllers
             return Ok(new { message = "Add Home Stay Success." });
         }
 
-
         [HttpPost("add-home-stay-amenity")]
         public async Task<IActionResult> AddHomeStayAmennity([FromBody] AddAmenityDTO request)
         {
@@ -131,7 +132,6 @@ namespace API.Controllers
                 return StatusCode(500, new { Message = "An error occurred", Error = ex.Message });
             }
         }
-
 
         [HttpPut("edit-home-stay-information")]
         public async Task<IActionResult> EditHomeStay([FromBody] EditHomeStayInforRequest request)
@@ -182,7 +182,6 @@ namespace API.Controllers
             return NotFound();
         }
 
-
         [HttpDelete("delete-home-stay-amenity")]
         public async Task<IActionResult> DeleteHomeStayAmenity([FromQuery] Guid HomeStayID, Guid AmenityID)
         {
@@ -199,7 +198,7 @@ namespace API.Controllers
         }
 
         [HttpPost("get-all-home-stay")]
-        public async Task<IActionResult> GetAllHomeStay([FromBody]FilterDTO request)
+        public async Task<IActionResult> GetAllHomeStay([FromBody] FilterDTO request)
         {
             var query = _homeStayRepository
                 .FindWithInclude(h => h.Calendars!)
@@ -255,7 +254,7 @@ namespace API.Controllers
                     c.Id,
                     c.Date,
                     c.Price,
-                    c.IsBooked
+                    c.isBooked
                 }).ToList(),
 
                 Amenities = h.HomestayAmenities!
@@ -275,8 +274,6 @@ namespace API.Controllers
             return Ok(response);
         }
 
-
-
         [HttpGet("get-home-stay-detail")]
         public async Task<IActionResult> GetHomeStayDetail([FromQuery] Guid homeStayID)
         {
@@ -287,6 +284,8 @@ namespace API.Controllers
                 .Include(hs => hs.HomestayImages!)
                 .Include(h => h.HomestayFacilities!)
                 .ThenInclude(h => h.Facility)
+                .Include(x => x.FeedBacks)
+                .ThenInclude(x => x.User)
                 .FirstOrDefaultAsync(h => h.Id == homeStayID);
 
             if (getDetail == null)
@@ -316,7 +315,7 @@ namespace API.Controllers
                         c.Date,
                         c.Price,
                         c.isDeleted,
-                        c.IsBooked
+                        c.isBooked
                     }).ToList(),
                 HomeStayImage = getDetail.HomestayImages!.Select(image => new
                 {
@@ -332,6 +331,15 @@ namespace API.Controllers
                     hf.FacilityID,
                     hf.Facility.Name,
                     hf.Facility.Description
+                }).ToList(),
+                Feeback = getDetail.FeedBacks!.Select(fb => new
+                {
+                    fb.User.FullName,
+                    fb.User.Avatar,
+                    fb.User.Email,
+                    fb.Rating,
+                    fb.Description,
+                    fb.isDeleted
                 }).ToList()
             };
             return Ok(response);
@@ -411,6 +419,7 @@ namespace API.Controllers
             return Ok(new { Message = "Images deleted successfully" });
         }
 
+
         [HttpGet("get-city-list")]
         public async Task<IActionResult> GetAllCity()
         {
@@ -445,12 +454,13 @@ namespace API.Controllers
                 h.Standar,
                 h.isDeleted,
 
+
                 Calendar = h.Calendars!.Select(c => new
                 {
                     c.Id,
                     c.Date,
                     c.Price,
-                    c.IsBooked
+                    c.isBooked
                 }).ToList(),
 
                 Amenities = h.HomestayAmenities!
@@ -469,7 +479,6 @@ namespace API.Controllers
 
             return Ok(response);
         }
-
 
         [HttpGet("get-home-stay-by-user")]
         public async Task<IActionResult> GetHomeStayByUser([FromQuery] Guid userID)
@@ -506,7 +515,7 @@ namespace API.Controllers
                     c.Id,
                     c.Date,
                     c.Price,
-                    c.IsBooked
+                    c.isBooked
                 }).ToList(),
 
                 Amenities = h.HomestayAmenities!
@@ -557,13 +566,12 @@ namespace API.Controllers
                 h.Standar,
                 h.isDeleted,
 
-
                 Calendar = h.Calendars!.Select(c => new
                 {
                     c.Id,
                     c.Date,
                     c.Price,
-                    c.IsBooked
+                    c.isBooked
                 }).ToList(),
 
                 Amenities = h.HomestayAmenities!
@@ -583,6 +591,7 @@ namespace API.Controllers
             return Ok(response);
 
         }
+
     }
 }
 
