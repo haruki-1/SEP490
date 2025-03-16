@@ -76,7 +76,7 @@ namespace API.Controllers
                         HomeStay = homeStay,
                         Booking = null,
                         isDeleted = false,
-                        IsBooked = false
+                        isBooked = false
                     });
                 }
             }

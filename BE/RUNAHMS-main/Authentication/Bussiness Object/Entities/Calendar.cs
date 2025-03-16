@@ -11,6 +11,8 @@ namespace BusinessObject.Entities
     [Table("Calendar")]
     public class Calendar : BaseEntity<Guid>
     {
+        public bool isBooked;
+
         public DateTime Date { get; set; }
         public Decimal Price {  get; set; }
         public Guid HomeStayID { get; set; }
