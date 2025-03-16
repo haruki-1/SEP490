@@ -53,15 +53,15 @@ const VoucherList = () => {
 		queryFn: () => getUsers(userPage, userPageSize),
 		enabled: receiveDialogOpen,
 		onSuccess: (data) => {
-			// Assuming the API returns total count in a metadata field
-			if (data.totalCount) {
-				setTotalUsers(data.totalCount);
+			// Update total count based on the API response structure
+			if (data.totalPage) {
+				setTotalUsers(data.totalPage * userPageSize);
 			}
 		},
 	});
 
 	// Extract the actual users array from the response
-	const users = usersData?.items || usersData || [];
+	const users = usersData?.data || [];
 
 	const uploadImageMutation = useMutation({
 		mutationFn: uploadImage,
@@ -318,7 +318,53 @@ const VoucherList = () => {
 								disabled={editMode}
 							/>
 						</div>
-						{/* ...other fields... */}
+						<div className='grid gap-2'>
+							<Label htmlFor='discount'>Discount (%)</Label>
+							<Input
+								id='discount'
+								name='discount'
+								type='number'
+								min='0'
+								max='100'
+								value={voucherData.discount}
+								onChange={handleChange}
+								required
+							/>
+						</div>
+						<div className='grid gap-2'>
+							<Label htmlFor='description'>Description</Label>
+							<Input
+								id='description'
+								name='description'
+								value={voucherData.description}
+								onChange={handleChange}
+								required
+							/>
+						</div>
+						<div className='grid grid-cols-2 gap-4'>
+							<div className='grid gap-2'>
+								<Label htmlFor='startDate'>Start Date</Label>
+								<Input
+									id='startDate'
+									name='startDate'
+									type='date'
+									value={voucherData.startDate}
+									onChange={handleChange}
+									required
+								/>
+							</div>
+							<div className='grid gap-2'>
+								<Label htmlFor='endDate'>End Date</Label>
+								<Input
+									id='endDate'
+									name='endDate'
+									type='date'
+									value={voucherData.endDate}
+									onChange={handleChange}
+									required
+								/>
+							</div>
+						</div>
 						<div className='flex justify-end gap-2'>
 							<Button
 								type='button'
@@ -351,7 +397,7 @@ const VoucherList = () => {
 
 			{/* Updated Dialog for Voucher Receiving with User Select and Pagination */}
 			<Dialog open={receiveDialogOpen} onOpenChange={setReceiveDialogOpen}>
-				<DialogContent className='sm:max-w-[450px]'>
+				<DialogContent className='sm:max-w-[450px] max-h-[80vh]'>
 					<DialogHeader>
 						<DialogTitle>Assign Voucher to User</DialogTitle>
 					</DialogHeader>
@@ -363,20 +409,20 @@ const VoucherList = () => {
 							) : (
 								<>
 									<Select onValueChange={handleUserSelect} value={targetUser}>
-										<SelectTrigger>
+										<SelectTrigger className='w-full'>
 											<SelectValue placeholder='Select a user' />
 										</SelectTrigger>
-										<SelectContent>
-											{users?.data?.map((user) => (
+										<SelectContent className='max-h-[200px] overflow-y-auto' position='popper'>
+											{users.map((user) => (
 												<SelectItem key={user.id} value={user.id}>
-													{user.userName} ({user.email})
+													{user.fullName} ({user.email})
 												</SelectItem>
 											))}
 										</SelectContent>
 									</Select>
 
 									{/* Page size selector */}
-									<div className='flex items-center gap-2 mt-2'>
+									<div className='flex items-center gap-2 mt-4'>
 										<Label htmlFor='pageSize' className='text-sm'>
 											Show:
 										</Label>
@@ -398,7 +444,7 @@ const VoucherList = () => {
 									</div>
 
 									{/* Simple pagination controls */}
-									{/* <div className='flex justify-between items-center mt-2'>
+									<div className='flex justify-between items-center mt-4'>
 										<Button
 											variant='outline'
 											size='sm'
@@ -418,11 +464,11 @@ const VoucherList = () => {
 										>
 											Next
 										</Button>
-									</div> */}
+									</div>
 								</>
 							)}
 						</div>
-						<div className='flex justify-end gap-2'>
+						<div className='flex justify-end gap-2 mt-4'>
 							<Button
 								type='button'
 								variant='outline'

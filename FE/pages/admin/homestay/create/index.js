@@ -276,6 +276,7 @@ const CreateHomeStay = () => {
 							dateFormat='h:mm aa'
 							placeholderText='Check-In Time'
 							className='w-full px-2 py-1 bg-transparent border rounded'
+							withPortal
 						/>
 					</div>
 					<div>
@@ -290,6 +291,7 @@ const CreateHomeStay = () => {
 							dateFormat='h:mm aa'
 							placeholderText='Check-Out Time'
 							className='w-full px-2 py-1 bg-transparent border rounded'
+							withPortal
 						/>
 					</div>
 					<div>
@@ -303,6 +305,7 @@ const CreateHomeStay = () => {
 							onChange={(date) => handleDateChange(date, 'date')}
 							placeholderText='Date'
 							className='w-full px-2 py-1 bg-transparent border rounded'
+							withPortal
 						/>
 					</div>
 				</div>

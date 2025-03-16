@@ -1,210 +1,222 @@
-import styled from 'styled-components';
-import { Globe, DollarSign, Facebook, Twitter, Instagram } from 'react-feather';
+import React from 'react';
+import Link from 'next/link';
+import { Globe, DollarSign, Facebook, Twitter, Instagram, MapPin, Mail, Phone, ChevronRight } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
+import { Button } from './components/ui/button';
 
 const Footer = () => {
 	return (
-		<FooterSection>
-			<div className='footerInner'>
-				<span>
-					<h2>About</h2>
-					<ul>
-						<li>How Runa works</li>
-						<li>Newsroom</li>
-						<li>Investors</li>
-						<li className='lg-hidden'>HotelTonight</li>
-						<li className='lg-hidden'>Made possible by Hosts</li>
-						<li className='lg-hidden'>Careers</li>
-						<li className='lg-hidden'>Founders&apos; Letter</li>
-					</ul>
-				</span>
-				<span>
-					<h2>Community</h2>
-					<ul>
-						<li>Diversity &amp; Belonging</li>
-						<li>Accessibility</li>
-						<li>Runa Associates</li>
-						<li>Frontline Stays</li>
-						<li>Guest Referrals</li>
-						<li>Runa.org</li>
-					</ul>
-				</span>
-				<span>
-					<h2>Host</h2>
-					<ul>
-						<li>Host your home</li>
-						<li>Host an Online Experience</li>
-						<li>Host an Experience</li>
-						<li>Responsible hosting</li>
-						<li>Resource Centre</li>
-						<li>Community Centre</li>
-					</ul>
-				</span>
-				<span>
-					<h2>Support</h2>
-					<ul>
-						<li>Help Centre</li>
-						<li>Cancellation options</li>
-						<li>Neighbourhood Support</li>
-						<li>Trust &amp; Safety</li>
-					</ul>
-				</span>
-				<div className='footer-bottom'>
+		<footer className='bg-white text-gray-600 sec-com border-t border-gray-100'>
+			<div className='container-lg'>
+				<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8'>
+					{/* About Section */}
 					<div>
-						<ThemeToggle text />
+					<h2 className='text-gray-800 text-lg font-bold mb-4'>About HomeStay</h2>
+						<p className='text-gray-500 text-sm leading-relaxed mb-4'>
+							Find perfect homestays for your travels. We connect travelers with unique accommodations for
+							authentic experiences around the world.
+						</p>
+						<div className='flex items-center space-x-4 mt-6'>
+							<a href='#' className='text-gray-400 hover:text-blue-600 transition-colors'>
+								<Facebook size={20} />
+							</a>
+							<a href='#' className='text-gray-400 hover:text-blue-600 transition-colors'>
+								<Twitter size={20} />
+							</a>
+							<a href='#' className='text-gray-400 hover:text-blue-600 transition-colors'>
+								<Instagram size={20} />
+							</a>
+						</div>
 					</div>
-					<p>
-						<span>
-							<Globe className='globe' />
-							English
-						</span>
-						<span>
-							<DollarSign className='dollar' />
-							USD
-						</span>
-						<span>
-							<Facebook />
-						</span>
-						<span>
-							<Twitter />
-						</span>
-						<span>
-							<Instagram />
-						</span>
-					</p>
-					<p>
-						&copy; 2022{' '}
-						<a href='https://shubhporwal.me' target='_blank' rel='noreferrer'>
-							Shubh Porwal
-						</a>
+					{/* Useful Links */}
+					<div>
+						<h2 className='text-gray-800 text-lg font-bold mb-4'>Useful Links</h2>
+						<ul className='space-y-2'>
+							<li>
+								<Link
+									href='/home-stay'
+									className='text-gray-500 hover:text-blue-600 flex items-center group'
+								>
+									<ChevronRight
+										size={16}
+										className='mr-2 opacity-0 group-hover:opacity-100 transition-opacity'
+									/>
+									<span>Browse Homestays</span>
+								</Link>
+							</li>
+							<li>
+								<Link
+									href='/about'
+									className='text-gray-500 hover:text-blue-600 flex items-center group'
+								>
+									<ChevronRight
+										size={16}
+										className='mr-2 opacity-0 group-hover:opacity-100 transition-opacity'
+									/>
+									<span>About Us</span>
+								</Link>
+							</li>
+							<li>
+								<Link
+									href='/blog'
+									className='text-gray-500 hover:text-blue-600 flex items-center group'
+								>
+									<ChevronRight
+										size={16}
+										className='mr-2 opacity-0 group-hover:opacity-100 transition-opacity'
+									/>
+									<span>Blog & News</span>
+								</Link>
+							</li>
+							<li>
+								<Link
+									href='/faqs'
+									className='text-gray-500 hover:text-blue-600 flex items-center group'
+								>
+									<ChevronRight
+										size={16}
+										className='mr-2 opacity-0 group-hover:opacity-100 transition-opacity'
+									/>
+									<span>FAQs</span>
+								</Link>
+							</li>
+							<li>
+								<Link
+									href='/privacy'
+									className='text-gray-500 hover:text-blue-600 flex items-center group'
+								>
+									<ChevronRight
+										size={16}
+										className='mr-2 opacity-0 group-hover:opacity-100 transition-opacity'
+									/>
+									<span>Privacy Policy</span>
+								</Link>
+							</li>
+							<li>
+								<Link
+									href='/terms'
+									className='text-gray-500 hover:text-blue-600 flex items-center group'
+								>
+									<ChevronRight
+										size={16}
+										className='mr-2 opacity-0 group-hover:opacity-100 transition-opacity'
+									/>
+									<span>Terms & Conditions</span>
+								</Link>
+							</li>
+						</ul>
+					</div>
+
+					{/* Host Section */}
+					<div>
+						<h2 className='text-gray-800 text-lg font-bold mb-4'>Host with Us</h2>
+						<ul className='space-y-2'>
+							<li>
+								<Link
+									href='/host'
+									className='text-gray-500 hover:text-blue-600 flex items-center group'
+								>
+									<ChevronRight
+										size={16}
+										className='mr-2 opacity-0 group-hover:opacity-100 transition-opacity'
+									/>
+									<span>List Your Property</span>
+								</Link>
+							</li>
+							<li>
+								<Link
+									href='/host-resources'
+									className='text-gray-500 hover:text-blue-600 flex items-center group'
+								>
+									<ChevronRight
+										size={16}
+										className='mr-2 opacity-0 group-hover:opacity-100 transition-opacity'
+									/>
+									<span>Host Resources</span>
+								</Link>
+							</li>
+							<li>
+								<Link
+									href='/host-guidelines'
+									className='text-gray-500 hover:text-blue-600 flex items-center group'
+								>
+									<ChevronRight
+										size={16}
+										className='mr-2 opacity-0 group-hover:opacity-100 transition-opacity'
+									/>
+									<span>Hosting Guidelines</span>
+								</Link>
+							</li>
+							<li>
+								<Link
+									href='/responsible-hosting'
+									className='text-gray-500 hover:text-blue-600 flex items-center group'
+								>
+									<ChevronRight
+										size={16}
+										className='mr-2 opacity-0 group-hover:opacity-100 transition-opacity'
+									/>
+									<span>Responsible Hosting</span>
+								</Link>
+							</li>
+						</ul>
+						<Button className='mt-4 bg-blue-600 hover:bg-blue-700'>Become a Host</Button>
+					</div>
+
+					{/* Contact Section */}
+					<div>
+						<h2 className='text-gray-800 text-lg font-bold mb-4'>Contact Us</h2>
+						<ul className='space-y-3'>
+							<li className='flex items-start'>
+								<MapPin className='w-5 h-5 text-blue-600 mt-0.5 mr-3 flex-shrink-0' />
+								<span className='text-gray-500'>123 Main Street, City Center, Country, 12345</span>
+							</li>
+							<li className='flex items-center'>
+								<Phone className='w-5 h-5 text-blue-600 mr-3 flex-shrink-0' />
+								<span className='text-gray-500'>+1 234 567 8900</span>
+							</li>
+							<li className='flex items-center'>
+								<Mail className='w-5 h-5 text-blue-600 mr-3 flex-shrink-0' />
+								<span className='text-gray-500'>support@homestay.com</span>
+							</li>
+						</ul>
+						<div className='mt-6'>
+							<h3 className='text-gray-800 text-sm font-semibold mb-2'>Subscribe to our newsletter</h3>
+							<div className='flex'>
+								<input
+									type='email'
+									placeholder='Your email'
+									className='bg-gray-50 text-gray-700 text-sm py-2 px-3 rounded-l-md border border-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 w-full'
+								/>
+								<button className='bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-r-md transition-colors'>
+									Send
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				{/* Footer Bottom */}
+				<div className='pt-8 mt-8 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center'>
+					<div className='flex items-center space-x-4 mb-4 md:mb-0'>
+						<ThemeToggle />
+						<div className='flex items-center text-gray-500 hover:text-gray-700 cursor-pointer'>
+							<Globe className='w-4 h-4 mr-1' />
+							<span className='text-sm'>English</span>
+						</div>
+						<div className='flex items-center text-gray-500 hover:text-gray-700 cursor-pointer'>
+							<DollarSign className='w-4 h-4 mr-1' />
+							<span className='text-sm'>USD</span>
+						</div>
+					</div>
+
+					<p className='text-sm text-gray-400'>
+						&copy; {new Date().getFullYear()} HomeStay. All rights reserved.
 					</p>
 				</div>
 			</div>
-		</FooterSection>
+		</footer>
 	);
 };
 
 export default Footer;
-
-const FooterSection = styled.footer`
-	padding: 3rem var(--sidePadding);
-	background: var(--gray);
-	border-top: 1px solid #0002;
-
-	h2 {
-		font-size: 0.85rem;
-		text-transform: uppercase;
-		margin-bottom: 0.5rem;
-		font-weight: 800;
-	}
-
-	.footerInner {
-		& > span {
-			display: flex;
-			flex-direction: column;
-			padding: 1.5rem 0;
-		}
-
-		& > span + span {
-			border-top: 1px solid #0002;
-		}
-
-		& > span:first-of-type {
-			padding-top: 0;
-		}
-
-		& > span:last-of-type {
-			padding-bottom: 0;
-		}
-
-		ul {
-			list-style: none;
-			display: grid;
-			grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-
-			li {
-				padding: 0.25rem 0;
-				font-size: 0.85rem;
-				cursor: pointer;
-				opacity: 0.8;
-				transition: all 0.2s;
-				width: fit-content;
-
-				&:hover {
-					opacity: 1;
-					text-decoration: underline;
-				}
-			}
-		}
-
-		.footer-bottom {
-			display: flex;
-			flex-direction: row-reverse;
-			align-items: flex-end;
-			justify-content: space-between;
-
-			a {
-				margin-left: 0.5rem;
-			}
-
-			a:hover {
-				text-decoration: underline;
-				color: var(--pink);
-			}
-
-			svg {
-				height: 1rem;
-				cursor: pointer;
-			}
-
-			svg.globe {
-				margin-right: 0.1rem;
-			}
-
-			svg.dollar {
-				margin-right: -0.1rem;
-			}
-
-			span + span {
-				margin-left: 1rem;
-			}
-
-			p,
-			span {
-				display: flex;
-				align-items: center;
-			}
-		}
-	}
-
-	@media (max-width: 576px) {
-		.footerInner .footer-bottom {
-			flex-direction: column;
-			align-items: center;
-			gap: 1.5rem;
-		}
-	}
-
-	@media (min-width: 1296px) {
-		.footerInner {
-			display: flex;
-			flex-flow: row wrap;
-			max-width: 1200px;
-			margin: 0 auto;
-			justify-content: space-between;
-
-			.footer-bottom {
-				flex: 0 0 100%;
-				padding-top: 1.5rem;
-				margin-top: 1.5rem;
-			}
-			.lg-hidden {
-				display: none;
-			}
-			& > span:not(.footer-bottom) {
-				padding: 0;
-				border-top: none !important;
-			}
-		}
-	}
-`;
