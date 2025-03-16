@@ -466,15 +466,15 @@ const Homestay = () => {
 			</div>
 
 			{/* Filter section */}
-			<div className='mb-6 bg-white rounded-lg shadow-md overflow-hidden'>
-				<div className='p-4 border-b cursor-pointer flex justify-between items-center' onClick={toggleFilter}>
+			<div className='mb-6 overflow-hidden bg-white rounded-lg shadow-md'>
+				<div className='flex items-center justify-between p-4 border-b cursor-pointer' onClick={toggleFilter}>
 					<div className='flex items-center'>
-						<Filter className='h-5 w-5 mr-2' />
+						<Filter className='w-5 h-5 mr-2' />
 						<h2 className='text-xl font-semibold'>Filters</h2>
 					</div>
 					<button className='text-gray-500 hover:text-gray-700'>
 						{isFilterExpanded ? (
-							<X className='h-5 w-5' />
+							<X className='w-5 h-5' />
 						) : (
 							<span className='text-sm'>
 								{activeFiltersCount > 0 ? `${activeFiltersCount} active` : 'Show'}
@@ -488,7 +488,7 @@ const Homestay = () => {
 						{/* Search */}
 						<div className='mb-6'>
 							<div className='relative'>
-								<Search className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400' />
+								<Search className='absolute w-4 h-4 text-gray-400 transform -translate-y-1/2 left-3 top-1/2' />
 								<Input
 									className='pl-10'
 									placeholder='Search by name or location'
@@ -500,7 +500,7 @@ const Homestay = () => {
 
 						{/* Price Range */}
 						<div className='mb-6'>
-							<div className='flex justify-between items-center mb-2'>
+							<div className='flex items-center justify-between mb-2'>
 								<h3 className='text-lg font-medium'>Price Range</h3>
 								<span className='text-sm text-gray-500'>
 									${filters.priceRange[0]} - ${filters.priceRange[1]}
@@ -522,11 +522,11 @@ const Homestay = () => {
 
 						{/* Amenities */}
 						<div className='mb-6'>
-							<h3 className='text-lg font-medium mb-3'>Amenities</h3>
+							<h3 className='mb-3 text-lg font-medium'>Amenities</h3>
 							{amenitiesLoading ? (
-								<div className='text-center p-4'>Loading amenities...</div>
+								<div className='p-4 text-center'>Loading amenities...</div>
 							) : amenities && amenities.length > 0 ? (
-								<div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2'>
+								<div className='grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-6'>
 									{amenities.map((amenity) => (
 										<button
 											key={amenity.id}
@@ -565,7 +565,7 @@ const Homestay = () => {
 
 						{/* Standard/Rating */}
 						<div className='mb-4'>
-							<h3 className='text-lg font-medium mb-3'>Rating</h3>
+							<h3 className='mb-3 text-lg font-medium'>Rating</h3>
 							<div className='flex flex-wrap gap-2'>
 								{[1, 2, 3, 4, 5].map((rating) => (
 									<button
@@ -607,17 +607,17 @@ const Homestay = () => {
 
 			{/* Results section */}
 			{isLoading ? (
-				<div className='flex justify-center items-center h-64'>
+				<div className='flex items-center justify-center h-64'>
 					<p>Loading homestays...</p>
 				</div>
 			) : error ? (
-				<div className='flex justify-center items-center h-64'>
+				<div className='flex items-center justify-center h-64'>
 					<p className='text-red-500'>Error: {error.message}</p>
 				</div>
 			) : homestay?.length === 0 ? (
-				<div className='flex flex-col justify-center items-center h-64 bg-white rounded-lg shadow-md p-6'>
-					<p className='text-xl text-gray-500 mb-4'>No homestays found</p>
-					<p className='text-gray-400 mb-6'>Try adjusting your filters to find what you're looking for</p>
+				<div className='flex flex-col items-center justify-center h-64 p-6 bg-white rounded-lg shadow-md'>
+					<p className='mb-4 text-xl text-gray-500'>No homestays found</p>
+					<p className='mb-6 text-gray-400'>Try adjusting your filters to find what you're looking for</p>
 					<Button onClick={clearFilters} disabled={activeFiltersCount === 0}>
 						Clear All Filters
 					</Button>
@@ -699,7 +699,7 @@ const Homestay = () => {
 													<Button className='w-full'>View Detail</Button>
 												</Link>
 											</div>
-											<div className='flex items-center gap-2'>
+											<div className='flex items-center gap-2 flex-wrap'>
 												<Link href={`/admin/homestay/edit/${homeStay.id}`} className='w-1/5'>
 													<Button
 														className='w-full bg-green-500 hover:bg-green-700'
@@ -772,7 +772,7 @@ const Homestay = () => {
 						</DialogDescription>
 					</DialogHeader>
 					<div className='grid gap-4 py-4'>
-						<div className='grid grid-cols-4 items-center gap-4'>
+						<div className='grid items-center grid-cols-4 gap-4'>
 							<Label htmlFor='facility' className='text-right'>
 								Facility
 							</Label>
@@ -806,7 +806,7 @@ const Homestay = () => {
 								</Select>
 							</div>
 						</div>
-						<div className='grid grid-cols-4 items-center gap-4'>
+						<div className='grid items-center grid-cols-4 gap-4'>
 							<Label htmlFor='quantity' className='text-right'>
 								Quantity
 							</Label>
@@ -840,15 +840,15 @@ const Homestay = () => {
 					</DialogHeader>
 					<div className='py-4'>
 						{detailsLoading ? (
-							<p className='text-center py-4'>Loading facilities...</p>
+							<p className='py-4 text-center'>Loading facilities...</p>
 						) : !selectedHomestay?.facility || selectedHomestay.facility.length === 0 ? (
-							<p className='text-center py-4 text-gray-500'>No facilities added to this homestay yet.</p>
+							<p className='py-4 text-center text-gray-500'>No facilities added to this homestay yet.</p>
 						) : (
-							<div className='space-y-2 max-h-60 overflow-y-auto'>
+							<div className='space-y-2 overflow-y-auto max-h-60'>
 								{selectedHomestay.facility.map((facility) => (
 									<div
 										key={facility.facilityID}
-										className='flex items-center justify-between p-3 bg-gray-50 rounded-lg'
+										className='flex items-center justify-between p-3 rounded-lg bg-gray-50'
 									>
 										<div>
 											<p className='font-medium'>{facility.name}</p>
@@ -867,7 +867,7 @@ const Homestay = () => {
 												)
 											}
 										>
-											<Trash2 className='h-4 w-4' />
+											<Trash2 className='w-4 h-4' />
 										</Button>
 									</div>
 								))}
@@ -942,19 +942,19 @@ const Homestay = () => {
 					</DialogHeader>
 					<div className='py-4'>
 						{detailsLoading ? (
-							<p className='text-center py-4'>Loading amenities...</p>
+							<p className='py-4 text-center'>Loading amenities...</p>
 						) : !selectedHomestay?.amenities || selectedHomestay.amenities.length === 0 ? (
-							<p className='text-center py-4 text-gray-500'>No amenities added to this homestay yet.</p>
+							<p className='py-4 text-center text-gray-500'>No amenities added to this homestay yet.</p>
 						) : (
-							<div className='space-y-2 max-h-60 overflow-y-auto'>
+							<div className='space-y-2 overflow-y-auto max-h-60'>
 								{selectedHomestay.amenities.map((amenity) => (
 									<div
 										key={amenity.id}
-										className='flex items-center justify-between p-3 bg-gray-50 rounded-lg'
+										className='flex items-center justify-between p-3 rounded-lg bg-gray-50'
 									>
 										<div className='flex items-center'>
 											{getAmenityIcon(amenity.name)}
-											<p className='font-medium ml-2'>{amenity.name}</p>
+											<p className='ml-2 font-medium'>{amenity.name}</p>
 										</div>
 										<Button
 											variant='ghost'
@@ -964,7 +964,7 @@ const Homestay = () => {
 												handleDeleteAmenity(manageAmenitiesDialog.homestayId, amenity.id)
 											}
 										>
-											<Trash2 className='h-4 w-4' />
+											<Trash2 className='w-4 h-4' />
 										</Button>
 									</div>
 								))}

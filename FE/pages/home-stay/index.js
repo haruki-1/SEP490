@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { getAllHomeStay } from '../api/homestay/getAllHomeStay';
 import { getAllAmenity } from '../api/amenity/getAmenity';
 import MainLayout from '../layout';
+import Image from 'next/image';
 
 const HomeStay = () => {
 	const [searchParams, setSearchParams] = useState({
@@ -349,11 +350,16 @@ const HomeStay = () => {
 												className='bg-white rounded-lg shadow-md h-fit transition-transform duration-300 hover:shadow-xl hover:-translate-y-1'
 											>
 												<div className='relative'>
-													<div
-														className='h-48 bg-gray-200 bg-cover bg-center'
-														style={{ backgroundImage: `url(${homestay.mainImage})` }}
-													/>
-													<div className='absolute top-0 right-0 bg-yellow-400 text-gray-900 font-medium px-3 py-1 rounded-bl-lg flex items-center'>
+													<div className='h-48 bg-gray-200 rounded-tr-md rounded-tl-md'>
+														<Image
+															src={homestay.mainImage}
+															width={200}
+															height={200}
+															alt='homestay img'
+															className='object-cover w-full h-full rounded-tr-md rounded-tl-md'
+														/>
+													</div>
+													<div className='absolute top-0 right-0 bg-yellow-400 text-gray-900 font-medium px-3 py-1 rounded-bl-lg rounded-tr-md flex items-center'>
 														{[...Array(homestay.standar)].map((_, i) => (
 															<svg
 																key={i}

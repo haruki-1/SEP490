@@ -1,0 +1,20 @@
+{
+	"welcome": "Chào mừng đến với Homestay",
+	"search": "Tìm kiếm",
+	"login": "Đăng nhập",
+	"register": "Đăng ký",
+	"main": {
+		"title": "Trải nghiệm những nơi ở độc đáo",
+		"subtitle": "Tìm và đặt chỗ ở khắp thế giới",
+		"cta": "Khám phá gần đây"
+	},
+	"explore": {
+		"title": "Khám phá điểm đến gần đó",
+		"viewAll": "Xem tất cả"
+	},
+	"banner": {
+		"title": "Thiên nhiên Tuyệt vời",
+		"description": "Danh sách được tuyển chọn bởi Homestay",
+		"buttonText": "Lấy cảm hứng"
+	}
+}

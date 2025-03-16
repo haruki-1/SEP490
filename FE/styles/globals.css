@@ -183,3 +183,49 @@ body {
 		@apply bg-background text-foreground;
 	}
 }
+/* Add these styles to your global CSS file */
+
+/* Animation for the search form */
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+		transform: translateY(10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.animate-fadeIn {
+	animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* Custom styles for the DayPicker calendar */
+.rdp {
+	--rdp-cell-size: 40px;
+	--rdp-accent-color: #3b82f6;
+	--rdp-background-color: #e0e7ff;
+	--rdp-accent-color-dark: #2563eb;
+	--rdp-background-color-dark: #3b82f6;
+	--rdp-outline: 2px solid var(--rdp-accent-color);
+	--rdp-outline-selected: 2px solid var(--rdp-accent-color);
+	margin: 0;
+}
+
+.rdp-day_selected,
+.rdp-day_selected:focus-visible,
+.rdp-day_selected:hover {
+	background-color: var(--rdp-accent-color);
+	color: white;
+}
+
+.rdp-day_today {
+	font-weight: bold;
+	color: var(--rdp-accent-color);
+	border: 1px solid var(--rdp-accent-color);
+}
+
+.rdp-button:hover:not([disabled]):not(.rdp-day_selected) {
+	background-color: var(--rdp-background-color);
+}

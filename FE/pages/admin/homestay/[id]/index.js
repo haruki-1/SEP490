@@ -83,12 +83,12 @@ const DetailHomeStay = () => {
 		<AdminLayout>
 			<div>
 				{isLoading ? (
-					<p className='text-center py-8 h-screen'>Loading...</p>
+					<p className='h-screen py-8 text-center'>Loading...</p>
 				) : error ? (
-					<p className='text-center text-red-500 py-8'>Error fetching details</p>
+					<p className='py-8 text-center text-red-500'>Error fetching details</p>
 				) : (
-					<div className='p-4 sm:p-6 lg:p-8 bg-white rounded-2xl shadow-lg space-y-6'>
-						<h2 className='text-2xl sm:text-3xl font-bold text-gray-800 mb-6 text-center'>{data?.name}</h2>
+					<div className='p-4 space-y-6 bg-white shadow-lg sm:p-6 lg:p-8 rounded-2xl'>
+						<h2 className='mb-6 text-2xl font-bold text-center text-gray-800 sm:text-3xl'>{data?.name}</h2>
 
 						<PhotoProvider>
 							{data?.mainImage && (
@@ -96,19 +96,19 @@ const DetailHomeStay = () => {
 									<img
 										src={data.mainImage}
 										alt='Main Homestay'
-										className='w-full object-cover h-64 sm:h-80 lg:h-96 rounded-md cursor-pointer hover:opacity-90 transition'
+										className='object-cover w-full h-64 transition rounded-md cursor-pointer sm:h-80 lg:h-96 hover:opacity-90'
 									/>
 								</PhotoView>
 							)}
 
-							<div className='grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-8 gap-4'>
+							<div className='grid grid-cols-4 gap-4 sm:grid-cols-6 lg:grid-cols-8'>
 								{data?.homeStayImage?.map((img, index) => (
 									<PhotoView key={index} src={img.image}>
 										<div className='border rounded-md'>
 											<img
 												src={img.image}
 												alt={`Image ${index + 1}`}
-												className='rounded-lg w-full h-full object-cover cursor-pointer hover:opacity-90 transition'
+												className='object-cover w-full h-full transition rounded-lg cursor-pointer hover:opacity-90'
 											/>
 										</div>
 									</PhotoView>
@@ -117,9 +117,9 @@ const DetailHomeStay = () => {
 						</PhotoProvider>
 
 						<div className='flex flex-col gap-3'>
-							<p className='text-gray-600 text-base sm:text-lg leading-relaxed'>{data?.description}</p>
+							<p className='text-base leading-relaxed text-gray-600 sm:text-lg'>{data?.description}</p>
 
-							<div className='grid grid-cols-1 sm:grid-cols-2 gap-4 text-gray-700'>
+							<div className='grid grid-cols-1 gap-4 text-gray-700 sm:grid-cols-2'>
 								<p>
 									<strong>Address:</strong> {data?.address}
 								</p>
@@ -128,7 +128,7 @@ const DetailHomeStay = () => {
 								</p>
 							</div>
 
-							<div className='grid grid-cols-1 sm:grid-cols-2 gap-4 text-gray-700'>
+							<div className='grid grid-cols-1 gap-4 text-gray-700 sm:grid-cols-2'>
 								<p>
 									<strong>Check-In:</strong> {data?.checkInTime}
 								</p>
@@ -150,7 +150,7 @@ const DetailHomeStay = () => {
 
 							{/* Standard/Rating */}
 							<div className='mt-4'>
-								<h3 className='text-lg font-semibold mb-2'>Standard</h3>
+								<h3 className='mb-2 text-lg font-semibold'>Standard</h3>
 								<div className='flex items-center'>
 									{[...Array(5)].map((_, index) => (
 										<Star
@@ -169,12 +169,12 @@ const DetailHomeStay = () => {
 							{/* Amenities Section */}
 							{data?.amenities && data.amenities.length > 0 && (
 								<div className='mt-6'>
-									<h3 className='text-lg font-semibold mb-4'>Amenities</h3>
-									<div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4'>
+									<h3 className='mb-4 text-lg font-semibold'>Amenities</h3>
+									<div className='grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4'>
 										{data.amenities.map((amenity) => (
 											<div
 												key={amenity.id}
-												className='flex items-center p-3 bg-gray-50 rounded-lg shadow-sm'
+												className='flex items-center p-3 rounded-lg shadow-sm bg-gray-50'
 											>
 												{getAmenityIcon(amenity.name)}
 												<span className='ml-2 text-gray-700'>{amenity.name}</span>
@@ -187,16 +187,16 @@ const DetailHomeStay = () => {
 							{/* Facilities Section */}
 							{data?.facility && data.facility.length > 0 && (
 								<div className='mt-6'>
-									<h3 className='text-lg font-semibold mb-4'>Facilities</h3>
-									<div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+									<h3 className='mb-4 text-lg font-semibold'>Facilities</h3>
+									<div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
 										{data.facility.map((facility) => (
 											<div
 												key={facility.facilityID}
-												className='p-4 bg-gray-50 rounded-lg shadow-sm'
+												className='p-4 rounded-lg shadow-sm bg-gray-50'
 											>
-												<h4 className='font-medium text-gray-800 mb-1'>{facility.name}</h4>
+												<h4 className='mb-1 font-medium text-gray-800'>{facility.name}</h4>
 												{facility.description && (
-													<p className='text-gray-600 text-sm'>{facility.description}</p>
+													<p className='text-sm text-gray-600'>{facility.description}</p>
 												)}
 											</div>
 										))}
@@ -207,9 +207,16 @@ const DetailHomeStay = () => {
 							{/* Calendar Section */}
 							{data?.calendar && data.calendar.length > 0 && (
 								<div className='mt-6'>
-									<h3 className='text-lg font-semibold mb-4'>Available Dates</h3>
-									<div className='grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-3 max-h-64 overflow-y-auto p-2'>
+									<h3 className='mb-4 text-lg font-semibold'>Available Dates</h3>
+									<div className='grid grid-cols-2 gap-3 p-2 overflow-y-auto sm:grid-cols-4 md:grid-cols-6 max-h-64'>
 										{data.calendar
+											.filter((calendarItem) => {
+												const entryDate = new Date(calendarItem.date);
+												entryDate.setHours(0, 0, 0, 0);
+												const today = new Date();
+												today.setHours(0, 0, 0, 0);
+												return entryDate >= today;
+											})
 											.sort((a, b) => new Date(a.date) - new Date(b.date))
 											.map((calendarItem) => {
 												const date = new Date(calendarItem.date);
@@ -240,7 +247,7 @@ const DetailHomeStay = () => {
 																year: 'numeric',
 															})}
 														</p>
-														<div className='flex justify-between items-center'>
+														<div className='flex items-center justify-between'>
 															<p
 																className={`${
 																	isDeleted
@@ -251,7 +258,7 @@ const DetailHomeStay = () => {
 																${calendarItem.price}
 															</p>
 															{isDeleted && (
-																<span className='text-xs text-red-500 font-medium'>
+																<span className='text-xs font-medium text-red-500'>
 																	Deleted
 																</span>
 															)}

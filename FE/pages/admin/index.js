@@ -128,23 +128,14 @@ const Admin = () => {
 		datasets: [
 			{
 				label: 'Revenue',
-				data: revenueData
-					? [
-							revenueData.january || 0,
-							revenueData.february || 0,
-							revenueData.march || 0,
-							revenueData.april || 0,
-							revenueData.may || 0,
-							revenueData.june || 0,
-							revenueData.july || 0,
-							revenueData.august || 0,
-							revenueData.september || 0,
-							revenueData.october || 0,
-							revenueData.november || 0,
-							revenueData.december || 0,
-					  ]
-					: Array(12).fill(0),
+				data: revenueData ? revenueData.map((item) => item.revenue) : Array(12).fill(0),
 				backgroundColor: 'rgba(53, 162, 235, 0.5)',
+			},
+			{
+				label: 'Bookings',
+				data: revenueData ? revenueData.map((item) => item.booking) : Array(12).fill(0),
+				backgroundColor: 'rgba(255, 99, 132, 0.5)',
+				// Use a secondary y-axis for bookings if needed
 			},
 		],
 	};
@@ -173,12 +164,20 @@ const Admin = () => {
 		},
 	};
 
+	// Calculate summary statistics for revenue data if available
+	const totalRevenue = revenueData ? revenueData.reduce((sum, item) => sum + item.revenue, 0) : 0;
+	const totalBookings = revenueData ? revenueData.reduce((sum, item) => sum + item.booking, 0) : 0;
+	const highestMonth = revenueData
+		? revenueData.reduce((highest, item) => (item.revenue > (highest?.revenue || 0) ? item : highest), null)?.month
+		: 'N/A';
+	const averageMonthly = revenueData ? totalRevenue / 12 : 0;
+
 	const years = Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i);
 
 	return (
-		<AdminLayout>
+		<ManagerLayout>
 			<div className='p-4'>
-				<h1 className='text-2xl font-bold mb-6'>Welcome, {dataProfile?.fullName}</h1>
+				<h1 className='mb-6 text-2xl font-bold'>Welcome, {dataProfile?.fullName}</h1>
 
 				<div className='grid grid-cols-1 gap-6 mb-6'>
 					<Card>
@@ -187,9 +186,9 @@ const Admin = () => {
 						</CardHeader>
 						<CardContent>
 							<div className='space-y-5'>
-								<div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+								<div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
 									<div>
-										<h3 className='text-sm font-medium mb-2'>Price Range</h3>
+										<h3 className='mb-2 text-sm font-medium'>Price Range</h3>
 										<div className='flex items-center space-x-2'>
 											<Input
 												type='number'
@@ -222,7 +221,7 @@ const Admin = () => {
 									</div>
 
 									<div>
-										<h3 className='text-sm font-medium mb-2'>Standard</h3>
+										<h3 className='mb-2 text-sm font-medium'>Standard</h3>
 										<div className='flex flex-wrap gap-2'>
 											{standardOptions.map((standard) => (
 												<div key={standard} className='flex items-center space-x-2'>
@@ -250,13 +249,13 @@ const Admin = () => {
 								</div>
 
 								<div>
-									<h3 className='text-sm font-medium mb-2'>Amenities</h3>
+									<h3 className='mb-2 text-sm font-medium'>Amenities</h3>
 									{loadingAmenity ? (
 										<div className='py-2 text-sm'>Loading amenities...</div>
 									) : errorAmenity ? (
-										<div className='text-red-500 py-2 text-sm'>Error loading amenities</div>
+										<div className='py-2 text-sm text-red-500'>Error loading amenities</div>
 									) : (
-										<div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2'>
+										<div className='grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6'>
 											{availableAmenities.map((amenity) => (
 												<div key={amenity} className='flex items-center space-x-2'>
 													<Checkbox
@@ -278,7 +277,7 @@ const Admin = () => {
 									filters.minPrice > 0 ||
 									filters.maxPrice < 5000000) && (
 									<div>
-										<h3 className='text-sm font-medium mb-2'>Active Filters</h3>
+										<h3 className='mb-2 text-sm font-medium'>Active Filters</h3>
 										<div className='flex flex-wrap gap-2'>
 											{filters.minPrice > 0 && (
 												<Badge variant='outline'>Min Price: ${filters.minPrice}</Badge>
@@ -308,7 +307,7 @@ const Admin = () => {
 							<CardTitle>Homestay Revenue Statistics</CardTitle>
 							<div className='flex flex-wrap gap-4'>
 								<div className='min-w-[200px]'>
-									<label className='block text-sm font-medium mb-1'>Select Homestay</label>
+									<label className='block mb-1 text-sm font-medium'>Select Homestay</label>
 									<Select
 										value={homestayId}
 										onValueChange={setHomestayId}
@@ -337,7 +336,7 @@ const Admin = () => {
 									</Select>
 								</div>
 								<div className='min-w-[120px]'>
-									<label className='block text-sm font-medium mb-1'>Select Year</label>
+									<label className='block mb-1 text-sm font-medium'>Select Year</label>
 									<Select
 										value={year.toString()}
 										onValueChange={(value) => setYear(parseInt(value))}
@@ -359,19 +358,19 @@ const Admin = () => {
 						</CardHeader>
 						<CardContent>
 							{!mounted ? (
-								<div className='flex justify-center items-center h-80'>
+								<div className='flex items-center justify-center h-80'>
 									<div className='w-12 h-12 border-t-4 border-blue-500 rounded-full animate-spin'></div>
 								</div>
 							) : isLoading ? (
-								<div className='flex justify-center items-center h-80'>
+								<div className='flex items-center justify-center h-80'>
 									<div className='w-12 h-12 border-t-4 border-blue-500 rounded-full animate-spin'></div>
 								</div>
 							) : homestays.length === 0 ? (
-								<div className='flex justify-center items-center h-80 text-gray-500'>
+								<div className='flex items-center justify-center text-gray-500 h-80'>
 									No homestays available to display revenue statistics
 								</div>
 							) : revenueError ? (
-								<div className='flex justify-center items-center h-80 text-red-500'>
+								<div className='flex items-center justify-center text-red-500 h-80'>
 									Error loading revenue data: {revenueError.message}
 								</div>
 							) : (
@@ -382,16 +381,15 @@ const Admin = () => {
 						</CardContent>
 					</Card>
 				</div>
+
 				{mounted && revenueData && (
-					<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
+					<div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4'>
 						<Card>
 							<CardHeader className='pb-2'>
 								<div className='text-sm font-medium text-gray-500'>Total Revenue</div>
 							</CardHeader>
 							<CardContent>
-								<div className='text-2xl font-bold'>
-									${revenueData.totalRevenue?.toLocaleString() || 0}
-								</div>
+								<div className='text-2xl font-bold'>${totalRevenue.toLocaleString() || 0}</div>
 							</CardContent>
 						</Card>
 						<Card>
@@ -399,7 +397,7 @@ const Admin = () => {
 								<div className='text-sm font-medium text-gray-500'>Highest Month</div>
 							</CardHeader>
 							<CardContent>
-								<div className='text-2xl font-bold'>{revenueData.highestMonth || 'N/A'}</div>
+								<div className='text-2xl font-bold'>{highestMonth}</div>
 							</CardContent>
 						</Card>
 						<Card>
@@ -409,7 +407,7 @@ const Admin = () => {
 							<CardContent>
 								<div className='text-2xl font-bold'>
 									$
-									{(revenueData.totalRevenue / 12)?.toLocaleString(undefined, {
+									{averageMonthly.toLocaleString(undefined, {
 										maximumFractionDigits: 2,
 									}) || 0}
 								</div>
@@ -420,13 +418,13 @@ const Admin = () => {
 								<div className='text-sm font-medium text-gray-500'>Total Bookings</div>
 							</CardHeader>
 							<CardContent>
-								<div className='text-2xl font-bold'>{revenueData.totalBookings || 0}</div>
+								<div className='text-2xl font-bold'>{totalBookings || 0}</div>
 							</CardContent>
 						</Card>
 					</div>
 				)}
 			</div>
-		</AdminLayout>
+		</ManagerLayout>
 	);
 };
 
