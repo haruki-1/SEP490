@@ -9,11 +9,6 @@ self.__BUILD_MANIFEST = {
   "lowPriorityFiles": [],
   "rootMainFiles": [],
   "pages": {
-    "/": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/index.js"
-    ],
     "/_app": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
@@ -24,15 +19,20 @@ self.__BUILD_MANIFEST = {
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
-    "/home-stay/[id]": [
+    "/manager/amenity": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/home-stay/[id].js"
+      "static/chunks/pages/manager/amenity.js"
     ],
-    "/searchList": [
+    "/manager/profile": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/searchList.js"
+      "static/chunks/pages/manager/profile.js"
+    ],
+    "/manager/voucher": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/manager/voucher.js"
     ]
   },
   "ampFirstPages": []

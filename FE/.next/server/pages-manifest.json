@@ -2,8 +2,9 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/": "pages/index.js",
-  "/home-stay/[id]": "pages/home-stay/[id].js",
-  "/api/auth/[...nextauth]": "pages/api/auth/[...nextauth].js",
-  "/searchList": "pages/searchList.js"
+  "/manager/cost": "pages/manager/cost.js",
+  "/manager/amenity": "pages/manager/amenity.js",
+  "/manager/voucher": "pages/manager/voucher.js",
+  "/manager/profile": "pages/manager/profile.js",
+  "/api/auth/[...nextauth]": "pages/api/auth/[...nextauth].js"
 }
