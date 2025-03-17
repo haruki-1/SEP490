@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Menu, User, Search, Globe, ChevronDown, Bell, LogOut, Settings, Calendar, CalendarIcon  } from 'lucide-react';
+import { Menu, User, Search, ChevronDown, Bell, LogOut, Settings, Calendar, CalendarIcon } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
+import LanguageSwitcher from './LanguageSwitcher';
 import { Sheet, SheetContent, SheetTrigger } from './components/ui/sheet';
 import {
 	DropdownMenu,
@@ -25,14 +26,12 @@ import { format } from 'date-fns';
 import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
 import { useAuth } from '@/context/AuthProvider';
-import LanguageSwitcher from './LanguageSwitcher';
-// import LanguageCurrencySelector from './LanguageCurrency';
+import AmenityList from './AmenityList';
 
 // Define the navigation items with their paths
 const NAV_ITEMS = [
 	{ href: '/home-stay', label: 'Homestay' },
 	{ href: '/posts', label: 'Posts' },
-	{ href: '/online-experiences', label: 'Online Experiences' },
 ];
 
 const Header = () => {
@@ -76,6 +75,7 @@ const Header = () => {
 
 	const handleSearch = async (e) => {
 		e.preventDefault();
+
 		if (!checkInDate || !checkOutDate) {
 			toast.error('Please select both check-in and check-out dates');
 			return;
@@ -124,9 +124,6 @@ const Header = () => {
 			.substring(0, 2);
 	};
 
-
-
-
 	// DayPicker styles
 	const dayPickerClassNames = {
 		months: 'flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0',
@@ -163,15 +160,16 @@ const Header = () => {
 					{/* Logo */}
 					<div className='flex items-center gap-3'>
 						<Link
-						href='/'
+							href='/'
 							className='flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-md'
 						>
 							<div className='relative h-10 w-10 overflow-hidden rounded-full border-2 border-blue-100 shadow-sm'>
 								<Image src='/images/logo.jpg' alt='logo' fill className='object-cover' priority />
 							</div>
 						</Link>
-					{/* Desktop Navigation */}
-					<nav className='hidden md:flex items-center ml-6 space-x-1'>
+
+						{/* Desktop Navigation */}
+						<nav className='hidden md:flex items-center ml-6 space-x-1'>
 							{NAV_ITEMS.map((item) => (
 								<Link
 									key={item.href}
@@ -184,10 +182,10 @@ const Header = () => {
 							: 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
 					}
                   `}
-				  >
-					{item.label}
-					</Link>
-				))}
+								>
+									{item.label}
+								</Link>
+							))}
 						</nav>
 					</div>
 
@@ -252,7 +250,7 @@ const Header = () => {
 								)}
 								Search
 							</Button>
-							</form>
+						</form>
 					</div>
 
 					{/* Right side elements */}
@@ -324,7 +322,6 @@ const Header = () => {
 										onClick={logout}
 										className='cursor-pointer text-red-600 focus:text-red-600'
 									>
-										{item.label}
 										<LogOut className='mr-2 h-4 w-4' />
 										<span>Log out</span>
 									</DropdownMenuItem>
@@ -344,99 +341,97 @@ const Header = () => {
 								</Link>
 							</div>
 						)}
+						{/* Mobile menu */}
+						<Sheet>
+							<SheetTrigger asChild>
+								<Button variant='ghost' size='icon' className='md:hidden ml-1'>
+									<Menu className='h-5 w-5' />
+									<span className='sr-only'>Open menu</span>
+								</Button>
+							</SheetTrigger>
+							<SheetContent side='left' className='flex flex-col h-full'>
+								<div className='flex items-center gap-2 mb-6 mt-2'>
+									<div className='relative h-10 w-10 overflow-hidden rounded-full'>
+										<Image src='/images/logo.jpg' alt='logo' fill className='object-cover' />
+									</div>
+									<span className='font-semibold text-lg'>HomeStay</span>
+								</div>
 
-							{/* Mobile menu */}
-							<Sheet>
-								<SheetTrigger asChild>
-									<Button variant='ghost' size='icon' className='md:hidden ml-1'>
-										<Menu className='h-5 w-5' />
-										<span className='sr-only'>Open menu</span>
-									</Button>
-								</SheetTrigger>
-								<SheetContent side='left' className='flex flex-col h-full'>
-									<div className='flex items-center gap-2 mb-6 mt-2'>
-										<div className='relative h-10 w-10 overflow-hidden rounded-full'>
-											<Image src='/images/logo.jpg' alt='logo' fill className='object-cover' />
-										</div>
-										<span className='font-semibold text-lg'>HomeStay</span>
+								{/* Mobile search form */}
+								<form onSubmit={handleSearch} className='space-y-4 mb-6'>
+									<div className='space-y-2'>
+										<label className='text-sm font-medium'>Location</label>
+										<Input
+											type='text'
+											placeholder='Where are you going?'
+											value={location}
+											onChange={(e) => setLocation(e.target.value)}
+											className='w-full'
+										/>
 									</div>
 
-									{/* Mobile search form */}
-									<form onSubmit={handleSearch} className='space-y-4 mb-6'>
-										<div className='space-y-2'>
-											<label className='text-sm font-medium'>Location</label>
-											<Input
-												type='text'
-												placeholder='Where are you going?'
-												value={location}
-												onChange={(e) => setLocation(e.target.value)}
-												className='w-full'
-											/>
-										</div>
+									<div className='space-y-2'>
+										<label className='text-sm font-medium'>Check in - Check out</label>
+										<Popover>
+											<PopoverTrigger asChild>
+												<Button
+													variant='outline'
+													className='w-full justify-start text-left font-normal'
+												>
+													<CalendarIcon className='mr-2 h-4 w-4' />
+													{checkInDate && checkOutDate ? (
+														<span>
+															{format(checkInDate, 'MMM d')} -{' '}
+															{format(checkOutDate, 'MMM d')}
+														</span>
+													) : (
+														<span>Select dates</span>
+													)}
+												</Button>
+											</PopoverTrigger>
+											<PopoverContent className='w-auto p-0' align='start'>
+												<div className='p-3'>
+													<DayPicker
+														mode='range'
+														selected={selectedRange}
+														onSelect={handleRangeSelect}
+														defaultMonth={new Date()}
+														fromDate={new Date()}
+														classNames={dayPickerClassNames}
+													/>
+												</div>
+											</PopoverContent>
+										</Popover>
+									</div>
 
-										<div className='space-y-2'>
-											<label className='text-sm font-medium'>Check in - Check out</label>
-											<Popover>
-												<PopoverTrigger asChild>
-													<Button
-														variant='outline'
-														className='w-full justify-start text-left font-normal'
-													>
-														<CalendarIcon className='mr-2 h-4 w-4' />
-														{checkInDate && checkOutDate ? (
-															<span>
-																{format(checkInDate, 'MMM d')} -{' '}
-																{format(checkOutDate, 'MMM d')}
-															</span>
-														) : (
-															<span>Select dates</span>
-														)}
-													</Button>
-												</PopoverTrigger>
-												<PopoverContent className='w-auto p-0' align='start'>
-													<div className='p-3'>
-														<DayPicker
-															mode='range'
-															selected={selectedRange}
-															onSelect={handleRangeSelect}
-															defaultMonth={new Date()}
-															fromDate={new Date()}
-															classNames={dayPickerClassNames}
-														/>
-													</div>
-												</PopoverContent>
-											</Popover>
-										</div>
-
-										<Button type='submit' className='w-full' disabled={isSearching}>
-											{isSearching ? (
-												<div className='h-4 w-4 border-t-2 border-white rounded-full animate-spin mr-2' />
-											) : (
-												<Search className='w-4 h-4 mr-2' />
-											)}
-											Search Homestays
-										</Button>
-									</form>
-
-									{/* Mobile navigation */}
-									<nav className='space-y-1 mb-6'>
-										{NAV_ITEMS.map((item) => (
-											<Link
-												key={item.href}
-												href={item.href}
-												className={`
-							flex items-center px-3 py-3 rounded-md text-base font-medium transition-colors
-							${
-								isActivePath(item.href)
-									? 'text-blue-600 bg-blue-50'
-									: 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
-							}
-						`}
-							>
-							{item.label}
-								</Link>
-							))}
-							</nav>
+									<Button type='submit' className='w-full' disabled={isSearching}>
+										{isSearching ? (
+											<div className='h-4 w-4 border-t-2 border-white rounded-full animate-spin mr-2' />
+										) : (
+											<Search className='w-4 h-4 mr-2' />
+										)}
+										Search Homestays
+									</Button>
+								</form>
+								{/* Mobile navigation */}
+								<nav className='space-y-1 mb-6'>
+									{NAV_ITEMS.map((item) => (
+										<Link
+											key={item.href}
+											href={item.href}
+											className={`
+                        flex items-center px-3 py-3 rounded-md text-base font-medium transition-colors
+                        ${
+							isActivePath(item.href)
+								? 'text-blue-600 bg-blue-50'
+								: 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
+						}
+                      `}
+										>
+											{item.label}
+										</Link>
+									))}
+								</nav>
 
 								<div className='mt-auto space-y-4'>
 									<div className='flex items-center justify-between'>
@@ -452,9 +447,12 @@ const Header = () => {
 						</Sheet>
 					</div>
 				</div>
+						<div className="w-full mt-4">
+        					<AmenityList />
+    					</div>
 			</div>
 		</header>
 	);
 };
 
-	export default Header;
+export default Header;

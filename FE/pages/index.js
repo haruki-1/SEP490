@@ -18,7 +18,6 @@ export default function Home() {
 				<Main/>
 				{/* <Explore/> */}
 				<ListHomeStay/>
-				<AmenityList />
 				<Banner/>
 				{/* <MediumCards {...live} />
 				<LargeCards {...discover} />
