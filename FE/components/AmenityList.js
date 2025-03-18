@@ -56,14 +56,14 @@ const AmenityList = () => {
 	return (
 		<section className='sec-com bg-white'>
 			<div className='container-lg'>
-				<div className='mb-8 text-center'>
+				{/* <div className='mb-8 text-center'>
 					<h2 className='text-3xl font-bold mb-2'>
 						Popular <span className='text-blue-600'>Amenities</span>
 					</h2>
 					<p className='text-gray-600 max-w-2xl mx-auto'>
 						Enjoy these top features available in our homestays for your comfort and convenience
 					</p>
-				</div>
+				</div> */}
 
 				{isLoading ? (
 					<div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6'>
@@ -91,16 +91,15 @@ const AmenityList = () => {
 								className='group flex flex-col items-center text-center cursor-pointer'
 							>
 								<div
-									className={`w-24 h-24 md:w-32 md:h-32 rounded-full bg-gradient-to-br ${getGradientColors(
+									className={`w-3 h-3 md:w-7 md:h-7 rounded-full bg-gradient-to-br ${getGradientColors(
 										amenity.name
 									)} flex items-center justify-center mb-4 shadow-sm group-hover:shadow transition-all duration-300`}
 								>
 									{getAmenityIcon(amenity.name)}
 								</div>
-								<h3 className='text-lg font-semibold mb-1 group-hover:text-blue-600 transition-colors'>
+								<h3 className='text-sm font-semibold mb-1 group-hover:text-blue-600 transition-colors'>
 									{amenity.name}
 								</h3>
-								<p className='text-sm text-gray-500'>Available in most homestays</p>
 							</div>
 						))}
 					</div>

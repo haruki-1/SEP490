@@ -61,10 +61,6 @@ const Main = () => {
 						</Link>
 					)}
 				</div>
-
-				<div className='w-full max-w-4xl mx-auto mt-4'>
-					<SearchForm />
-				</div>
 			</div>
 		</section>
 	);
