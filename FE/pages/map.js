@@ -1,29 +1,49 @@
 import React, { useState } from 'react';
-import ReactMapGL, { Marker, Popup } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { MapPin } from 'react-feather';
+import Map,{ Marker, Popup } from 'react-map-gl/mapbox';
 
-// Sample Data for Markers
-const locations = [
-  { id: 1, title: 'Hanoi', latitude: 21.0285, longitude: 105.8542 },
-  { id: 2, title: 'Da Nang', latitude: 16.0471, longitude: 108.2062 },
-  { id: 3, title: 'Ho Chi Minh City', latitude: 10.7769, longitude: 106.7009 }
+// Sample Data
+const properties = [
+  {
+    id: 1,
+    title: 'Modern Studio in Old Quarter',
+    location: 'Hanoi, Vietnam',
+    latitude: 21.0321,
+    longitude: 105.8510,
+    price: 45,
+  },
+  {
+    id: 2,
+    title: 'Luxury Apartment with River View',
+    location: 'Hanoi, Vietnam',
+    latitude: 21.0395,
+    longitude: 105.8650,
+    price: 75,
+  },
+  {
+    id: 3,
+    title: 'Traditional Vietnamese House',
+    location: 'Hanoi, Vietnam',
+    latitude: 21.0240,
+    longitude: 105.8420,
+    price: 38,
+  }
 ];
 
 export default function MapPage() {
   const [viewport, setViewport] = useState({
     latitude: 21.0285,
     longitude: 105.8542,
-    zoom: 5,
-    bearing: 0,
-    pitch: 0
+    zoom: 12,
   });
 
-  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [selectedProperty, setSelectedProperty] = useState(null);
 
   return (
     <div style={{ width: '100vw', height: '100vh' }}>
-      <ReactMapGL
+      {/* Map Component */}
+      <Map
         {...viewport}
         width="100%"
         height="100%"
@@ -31,31 +51,34 @@ export default function MapPage() {
         mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_TOKEN}
         onMove={(evt) => setViewport(evt.viewState)}
       >
-        {/* Render Markers */}
-        {locations.map((loc) => (
-          <Marker key={loc.id} longitude={loc.longitude} latitude={loc.latitude}>
+        {/* Markers */}
+        {properties.map((property) => (
+          <Marker key={property.id} longitude={property.longitude} latitude={property.latitude}>
             <button
               className="marker-btn"
-              onClick={() => setSelectedLocation(loc)}
+              onClick={() => setSelectedProperty(property)}
+              aria-label="Property Marker"
             >
               <MapPin color="#FF385C" />
             </button>
           </Marker>
         ))}
 
-        {/* Popup for Selected Location */}
-        {selectedLocation && (
+        {/* Popup on Marker Click */}
+        {selectedProperty && (
           <Popup
-            longitude={selectedLocation.longitude}
-            latitude={selectedLocation.latitude}
-            onClose={() => setSelectedLocation(null)}
+            longitude={selectedProperty.longitude}
+            latitude={selectedProperty.latitude}
+            onClose={() => setSelectedProperty(null)}
           >
             <div>
-              <h3>{selectedLocation.title}</h3>
+              <h3>{selectedProperty.title}</h3>
+              <p>Price: ${selectedProperty.price} / night</p>
+              <p>{selectedProperty.location}</p>
             </div>
           </Popup>
         )}
-      </ReactMapGL>
+      </Map>
     </div>
   );
 }
