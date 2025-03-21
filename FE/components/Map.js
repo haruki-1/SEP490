@@ -29,8 +29,9 @@ const Map = React.memo(
     return (
       <MapContainer ref={containerRef}>
         <ReactMapGL
-          mapStyle="mapbox://styles/shubh73/ckzrv8bl9000c14rpeqn1quig"
-          mapboxApiAccessToken="pk.eyJ1Ijoic2h1Ymg3MyIsImEiOiJja3pydjFvZGIwazVnMm9wYXEzaDgzOXdkIn0.nzDLQcpkAPhY6vGM8FvWYg"
+          mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_TOKEN}
+          mapStyle="mapbox://styles/mapbox/streets-v11"
+          mapboxApiAccessToken="sk.eyJ1IjoiZHVvbmdjb25nc29uIiwiYSI6ImNtOGhrMjBjNjAyc3YyanF5YW9hdWZ0NmUifQ.xfC6aAm2AJoVsoVAd_meCQ"
           {...viewport}
           width="100%"
           height="100%"
