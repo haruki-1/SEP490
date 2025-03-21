@@ -1,4 +1,5 @@
-﻿using BusinessObject.DTO;
+﻿using API.Services;
+using BusinessObject.DTO;
 using BusinessObject.Entities;
 using BusinessObject.Exceptions;
 using BusinessObject.Interfaces;
@@ -12,18 +13,36 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController(IUserRepository _userRepository, ITokenService _tokenService
+    public class AuthController(IUserRepository _userRepository, 
+        ITokenService _tokenService
         , IPasswordHasher _passwordHasher
         , IEmailSender _emailSender
         , IConfiguration _configuration) : ControllerBase
     {
+
+        [HttpGet("get-me")]
+        public async Task<IActionResult> Get([FromHeader(Name = "X-User-Id")] Guid userId)
+        {
+            return Ok(await _userRepository.GetUser(userId));
+        }
+
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDTO command)
         {
+            if (command == null || string.IsNullOrWhiteSpace(command.FullName) ||
+                string.IsNullOrWhiteSpace(command.Email) || string.IsNullOrWhiteSpace(command.Phone) ||
+                string.IsNullOrWhiteSpace(command.Address) || string.IsNullOrWhiteSpace(command.Password) ||
+                command.RoleId == 0)
+            {
+                return BadRequest(new { message = "Invalid request data" });
+            }
+
+
             var existingUser = await _userRepository.GetByEmailAsync(command.Email);
 
             if (existingUser != null) throw new InvalidCredentialsException("User already exists");
@@ -74,7 +93,8 @@ namespace API.Controllers
                 Email = user.Email,
                 FullName = user.FullName,
                 AccessToken = accessToken,
-                RefreshToken = refreshToken
+                RefreshToken = refreshToken,
+                Role = user.Role.Name
             };
             if (response == null) return Unauthorized();
             return Ok(response);
@@ -88,7 +108,7 @@ namespace API.Controllers
             if (confirm) await _userRepository.ConfirmEmail(userId);
 
             await _userRepository.SaveAsync();
-            return Ok(confirm);
+            return Redirect("http://localhost:3000");
         }
 
         [HttpPost("resend-confirm")]
@@ -106,7 +126,7 @@ namespace API.Controllers
             string content = url + "/api/auth/confirm-email?userId=" + existingUser.Id + "&code=" + code;
 
             await _emailSender.SendEmailAsync(existingUser.Email, "Confirm email", content);
-            return Ok(new { message = "Registration successful" }); 
+            return Ok(new { message = "Registration successful" });
         }
 
         [HttpPut("change-password")]
@@ -122,7 +142,7 @@ namespace API.Controllers
             await _userRepository.ChangePassword(user.Id, _passwordHasher.HashPassword(command.NewPassword));
 
             await _userRepository.SaveAsync();
-            return Ok(new {message = "Change password successful" });
+            return Ok(new { message = "Change password successful" });
         }
 
         [HttpPut("forgot-password")]
@@ -146,17 +166,32 @@ namespace API.Controllers
         [HttpPut("reset-password")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO command)
         {
-            var confirm = await _userRepository.IsVerifyCode(command.UserId, command.Code);
+            try
+            {
+                var confirm = await _userRepository.IsVerifyCode(command.UserId, command.Code);
+                if (!confirm)
+                    return BadRequest("Invalid code");
+                if (confirm) await _userRepository.ChangePassword(command.UserId, _passwordHasher.HashPassword(command.Password));
 
-            if (confirm) await _userRepository.ChangePassword(command.UserId, _passwordHasher.HashPassword(command.Password));
-
-            await _userRepository.SaveAsync();
-            return Ok(new { message = "Reset password successful" });
+                await _userRepository.SaveAsync();
+                return Ok(new { message = "Reset password successful" });
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal Server Error: " + ex.Message);
+            }
         }
 
         [HttpPut("access-token")]
         public async Task<IActionResult> AccessToken([FromBody] AccessTokenDTO command)
         {
+            if (command == null || string.IsNullOrEmpty(command.RefreshToken))
+                throw new ArgumentNullException(nameof(command.RefreshToken), "Refresh token is required");
+
             var user = await _userRepository.GetUserByRefreshToken(command.RefreshToken);
 
             if (user == null) throw new InvalidCredentialsException("Invalid refresh token");
@@ -176,6 +211,10 @@ namespace API.Controllers
         [Authorize(Policy = "AdminPolicy")]
         public async Task<IActionResult> Block([FromQuery] Guid id)
         {
+            if (id == Guid.Empty)
+            {
+                return BadRequest(new { message = "Invalid UserId" });
+            }
             await _userRepository.ChangeIsDeletedUser(id, true);
 
             await _userRepository.SaveAsync();
@@ -191,5 +230,8 @@ namespace API.Controllers
             await _userRepository.SaveAsync();
             return Ok(new { message = "UnBlock successful" });
         }
+
+        
     }
 }
+
