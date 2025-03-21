@@ -2,12 +2,13 @@ import Head from 'next/head';
 import React from 'react';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-// import { Toaster } from '@/components/components/ui/sonner';
+import { Toaster } from '@/components/components/ui/sonner';
 import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 
 const MainLayout = ({ children }) => {
 	return (
-		<div className='bg-gray-100'>
+		<div>
 			<Head>
 				<title>Runa: Incredible Places to Stay and Things to Do</title>
 				<meta
@@ -16,12 +17,13 @@ const MainLayout = ({ children }) => {
 				/>
 				<link rel='icon' href='images/logo.svg' />
 			</Head>
-			<main className='w-full overflow-x-hidden'>
+			<main className='w-full relative'>
 				<div>
 					<Header />
 					{children}
+					<Footer />
 				</div>
-				{/* <Toaster /> */}
+				<Toaster position='top-right' richColors />
 				<ToastContainer />
 			</main>
 		</div>

@@ -1,661 +1,458 @@
-import { useState, useEffect, useRef } from 'react';
-import styled from 'styled-components';
-import { Search, Globe, Menu, User } from 'react-feather';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { useMediaQuery } from '@react-hook/media-query';
+import Image from 'next/image';
+import Link from 'next/link';
+import { Menu, User, Search, ChevronDown, Bell, LogOut, Settings, Calendar, CalendarIcon } from 'lucide-react';
+import ThemeToggle from './ThemeToggle';
+import LanguageSwitcher from './LanguageSwitcher';
+import { Sheet, SheetContent, SheetTrigger } from './components/ui/sheet';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuGroup,
 	DropdownMenuItem,
 	DropdownMenuLabel,
-	DropdownMenuPortal,
 	DropdownMenuSeparator,
-	DropdownMenuShortcut,
-	DropdownMenuSub,
-	DropdownMenuSubContent,
-	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
 } from './components/ui/dropdown-menu';
 import { Button } from './components/ui/button';
-import Image from 'next/image';
-import Link from 'next/link';
+import { Input } from './components/ui/input';
+import { Avatar, AvatarFallback, AvatarImage } from './components/ui/avatar';
+import { Badge } from './components/ui/badge';
+import { searchHomeStay } from '@/pages/api/homestay/searchHomeStay';
+import { Popover, PopoverContent, PopoverTrigger } from './components/ui/popover';
+import { toast } from 'sonner';
+import { format } from 'date-fns';
+import { DayPicker } from 'react-day-picker';
+import 'react-day-picker/dist/style.css';
 import { useAuth } from '@/context/AuthProvider';
-import ThemeToggle from './ThemeToggle';
-import MobileNav from './MobileNav';
-import DatePicker from './DatePicker';
+import AmenityList from './AmenityList';
 
+// Define the navigation items with their paths
+const NAV_ITEMS = [
+	{ href: '/home-stay', label: 'Homestay' },
+	{ href: '/posts', label: 'Posts' },
+];
 
-const Header = ({ placeholder }) => {
+const Header = () => {
 	const router = useRouter();
 	const { dataProfile, logout } = useAuth();
-
-	const navRef = useRef(null);
-	const headerRef = useRef(null);
-	const [scrolled, setScrolled] = useState(false);
-	const [inputFocus, setInputFocus] = useState(false);
-	const primaryLocationRef = useRef(null);
-	const secondaryLocationRef = useRef(null);
-
-	const isSmallScreen = useMediaQuery('(max-width: 576px)');
-
-	// form data
 	const [location, setLocation] = useState('');
-	const [checkInDate, setCheckInDate] = useState(new Date());
-	const [checkOutDate, setCheckOutDate] = useState(new Date());
-	const [numberOfAdults, setNumberOfAdults] = useState(0);
-	const [numberOfChildren, setNumberOfChildren] = useState(0);
+	const [scrolled, setScrolled] = useState(false);
+	const [isMounted, setIsMounted] = useState(false);
+	const [isSearching, setIsSearching] = useState(false);
 
-	const openDatePicker = () => {
-		setInputFocus(true);
-		document.body.style.overflow = 'hidden';
-		setTimeout(() => {
-			if (!isSmallScreen && secondaryLocationRef.current) {
-				secondaryLocationRef.current.focus();
+	// Date selection states
+	const [checkInDate, setCheckInDate] = useState(null);
+	const [checkOutDate, setCheckOutDate] = useState(null);
+	const [datePickerOpen, setDatePickerOpen] = useState(false);
+	const [selectedRange, setSelectedRange] = useState({ from: null, to: null });
+
+	// Handle scroll effect for transparent to solid header
+	useEffect(() => {
+		setIsMounted(true);
+
+		const handleScroll = () => {
+			const isScrolled = window.scrollY > 10;
+			if (isScrolled !== scrolled) {
+				setScrolled(isScrolled);
 			}
-		}, 10);
+		};
+
+		window.addEventListener('scroll', handleScroll);
+
+		return () => {
+			window.removeEventListener('scroll', handleScroll);
+		};
+	}, [scrolled]);
+
+	// Handle range selection
+	const handleRangeSelect = (range) => {
+		setSelectedRange(range);
+		setCheckInDate(range?.from || null);
+		setCheckOutDate(range?.to || null);
 	};
 
-	const closeDatePicker = () => {
-		setInputFocus(false);
-		setLocation('');
-		setNumberOfAdults(0);
-		setNumberOfChildren(0);
-		setCheckInDate(new Date());
-		setCheckOutDate(new Date());
-		document.body.style.overflow = 'intial';
-	};
-
-	const handleSubmit = (e) => {
+	const handleSearch = async (e) => {
 		e.preventDefault();
-		if (!location) {
-			primaryLocationRef.current.focus();
+
+		if (!checkInDate || !checkOutDate) {
+			toast.error('Please select both check-in and check-out dates');
 			return;
 		}
 
-		router.push({
-			pathname: '/search',
-			query: {
-				location: location,
-				checkIn: checkInDate.toISOString(),
-				checkOut: checkOutDate.toISOString(),
-				guests: numberOfAdults + numberOfChildren,
-			},
-		});
-		setTimeout(() => closeDatePicker(), 100);
+		// Format dates for API call
+		const formattedCheckIn = format(checkInDate, 'yyyy-MM-dd');
+		const formattedCheckOut = format(checkOutDate, 'yyyy-MM-dd');
+
+		try {
+			setIsSearching(true);
+
+			// Call the search API
+			const results = await searchHomeStay(formattedCheckIn, formattedCheckOut);
+
+			// Navigate to search results page with query params
+			router.push({
+				pathname: '/search',
+				query: {
+					checkIn: formattedCheckIn,
+					checkOut: formattedCheckOut,
+					location: location.trim() || undefined,
+				},
+			});
+		} catch (error) {
+			console.error('Search failed:', error);
+			toast.error('Failed to search homestays. Please try again.');
+		} finally {
+			setIsSearching(false);
+		}
 	};
 
-	useEffect(() => {
-		const handleClick = (e) => {
-			if (!headerRef.current?.contains(e.target)) {
-				closeDatePicker();
-			}
-		};
+	const isActivePath = (path) => {
+		// Exact match or nested routes (e.g., /home-stay/details)
+		return router.pathname === path || router.pathname.startsWith(`${path}/`);
+	};
 
-		document.addEventListener('click', handleClick);
-		return () => document.removeEventListener('click', handleClick);
-	}, []);
+	// Get initials for avatar fallback
+	const getInitials = (name) => {
+		if (!name) return 'U';
+		return name
+			.split(' ')
+			.map((part) => part[0])
+			.join('')
+			.toUpperCase()
+			.substring(0, 2);
+	};
 
-	useEffect(() => {
-		const onScroll = () => {
-			if (window.scrollY > 10) {
-				setScrolled(true);
-			} else {
-				setScrolled(false);
-			}
-		};
-		window.addEventListener('scroll', onScroll);
-
-		return () => window.removeEventListener('scroll', onScroll);
-	}, []);
+	// DayPicker styles
+	const dayPickerClassNames = {
+		months: 'flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0',
+		month: 'space-y-4',
+		caption: 'flex justify-center pt-1 relative items-center',
+		caption_label: 'text-sm font-medium',
+		nav: 'space-x-1 flex items-center',
+		nav_button: 'h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100',
+		nav_button_previous: 'absolute left-1',
+		nav_button_next: 'absolute right-1',
+		table: 'w-full border-collapse space-y-1',
+		head_row: 'flex',
+		head_cell: 'text-muted-foreground rounded-md w-9 font-normal text-[0.8rem]',
+		row: 'flex w-full mt-2',
+		cell: 'text-center text-sm p-0 relative [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20',
+		day: 'h-9 w-9 p-0 font-normal aria-selected:opacity-100 hover:bg-blue-100 rounded-md',
+		day_selected: 'bg-blue-500 text-white hover:bg-blue-600 hover:text-white focus:bg-blue-600 focus:text-white',
+		day_today: 'bg-gray-100',
+		day_outside: 'text-gray-400 opacity-50',
+		day_disabled: 'text-gray-400 opacity-50',
+		day_range_middle: 'aria-selected:bg-blue-100 aria-selected:text-blue-800',
+		day_range_end: 'rounded-r-md',
+		day_range_start: 'rounded-l-md',
+	};
 
 	return (
-		<HeaderSection
-			ref={headerRef}
-			className={[
-				scrolled || inputFocus || router.pathname !== '/' ? 'scrolled' : null,
-				inputFocus ? 'inputFocus' : null,
-			]}
+		<header
+			className={`sticky top-0 z-50 w-full backdrop-blur-sm transition-all duration-200 ${
+				scrolled ? 'bg-white/95 shadow-md py-2' : 'bg-white/80 py-3 md:py-4'
+			}`}
 		>
-			<div className='headerInner'>
-				<div className='logo' onClick={() => router.push('/')}>
-					<Image src='/images/logo.jpg' width={90} height={50} alt='logo' className='rounded-full size-10' />
-				</div>
-				<nav ref={navRef}>
-					<a href='#' className='active'>
-						Places to stay
-					</a>
-					<a href='/home-stay'>Experiences</a>
-					<a href='#'>Online Experiences</a>
-				</nav>
-				<form className='search'>
-					<input
-						type='text'
-						ref={primaryLocationRef}
-						placeholder={placeholder ? placeholder : 'Where are you going?'}
-						onFocus={openDatePicker}
-						value={location}
-						onChange={(e) => setLocation(e.target.value)}
-						required
-					/>
-
-					{inputFocus && (
-						<div className='overlay'>
-							<div className='field'>
-								<label htmlFor='location'>Location</label>
-								<input
-									type='text'
-									id='location'
-									value={location}
-									ref={secondaryLocationRef}
-									onChange={(e) => setLocation(e.target.value)}
-									placeholder='Where are you going?'
-								/>
+			<div className='container-lg'>
+				<div className='relative flex items-center justify-between'>
+					{/* Logo */}
+					<div className='flex items-center gap-3'>
+						<Link
+							href='/'
+							className='flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-md'
+						>
+							<div className='relative h-10 w-10 overflow-hidden rounded-full border-2 border-blue-100 shadow-sm'>
+								<Image src='/images/logo.jpg' alt='logo' fill className='object-cover' priority />
 							</div>
-
-							<div className='field'>
-								<label>Check-in</label>
-								<input disabled placeholder='Add dates' value={checkInDate} />
-							</div>
-
-							<div className='field'>
-								<label>Check-out</label>
-								<input disabled placeholder='Add dates' value={checkOutDate} />
-							</div>
-
-							<div className='field'>
-								<label>Guests</label>
-								<span className='guestNumber'>
-									{numberOfChildren || numberOfAdults ? (
-										<p>{numberOfChildren + numberOfAdults} guests</p>
-									) : (
-										<p className='empty'>Add guests</p>
-									)}
-								</span>
-							</div>
-						</div>
-					)}
-					<button
-						type='submit'
-						disabled={
-							inputFocus &&
-							!(location && checkInDate && checkOutDate && (numberOfAdults || numberOfChildren))
-						}
-						onClick={handleSubmit}
-						aria-label='search places'
-					>
-						<Search />
-						<span>Search</span>
-					</button>
-				</form>
-
-				{inputFocus && (
-					<DatePicker
-						className='datepicker'
-						close={closeDatePicker}
-						checkInDate={{ value: checkInDate, setValue: setCheckInDate }}
-						checkOutDate={{ value: checkOutDate, setValue: setCheckOutDate }}
-						numberOfAdults={{
-							value: numberOfAdults,
-							setValue: setNumberOfAdults,
-						}}
-						numberOfChildren={{
-							value: numberOfChildren,
-							setValue: setNumberOfChildren,
-						}}
-					/>
-				)}
-
-				<div className='profile'>
-					<ThemeToggle icon />
-					
-					{dataProfile ? (
-						<DropdownMenu>
-							<DropdownMenuTrigger asChild>
-								<div className='user'>
-									<Menu className='menu' />
-									<User className='userIcon' />
-								</div>
-							</DropdownMenuTrigger>
-							<DropdownMenuContent className='w-56'>
-								<DropdownMenuLabel>My Account</DropdownMenuLabel>
-								<DropdownMenuSeparator />
-								<DropdownMenuGroup>
-									<DropdownMenuItem>
-										Profile
-										<DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-									</DropdownMenuItem>
-								</DropdownMenuGroup>
-								<DropdownMenuSeparator />
-								<DropdownMenuItem onClick={logout}>
-									Log out
-									<DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
-								</DropdownMenuItem>
-							</DropdownMenuContent>
-						</DropdownMenu>
-					) : (
-						<Link href='/auth/register'>
-							<button className='px-2 py-1 bg-transparent border border-white rounded-md'>
-								Login/Register
-							</button>
 						</Link>
-					)}
+
+						{/* Desktop Navigation */}
+						<nav className='hidden md:flex items-center ml-6 space-x-1'>
+							{NAV_ITEMS.map((item) => (
+								<Link
+									key={item.href}
+									href={item.href}
+									className={`
+                    px-3 py-2 rounded-md text-sm font-medium transition-colors
+                    ${
+						isActivePath(item.href)
+							? 'text-blue-600 bg-blue-50'
+							: 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
+					}
+                  `}
+								>
+									{item.label}
+								</Link>
+							))}
+						</nav>
+					</div>
+
+					{/* Search bar - Desktop */}
+					<div className='hidden md:flex items-center max-w-md w-full mx-6'>
+						<form onSubmit={handleSearch} className='relative flex w-full items-center gap-2'>
+							<Input
+								type='text'
+								placeholder='Where are you going?'
+								value={location}
+								onChange={(e) => setLocation(e.target.value)}
+								className='border-gray-200 rounded-l-full focus:ring-blue-500 focus:border-blue-500 rounded-r-none'
+							/>
+
+							<Popover open={datePickerOpen} onOpenChange={setDatePickerOpen}>
+								<PopoverTrigger asChild>
+									<Button
+										variant='outline'
+										className={`rounded-none border-l-0 border-r-0 px-3 ${
+											checkInDate && checkOutDate ? 'text-blue-600' : 'text-gray-500'
+										}`}
+									>
+										<CalendarIcon className='mr-2 h-4 w-4' />
+										{checkInDate && checkOutDate ? (
+											<span className='text-xs'>
+												{format(checkInDate, 'MMM d')} - {format(checkOutDate, 'MMM d')}
+											</span>
+										) : (
+											<span>Select dates</span>
+										)}
+									</Button>
+								</PopoverTrigger>
+								<PopoverContent className='w-auto p-0' align='center'>
+									<div className='p-3'>
+										<div className='space-y-1 mb-2'>
+											<h4 className='font-medium text-sm'>Check in - Check out</h4>
+											<p className='text-xs text-gray-500'>Select your stay dates</p>
+										</div>
+										<DayPicker
+											mode='range'
+											selected={selectedRange}
+											onSelect={handleRangeSelect}
+											numberOfMonths={2}
+											defaultMonth={new Date()}
+											fromDate={new Date()}
+											classNames={dayPickerClassNames}
+										/>
+										<div className='flex justify-end mt-4'>
+											<Button size='sm' onClick={() => setDatePickerOpen(false)}>
+												Apply
+											</Button>
+										</div>
+									</div>
+								</PopoverContent>
+							</Popover>
+
+							<Button type='submit' className='rounded-r-full rounded-l-none' disabled={isSearching}>
+								{isSearching ? (
+									<div className='h-4 w-4 border-t-2 border-white rounded-full animate-spin mr-1' />
+								) : (
+									<Search className='w-4 h-4 mr-1' />
+								)}
+								Search
+							</Button>
+						</form>
+					</div>
+
+					{/* Right side elements */}
+					<div className='flex items-center gap-1 md:gap-3'>
+						{/* Theme toggle and language on desktop */}
+						<div className='hidden md:flex items-center gap-2'>
+							<ThemeToggle />
+							<LanguageSwitcher />
+						</div>
+
+						{/* User menu or login button */}
+						{dataProfile ? (
+							<DropdownMenu>
+								<DropdownMenuTrigger asChild>
+									<Button
+										variant='ghost'
+										className='relative h-10 rounded-full focus:ring-0 focus:ring-offset-0'
+									>
+										<Avatar className='h-9 w-9 border border-gray-200'>
+											{dataProfile.avatar ? (
+												<AvatarImage
+													src={dataProfile.avatar}
+													alt={dataProfile.fullName || 'User'}
+												/>
+											) : null}
+											<AvatarFallback className='bg-blue-100 text-blue-600 font-medium'>
+												{getInitials(dataProfile.fullName)}
+											</AvatarFallback>
+										</Avatar>
+										<span className='sr-only'>User menu</span>
+										<Badge
+											variant='outline'
+											className='absolute -bottom-1 right-2 size-4 px-1 rounded-full bg-green-500 border-2 border-white'
+										>
+											<span className='sr-only'>Online</span>
+										</Badge>
+									</Button>
+								</DropdownMenuTrigger>
+								<DropdownMenuContent align='end' className='w-56'>
+									<DropdownMenuLabel>
+										<div className='flex flex-col space-y-1'>
+											<p className='text-sm font-medium leading-none'>
+												{dataProfile.fullName || 'User'}
+											</p>
+											<p className='text-xs leading-none text-gray-500'>
+												{dataProfile.email || ''}
+											</p>
+										</div>
+									</DropdownMenuLabel>
+									<DropdownMenuSeparator />
+									<DropdownMenuGroup>
+										<DropdownMenuItem
+											onClick={() => router.push('/profile')}
+											className='cursor-pointer'
+										>
+											<User className='mr-2 h-4 w-4' />
+											<span>Profile</span>
+										</DropdownMenuItem>
+										<DropdownMenuItem
+											onClick={() => router.push('/bookings')}
+											className='cursor-pointer'
+										>
+											<Settings className='mr-2 h-4 w-4' />
+											<span>My Bookings</span>
+										</DropdownMenuItem>
+									</DropdownMenuGroup>
+									<DropdownMenuSeparator />
+									<DropdownMenuItem
+										onClick={logout}
+										className='cursor-pointer text-red-600 focus:text-red-600'
+									>
+										<LogOut className='mr-2 h-4 w-4' />
+										<span>Log out</span>
+									</DropdownMenuItem>
+								</DropdownMenuContent>
+							</DropdownMenu>
+						) : (
+							<div className='flex gap-2'>
+								<Link href='/auth/login'>
+									<Button variant='ghost' size='sm' className='hidden sm:inline-flex'>
+										Log in
+									</Button>
+								</Link>
+								<Link href='/auth/register'>
+									<Button size='sm' className='bg-blue-600 hover:bg-blue-700'>
+										Sign up
+									</Button>
+								</Link>
+							</div>
+						)}
+						{/* Mobile menu */}
+						<Sheet>
+							<SheetTrigger asChild>
+								<Button variant='ghost' size='icon' className='md:hidden ml-1'>
+									<Menu className='h-5 w-5' />
+									<span className='sr-only'>Open menu</span>
+								</Button>
+							</SheetTrigger>
+							<SheetContent side='left' className='flex flex-col h-full'>
+								<div className='flex items-center gap-2 mb-6 mt-2'>
+									<div className='relative h-10 w-10 overflow-hidden rounded-full'>
+										<Image src='/images/logo.jpg' alt='logo' fill className='object-cover' />
+									</div>
+									<span className='font-semibold text-lg'>HomeStay</span>
+								</div>
+
+								{/* Mobile search form */}
+								<form onSubmit={handleSearch} className='space-y-4 mb-6'>
+									<div className='space-y-2'>
+										<label className='text-sm font-medium'>Location</label>
+										<Input
+											type='text'
+											placeholder='Where are you going?'
+											value={location}
+											onChange={(e) => setLocation(e.target.value)}
+											className='w-full'
+										/>
+									</div>
+
+									<div className='space-y-2'>
+										<label className='text-sm font-medium'>Check in - Check out</label>
+										<Popover>
+											<PopoverTrigger asChild>
+												<Button
+													variant='outline'
+													className='w-full justify-start text-left font-normal'
+												>
+													<CalendarIcon className='mr-2 h-4 w-4' />
+													{checkInDate && checkOutDate ? (
+														<span>
+															{format(checkInDate, 'MMM d')} -{' '}
+															{format(checkOutDate, 'MMM d')}
+														</span>
+													) : (
+														<span>Select dates</span>
+													)}
+												</Button>
+											</PopoverTrigger>
+											<PopoverContent className='w-auto p-0' align='start'>
+												<div className='p-3'>
+													<DayPicker
+														mode='range'
+														selected={selectedRange}
+														onSelect={handleRangeSelect}
+														defaultMonth={new Date()}
+														fromDate={new Date()}
+														classNames={dayPickerClassNames}
+													/>
+												</div>
+											</PopoverContent>
+										</Popover>
+									</div>
+
+									<Button type='submit' className='w-full' disabled={isSearching}>
+										{isSearching ? (
+											<div className='h-4 w-4 border-t-2 border-white rounded-full animate-spin mr-2' />
+										) : (
+											<Search className='w-4 h-4 mr-2' />
+										)}
+										Search Homestays
+									</Button>
+								</form>
+								{/* Mobile navigation */}
+								<nav className='space-y-1 mb-6'>
+									{NAV_ITEMS.map((item) => (
+										<Link
+											key={item.href}
+											href={item.href}
+											className={`
+                        flex items-center px-3 py-3 rounded-md text-base font-medium transition-colors
+                        ${
+							isActivePath(item.href)
+								? 'text-blue-600 bg-blue-50'
+								: 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
+						}
+                      `}
+										>
+											{item.label}
+										</Link>
+									))}
+								</nav>
+
+								<div className='mt-auto space-y-4'>
+									<div className='flex items-center justify-between'>
+										<p className='text-sm font-medium text-gray-600'>Theme</p>
+										<ThemeToggle />
+									</div>
+									<div className='flex items-center justify-between'>
+										<p className='text-sm font-medium text-gray-600'>Language</p>
+										<LanguageSwitcher />
+									</div>
+								</div>
+							</SheetContent>
+						</Sheet>
+					</div>
 				</div>
-				{/* Mobile Nav */}
-				<MobileNav />
+						<div className="w-full mt-4">
+        					<AmenityList />
+    					</div>
 			</div>
-		</HeaderSection>
+		</header>
 	);
 };
 
 export default Header;
-
-const HeaderSection = styled.header`
-	position: fixed;
-	top: 0;
-	color: #fafafc;
-	padding: 1.5rem var(--sidePadding);
-	width: 100%;
-	z-index: 10;
-	transition: background-color 0.2s, border-bottom 0.2s;
-
-	.overlay {
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		background: var(--light);
-		border-radius: 99px;
-		display: flex;
-		align-items: center;
-		left: 0;
-		top: 0;
-		transition: all 0.2s;
-
-		label,
-		input,
-		.guestNumber {
-			background: none;
-			font-size: 14px;
-			border: none;
-			line-height: 1.5;
-			display: block;
-			color: var(--dark);
-			outline: none;
-			white-space: nowrap;
-			overflow: hidden;
-			text-overflow: ellipsis;
-		}
-
-		input {
-			width: 100%;
-			font-weight: 700;
-
-			&::placeholder {
-				color: var(--dark);
-				font-weight: 400;
-				opacity: 0.5;
-			}
-		}
-
-		.guestNumber {
-			font-weight: 700;
-
-			.empty {
-				color: var(--dark);
-				font-weight: 400;
-				opacity: 0.5;
-			}
-		}
-
-		.field {
-			width: 100%;
-			padding: 0.5rem 1.5rem;
-			border-radius: 99px;
-			height: 100%;
-			display: flex;
-			flex-direction: column;
-			justify-content: center;
-			transition: background-color 0.2s;
-			position: relative;
-
-			& + .field::before {
-				position: absolute;
-				content: '';
-				width: 2px;
-				height: 2rem;
-				background: var(--gray);
-				border-radius: 2px;
-				left: 0;
-				transition: transform 0.2s;
-			}
-
-			&:hover,
-			&:focus-within {
-				background: var(--gray);
-			}
-
-			&:last-of-type {
-				padding-right: 10rem;
-			}
-		}
-	}
-
-	.overlay:hover .field::before,
-	.overlay:focus-within .field::before {
-		transform: scale(0);
-	}
-
-	.user,
-	.profile,
-	.logo,
-	.globe,
-	nav {
-		display: flex;
-		align-items: center;
-		cursor: pointer;
-	}
-
-	.headerInner {
-		max-width: var(--containerWidth);
-		margin: 0 auto;
-		display: grid;
-		grid-template-columns: 1fr 2fr 1fr;
-	}
-
-	& > div {
-		flex: 0 0 20%;
-	}
-
-	nav {
-		flex: 1;
-		justify-content: center;
-		transition: all 0.2s;
-
-		a + a {
-			margin-left: 1.5rem;
-		}
-
-		a {
-			position: relative;
-		}
-
-		a::before {
-			position: absolute;
-			content: '';
-			width: 1.5rem;
-			height: 2px;
-			border-radius: 2px;
-			background: var(--light);
-			bottom: -0.5rem;
-			left: calc(50% - 0.75rem);
-			transform: scaleX(0);
-			transform-origin: center;
-			transition: transform 0.2s;
-		}
-
-		a:hover::before,
-		a.active::before {
-			transform: scaleX(1);
-		}
-	}
-	.logo {
-		cursor: pointer;
-
-		svg {
-			height: 2rem;
-			color: #fafafc;
-			transition: color 0.2s;
-		}
-
-		span {
-			font-weight: 600;
-			font-size: 1.15rem;
-			margin-left: 0.5rem;
-		}
-	}
-	.profile {
-		justify-content: flex-end;
-		white-space: nowrap;
-		svg {
-			height: 1.15rem;
-		}
-
-		a,
-		.themeToggle {
-			margin-right: 1.5rem;
-		}
-
-		.userIcon {
-			background: #2e2e48;
-			border-radius: 99px;
-			height: 1.5rem;
-			width: 1.5rem;
-			color: #fafafc;
-		}
-
-		.user {
-			background: #fafafc;
-			border-radius: 99px;
-			padding: 0.25rem 0.25rem 0.25rem 0.5rem;
-		}
-
-		.menu {
-			color: #2e2e48;
-			margin-right: 0.5rem;
-		}
-	}
-
-	form {
-		position: absolute;
-		transform: translate(-50%, 150%);
-		left: 50%;
-		top: -1rem;
-		background: var(--light);
-		padding: 0.5rem;
-		border-radius: 99px;
-		display: flex;
-		align-items: center;
-		max-width: 720px;
-		margin: 1.5rem 0;
-		width: 60vw;
-		box-shadow: 0 1rem 3rem -1rem #1e1e38;
-		transition: all 0.2s;
-		transform-origin: center;
-
-		& * {
-			transition: all 0.2s;
-		}
-
-		& > input {
-			background: none;
-			border: none;
-			font-size: 1.15rem;
-			flex: 1;
-			padding: 0 1.5rem;
-			color: var(--dark);
-			outline: none;
-
-			&::placeholder {
-				color: var(--dark);
-				opacity: 0.6;
-			}
-		}
-
-		& > button {
-			background: var(--pink);
-			color: #fafafc;
-			border: none;
-			padding: 0.5rem calc(1.75rem / 2);
-			height: 3rem;
-			max-width: 300px;
-			display: flex;
-			align-items: center;
-			border-radius: 99px;
-			font-weight: 700;
-			font-size: 1rem;
-			overflow: hidden;
-			z-index: 2;
-
-			&:hover:not(:disabled) {
-				box-shadow: 0 0 0 2px var(--white), 0 0 0 4px var(--pink);
-			}
-
-			&:disabled {
-				opacity: 0.5;
-			}
-		}
-
-		& > button svg {
-			height: 1.25rem;
-			margin-right: 0.75rem;
-			flex: 0 0 1.25rem;
-		}
-	}
-
-	input::-webkit-outer-spin-button,
-	input::-webkit-inner-spin-button {
-		-webkit-appearance: none;
-		margin: 0;
-	}
-
-	input[type='number'] {
-		appearance: textfield;
-	}
-
-	@media (max-width: 576px) {
-		.profile,
-		.logo,
-		nav,
-		form > button span {
-			display: none;
-		}
-
-		.overlay {
-			display: none;
-		}
-
-		.headerInner {
-			grid-template-columns: 1fr;
-		}
-
-		form {
-			position: relative;
-			transform: none !important;
-			width: 100% !important;
-			left: unset;
-			top: 0;
-			margin: 0;
-
-			& > input {
-				padding: 0 1rem;
-				font-size: 1rem;
-			}
-
-			& > button {
-				width: 2.5rem;
-				height: 2.5rem;
-				padding: 0 0.6rem;
-			}
-
-			& > button svg {
-				height: 1rem;
-				width: 1rem;
-			}
-		}
-	}
-
-	@media (min-width: 576px) and (max-width: 1000px) {
-		nav {
-			display: none;
-		}
-
-		.headerInner {
-			grid-template-columns: 1fr 1fr;
-		}
-	}
-
-	&.scrolled:not(.inputFocus) {
-		background: var(--light);
-		color: var(--dark);
-		border-bottom: 2px solid var(--gray);
-
-		.overlay {
-			opacity: 0;
-			pointer-events: none;
-		}
-
-		nav {
-			opacity: 0;
-			pointer-events: none;
-		}
-
-		.logo svg {
-			color: var(--pink);
-		}
-
-		.user {
-			box-shadow: 0 0 0 2px var(--gray);
-		}
-
-		form {
-			box-shadow: 0 0 0 2px var(--gray);
-			transform: translate(-50%, 0.125rem) scale(0.83);
-			width: 480px;
-
-			& > button {
-				max-width: 3rem;
-			}
-
-			& > button span {
-				opacity: 0;
-			}
-		}
-
-		@media (max-width: 576px) {
-			padding-top: 1rem;
-			padding-bottom: 1rem;
-
-			form {
-				padding: 0;
-				box-shadow: none;
-				background: var(--gray);
-			}
-		}
-
-		@media (min-width: 576px) and (max-width: 1000px) {
-			.profile {
-				opacity: 0;
-				pointer-events: none;
-			}
-
-			form {
-				left: auto;
-				right: 0;
-				transform: translate(0, 0.125rem) scale(0.83);
-				width: 50%;
-			}
-		}
-
-		@media (min-width: 1000px) and (max-width: 1296px) {
-			.profile {
-				a:first-child {
-					opacity: 0;
-				}
-			}
-		}
-	}
-
-	&.inputFocus {
-		color: var(--dark);
-
-		.logo svg {
-			color: var(--pink);
-		}
-
-		form {
-			background: var(--light);
-			width: 100%;
-			box-shadow: 0 1rem 1.5rem -0.5rem #0001;
-		}
-	}
-`;

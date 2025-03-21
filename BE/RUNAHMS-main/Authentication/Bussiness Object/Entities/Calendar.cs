@@ -11,6 +11,8 @@ namespace BusinessObject.Entities
     [Table("Calendar")]
     public class Calendar : BaseEntity<Guid>
     {
+        public bool isBooked;
+
         public DateTime Date { get; set; }
         public Decimal Price {  get; set; }
         public Guid HomeStayID { get; set; }
@@ -23,5 +25,6 @@ namespace BusinessObject.Entities
         public Booking? Booking { get; set; }
 
         public bool isDeleted {  get; set; } = false;
+        public bool IsBooked { get; set; }
     }
 }

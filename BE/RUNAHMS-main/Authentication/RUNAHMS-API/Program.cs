@@ -16,6 +16,10 @@ using DataAccess.Repositories;
 using BusinessObject.Settings;
 using DataAccess.EmailHandler;
 using Microsoft.Extensions.FileProviders;
+using BusinessObject.Entities;
+using PayOSService.Services;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,7 +58,7 @@ builder.Services.AddSwaggerGen(opt =>
 });
 
 builder.Services.AddHttpContextAccessor();
-
+builder.Services.AddHttpClient();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
@@ -72,6 +76,10 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 builder.Services.AddScoped<IEmailSender, EmailSender>();
+
+builder.Services.AddScoped<IPayOSService, PayOSService.Services.PayOSService>();
+
+builder.Services.AddScoped<IBookingRepository,BookingRepository>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

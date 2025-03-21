@@ -1,0 +1,20 @@
+{
+	"welcome": "Welcome to Homestay",
+	"search": "Search",
+	"login": "Login",
+	"register": "Register",
+	"main": {
+		"title": "Experience Unique Stays",
+		"subtitle": "Find and book accommodations worldwide",
+		"cta": "Explore Nearby"
+	},
+	"explore": {
+		"title": "Discover Nearby Destinations",
+		"viewAll": "View All"
+	},
+	"banner": {
+		"title": "Wonderful Nature",
+		"description": "Curated listings by Homestay",
+		"buttonText": "Get Inspired"
+	}
+}

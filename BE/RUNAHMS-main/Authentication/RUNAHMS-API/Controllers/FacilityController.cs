@@ -52,6 +52,7 @@ namespace API.Controllers
             }
         }
 
+
         [HttpPut("edit-facility")]
         public async Task<IActionResult> EditFacility([FromBody] UpdateFacilityDTO request)
         {
@@ -75,6 +76,7 @@ namespace API.Controllers
             {
                 return StatusCode(500, ex.ToString());
             }
+
         }
 
         [HttpGet("get-all")]
@@ -115,6 +117,7 @@ namespace API.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, ex.ToString());
+
             }
         }
 

@@ -74,6 +74,8 @@ namespace API.Controllers
             return Ok(new { Message = "Voucher updated successfully" });
         }
 
+
+
         [HttpPost("receive")]
         public async Task<IActionResult> ReceiveVoucher([FromBody] ReceiveVoucherRequest request)
         {
@@ -86,7 +88,7 @@ namespace API.Controllers
                                                                     .FirstOrDefaultAsync();
                 if (checkAlready != null)
                 {
-                    return Conflict(new { Message = "You have already received this voucher" });
+                    return Conflict(new {Message = "You have already received this voucher" });
                 }
                 UserVoucher reciveVoucher = new UserVoucher
                 {
@@ -98,11 +100,10 @@ namespace API.Controllers
                 };
                 await _userVoucherRepository.AddAsync(reciveVoucher);
                 await _userVoucherRepository.SaveAsync();
-                return Ok(new { Message = "Recive Voucher Success" });
+                return Ok(new {Message = "Recive Voucher Success" });
             }
-            catch (Exception ex)
-            {
-
+            catch (Exception ex) { 
+            
                 return StatusCode(500, ex.Message);
             }
         }
@@ -135,6 +136,39 @@ namespace API.Controllers
             }
 
             return Ok(vouchers);
+        }
+
+
+        [HttpGet("user-vouchers")]
+        public async Task<IActionResult> GetUserVouchers([FromHeader(Name = "X-User-Id")] Guid userId)
+        {
+            var user = await _userRepository.Find(u => u.Id == userId).FirstOrDefaultAsync();
+            if (user == null)
+            {
+                return NotFound(new { Message = "User not found" });
+            }
+
+            var userVouchers = await _userVoucherRepository
+                .Find(uv => uv.UserID == userId && !uv.isUsed && uv.voucher.EndDate >= DateTime.UtcNow && !uv.voucher.isDeleted)
+                .Include(uv => uv.voucher)
+                .Select(uv => new
+                {
+                    VoucherID = uv.VoucherID,
+                    Code = uv.voucher.Code,
+                    Description = uv.voucher.Description,
+                    Discount = uv.voucher.Discount,
+                    StartDate = uv.voucher.StartDate,
+                    EndDate = uv.voucher.EndDate,
+                    Image = uv.voucher.Image
+                })
+                .ToListAsync();
+
+            if (!userVouchers.Any())
+            {
+                return NotFound(new { Message = "No valid vouchers found for this user" });
+            }
+
+            return Ok(userVouchers);
         }
 
     }

@@ -2,10 +2,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import React, { createContext, useContext, useState, useEffect } from 'react';
-
 import Provider from '../utils/Provider';
-import { jwtDecode } from 'jwt-decode';
 import { getUserInfo } from '@/pages/api/auth/getMe';
+import { toast } from 'react-toastify';
 
 const AuthContext = createContext(undefined);
 
@@ -33,32 +32,30 @@ export const AuthProvider = ({ children }) => {
 		}
 	};
 
-	
 	const {
 		data: dataProfile,
 		isLoading,
 		error,
 		refetch,
-
 	} = useQuery({
 		queryKey: ['dataProfile'],
-		queryFn: () => getUserInfo(userId),
+		queryFn: () => getUserInfo(),
 		refetchOnWindowFocus: true,
 	});
 
 	useEffect(() => {
 		if (isAuthenticated && !isLoading && dataProfile) {
-			if (dataProfile.role === 'Admin' || dataProfile.role === 'Manager') {
+			if (dataProfile.role === 'Admin' || dataProfile.role === 'Manager' || dataProfile.role === 'User') {
 				return;
 			}
-			toastr.error('Bạn không có quyền truy cập vào trang này!');
+			toast.error('Bạn không có quyền truy cập vào trang này!');
 			router.push('/');
 		}
 	}, [isAuthenticated, dataProfile, isLoading, router]);
 
 	return (
 		<Provider>
-			<AuthContext.Provider value={{ isAuthenticated, login, logout, dataProfile, refetch }}>
+			<AuthContext.Provider value={{ isAuthenticated, login, logout, dataProfile, refetch, isLoading }}>
 				{children}
 			</AuthContext.Provider>
 		</Provider>
