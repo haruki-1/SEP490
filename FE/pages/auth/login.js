@@ -130,11 +130,16 @@ export default function LoginForm() {
 							{errors.password && <p className='text-sm text-red-500'>{errors.password.message}</p>}
 						</div>
 						<div className='text-sm'>
+							<Button className='background-white' >Login as staff{' '}
+							</Button>
+						</div>
+						<div className='text-sm'>
 							Don't have an account?{' '}
 							<Link href='/auth/register' className='text-blue-500 hover:underline'>
 								Register
 							</Link>
 						</div>
+
 					</CardContent>
 					<CardFooter className='flex flex-col'>
 						<Button type='submit' className='w-full' disabled={loading}>

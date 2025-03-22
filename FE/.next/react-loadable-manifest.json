@@ -11,6 +11,12 @@
       "static/chunks/node_modules_tanstack_query-devtools_build_DevtoolsPanelComponent_LFXA4CB4_js.js"
     ]
   },
+  "node_modules\\@vis.gl\\react-mapbox\\dist\\components\\map.js -> mapbox-gl": {
+    "id": "node_modules\\@vis.gl\\react-mapbox\\dist\\components\\map.js -> mapbox-gl",
+    "files": [
+      "static/chunks/node_modules_mapbox-gl_dist_mapbox-gl_js.js"
+    ]
+  },
   "node_modules\\next\\dist\\client\\index.js -> ../pages/_app": {
     "id": "node_modules\\next\\dist\\client\\index.js -> ../pages/_app",
     "files": [
