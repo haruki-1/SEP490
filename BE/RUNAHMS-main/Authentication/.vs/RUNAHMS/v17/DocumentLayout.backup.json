@@ -1,0 +1,37 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\Administrator\\Documents\\GitHub\\SEP490\\BE\\RUNAHMS-main\\Authentication\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{52236E07-E991-4F4B-93B6-C31A131470E0}|RUNAHMS-API\\RUNAHMS-API.csproj|c:\\users\\administrator\\documents\\github\\sep490\\be\\runahms-main\\authentication\\runahms-api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{52236E07-E991-4F4B-93B6-C31A131470E0}|RUNAHMS-API\\RUNAHMS-API.csproj|solutionrelative:runahms-api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\Administrator\\Documents\\GitHub\\SEP490\\BE\\RUNAHMS-main\\Authentication\\RUNAHMS-API\\appsettings.json",
+              "RelativeDocumentMoniker": "RUNAHMS-API\\appsettings.json",
+              "ToolTip": "C:\\Users\\Administrator\\Documents\\GitHub\\SEP490\\BE\\RUNAHMS-main\\Authentication\\RUNAHMS-API\\appsettings.json*",
+              "RelativeToolTip": "RUNAHMS-API\\appsettings.json*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAACDAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-03-22T09:55:21.997Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

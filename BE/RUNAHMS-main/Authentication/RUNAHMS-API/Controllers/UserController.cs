@@ -27,6 +27,7 @@ namespace API.Controllers
             return Ok(await _userRepository.GetUser(id));
         }
 
+
         [HttpPut("{id}")]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateUserDTO request)
         {
