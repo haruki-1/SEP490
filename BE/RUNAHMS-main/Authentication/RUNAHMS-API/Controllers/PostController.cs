@@ -51,7 +51,7 @@ namespace API.Controllers
                     UserID = p.UserID,
                     Images = p.PostImages.Select(i => i.Image).ToList(),
                     Comments = p.CommentPosts
-                        .Where(c => !c.isDeleted)
+                        .Where(c => !c.isDeleted && c.ParrentID == null)
                         .OrderByDescending(c => c.CommontDate)
                         .Select(c => new CommentResponseDTO
                         {
@@ -60,9 +60,10 @@ namespace API.Controllers
                             CommentDate = c.CommontDate,
                             UserID = c.UserID,
                             FullName = c.User.FullName,
+                            Avatar = c.User.Avatar!,
                             PostID = c.PostID,
                             Replies = p.CommentPosts
-                                .Where(r => r.ParrentID == c.Id && !r.isDeleted)
+                                .Where(r => r.ParrentID == c.Id && !r.isDeleted && r.ParrentID != null)
                                 .OrderBy(r => r.CommontDate)
                                 .Select(r => new CommentResponseDTO
                                 {
@@ -71,6 +72,7 @@ namespace API.Controllers
                                     CommentDate = r.CommontDate,
                                     UserID = r.UserID,
                                     FullName = r.User.FullName,
+                                    Avatar = r.User.Avatar!,
                                     PostID = r.PostID
                                 })
                                 .ToList()
@@ -116,6 +118,8 @@ namespace API.Controllers
 
             return Ok(new { Message = "Post created successfully", PostID = newPost.Id });
         }
+
+
         [HttpPut("edit/{id}")]
         public async Task<IActionResult> EditPost(Guid id, [FromBody] EditPostDTO updatedPost)
         {
@@ -172,6 +176,7 @@ namespace API.Controllers
 
             return Ok(new { Message = "Post deleted successfully" });
         }
+
         [HttpPost("create-comment")]
         public async Task<IActionResult> CreateComment(
         [FromHeader(Name = "X-User-Id")] Guid userId,
@@ -238,6 +243,5 @@ namespace API.Controllers
         }
 
 
-       
     }
 }
