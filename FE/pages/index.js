@@ -10,6 +10,8 @@ import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import AmenityList from '@/components/AmenityList';
 import ToggleButton from '@/components/ToggleButton';
+import VoucherCard from '@/components/VoucherCard';
+
 
 export default function Home() {
 	const { t } = useTranslation('common');
@@ -20,6 +22,7 @@ export default function Home() {
 				{/* <Explore/> */}
 				<ListHomeStay/>
 				<Banner/>
+				<VoucherCard/>
 				<ToggleButton/>
 				{/* <MediumCards {...live} />
 				<LargeCards {...discover} />

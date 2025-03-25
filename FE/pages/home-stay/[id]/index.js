@@ -22,11 +22,11 @@ import {
 	CreditCard,
 	DollarSign,
 	Star,
+	MessageSquare,
 } from 'lucide-react';
 import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
-import { getHomeStayDetail } from 'pages/api/homestay/getHomeStayDetail';
-import MainLayout from 'pages/layout';
+import MainLayout from '@/pages/layout';
 import React, { useState } from 'react';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
 import 'react-photo-view/dist/react-photo-view.css';
@@ -38,10 +38,10 @@ import 'swiper/css/effect-fade';
 import { Navigation, Pagination, EffectFade, Autoplay } from 'swiper/modules';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
-import { createBooking } from 'pages/api/booking/createBooking';
-import { useAuth } from 'context/AuthProvider';
+import { createBooking } from '@/pages/api/booking/createBooking';
+import { useAuth } from '@/context/AuthProvider';
 import { toast } from 'sonner';
-import { getUserVouchers } from 'pages/api/voucher/getUserVouchers';
+import { getUserVouchers } from '@/pages/api/voucher/getUserVouchers';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -50,6 +50,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from '@/components/components/ui/dropdown-menu';
+import { getHomeStayDetail } from '@/pages/api/homestay/getHomeStayDetail';
 
 // Helper function to format dates consistently for comparison
 const formatDateForComparison = (dateInput) => {
@@ -155,7 +156,11 @@ const HomeStayDetail = () => {
 		mutationFn: (bookingData) => createBooking(dataProfile.id, bookingData),
 		onSuccess: (data) => {
 			toast.success('Booking successful!');
-			router.push(`/payment/?bookingID=${data.bookingID}`);
+			if (isOnline) {
+				router.push(`/payment/?bookingID=${data.bookingID}`);
+			} else {
+				router.push(`/payment/successfully`);
+			}
 		},
 		onError: (error) => {
 			toast.error(`Booking failed: ${error}`);
@@ -195,14 +200,14 @@ const HomeStayDetail = () => {
 	if (isLoading) {
 		return (
 			<MainLayout>
-				<div className='py-8 px-4 container-lg'>
+				<div className='px-4 py-8 container-lg'>
 					<div className='space-y-6'>
 						<Button
 							variant='ghost'
-							className='flex items-center text-gray-600 mb-6 hover:bg-gray-100 transition-all'
+							className='flex items-center mb-6 text-gray-600 transition-all hover:bg-gray-100'
 							onClick={() => router.back()}
 						>
-							<ArrowLeft className='mr-2 h-4 w-4' />
+								<ArrowLeft className='w-4 h-4 mr-2' />
 							Back to listings
 						</Button>
 
@@ -223,7 +228,7 @@ const HomeStayDetail = () => {
 
 						<div className='space-y-4'>
 							<Skeleton width={180} height={30} />
-							<div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
+							<div className='grid grid-cols-2 gap-4 md:grid-cols-4'>
 								{Array(8)
 									.fill(null)
 									.map((_, i) => (
@@ -259,13 +264,13 @@ const HomeStayDetail = () => {
 	return (
 		<MainLayout>
 			<div className='sec-com bg-gradient-to-b from-blue-50 to-white'>
-				<div className='container-lg px-4'>
+				<div className='px-4 container-lg'>
 					<Button
 						variant='ghost'
-						className='flex items-center text-gray-600 mb-6 hover:bg-white/80 transition-all'
+						className='flex items-center mb-6 text-gray-600 transition-all hover:bg-white/80'
 						onClick={() => router.back()}
 					>
-						<ArrowLeft className='mr-2 h-4 w-4' />
+						<ArrowLeft className='w-4 h-4 mr-2' />
 						Back to listings
 					</Button>
 
@@ -273,7 +278,7 @@ const HomeStayDetail = () => {
 						<div className='flex flex-col w-full space-y-8 lg:w-2/3'>
 							<PhotoProvider>
 								<div className='flex flex-col h-full gap-4'>
-									<div className='relative overflow-hidden rounded-2xl shadow-lg aspect-video'>
+									<div className='relative overflow-hidden shadow-lg rounded-2xl aspect-video'>
 										<Swiper
 											modules={[Navigation, Pagination, EffectFade, Autoplay]}
 											effect='fade'
@@ -281,7 +286,7 @@ const HomeStayDetail = () => {
 											pagination={{ clickable: true }}
 											autoplay={{ delay: 5000, disableOnInteraction: false }}
 											loop={homestay?.homeStayImage?.length > 1}
-											className='h-full w-full'
+											className='w-full h-full'
 										>
 											<SwiperSlide>
 												<PhotoView src={homestay?.mainImage}>
@@ -314,7 +319,7 @@ const HomeStayDetail = () => {
 										</Swiper>
 
 										{homestay.isBooked && (
-											<div className='absolute top-4 left-4 px-4 py-2 font-bold text-white bg-red-500 rounded-lg shadow-md z-10 flex items-center'>
+											<div className='absolute z-10 flex items-center px-4 py-2 font-bold text-white bg-red-500 rounded-lg shadow-md top-4 left-4'>
 												<span className='mr-1 animate-pulse'>●</span>
 												BOOKED
 											</div>
@@ -324,12 +329,12 @@ const HomeStayDetail = () => {
 									<div className='hidden grid-cols-5 gap-3 md:grid'>
 										{homestay?.homeStayImage?.slice(0, 5).map((img, index) => (
 											<PhotoView key={index} src={img.image}>
-												<div className='relative aspect-square overflow-hidden rounded-xl shadow-sm border-2 border-white hover:border-blue-500 transition-all cursor-pointer'>
+												<div className='relative overflow-hidden transition-all border-2 border-white shadow-sm cursor-pointer aspect-square rounded-xl hover:border-blue-500'>
 													<Image
 														src={img.image}
 														alt={`Room view ${index + 1}`}
 														fill
-														className='object-cover hover:scale-110 transition-transform duration-500'
+														className='object-cover transition-transform duration-500 hover:scale-110'
 													/>
 												</div>
 											</PhotoView>
@@ -338,10 +343,10 @@ const HomeStayDetail = () => {
 								</div>
 							</PhotoProvider>
 
-							<div className='flex flex-col justify-between p-6 bg-white rounded-xl shadow-sm border border-gray-100'>
-								<div className='flex flex-col md:flex-row justify-between gap-4 mb-6'>
+							<div className='flex flex-col justify-between p-6 bg-white border border-gray-100 shadow-sm rounded-xl'>
+								<div className='flex flex-col justify-between gap-4 mb-6 md:flex-row'>
 									<div className='flex flex-col gap-2'>
-										<h1 className='text-2xl font-bold md:text-3xl text-gray-800'>
+										<h1 className='text-2xl font-bold text-gray-800 md:text-3xl'>
 											{homestay.name}
 										</h1>
 										<div className='flex items-center text-gray-500'>
@@ -367,7 +372,7 @@ const HomeStayDetail = () => {
 										</div>
 									</div>
 
-									<div className='flex flex-col items-start md:items-end justify-center'>
+									<div className='flex flex-col items-start justify-center md:items-end'>
 										<div className='flex flex-col gap-1'>
 											<span className='text-sm font-medium text-gray-500'>Price per night</span>
 											<div className='flex items-baseline gap-2'>
@@ -376,7 +381,7 @@ const HomeStayDetail = () => {
 														${priceForToday.toLocaleString()}
 													</span>
 												) : (
-													<span className='text-lg font-medium text-red-500 py-1 px-3 bg-red-50 rounded-md'>
+													<span className='px-3 py-1 text-lg font-medium text-red-500 rounded-md bg-red-50'>
 														Decommissioned
 													</span>
 												)}
@@ -384,7 +389,7 @@ const HomeStayDetail = () => {
 										</div>
 
 										{homestay.isBooked && (
-											<Badge className='mt-2 bg-red-100 text-red-600 border-0'>
+											<Badge className='mt-2 text-red-600 bg-red-100 border-0'>
 												Currently booked
 											</Badge>
 										)}
@@ -394,91 +399,164 @@ const HomeStayDetail = () => {
 								<div className='flex flex-col gap-8'>
 									<div className='space-y-6'>
 										<div>
-											<h2 className='text-xl font-semibold mb-4 flex items-center text-gray-800'>
-												<span className='bg-blue-100 text-blue-600 p-1 rounded-md mr-2'>
+											<h2 className='flex items-center mb-4 text-xl font-semibold text-gray-800'>
+												<span className='p-1 mr-2 text-blue-600 bg-blue-100 rounded-md'>
 													<Bed className='w-5 h-5' />
 												</span>
 												Amenities
 											</h2>
 
 											{homestay.amenities?.length > 0 ? (
-												<div className='grid grid-cols-2 sm:grid-cols-3 gap-3'>
+												<div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
 													{homestay.amenities.map((ameniti) => (
 														<div
 															key={ameniti.id}
-															className='flex items-center p-3 bg-gray-50 rounded-lg hover:bg-blue-50 transition-colors'
+															className='flex items-center p-3 transition-colors rounded-lg bg-gray-50 hover:bg-blue-50'
 														>
 															{getAmenitiesIcon(ameniti.name)}
-															<span className='ml-3 text-gray-700 font-medium'>
+															<span className='ml-3 font-medium text-gray-700'>
 																{ameniti.name}
 															</span>
 														</div>
 													))}
 												</div>
 											) : (
-												<p className='text-gray-500 italic'>No amenities listed</p>
+												<p className='italic text-gray-500'>No amenities listed</p>
 											)}
 										</div>
 									</div>
 
 									<div className='space-y-6'>
 										<div>
-											<h2 className='text-xl font-semibold mb-4 flex items-center text-gray-800'>
-												<span className='bg-blue-100 text-blue-600 p-1 rounded-md mr-2'>
+											<h2 className='flex items-center mb-4 text-xl font-semibold text-gray-800'>
+												<span className='p-1 mr-2 text-blue-600 bg-blue-100 rounded-md'>
 													<Coffee className='w-5 h-5' />
 												</span>
 												Facilities
 											</h2>
 
 											{homestay.facility?.length > 0 ? (
-												<div className='grid grid-cols-2 sm:grid-cols-3 gap-3'>
+												<div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
 													{homestay.facility.map((facility) => (
 														<div
 															key={facility.facilityID}
-															className='flex items-center p-3 bg-gray-50 rounded-lg hover:bg-blue-50 transition-colors'
+															className='flex items-center p-3 transition-colors rounded-lg bg-gray-50 hover:bg-blue-50'
 														>
 															<Check className='w-5 h-5 text-blue-500' />
-															<span className='ml-3 text-gray-700 font-medium'>
+															<span className='ml-3 font-medium text-gray-700'>
 																{facility.name}
 															</span>
 														</div>
 													))}
 												</div>
 											) : (
-												<p className='text-gray-500 italic'>No facilities listed</p>
+												<p className='italic text-gray-500'>No facilities listed</p>
 											)}
 										</div>
 									</div>
 								</div>
 
 								<div className='mt-8'>
-									<h2 className='text-xl font-semibold mb-4 flex items-center text-gray-800'>
-										<span className='bg-blue-100 text-blue-600 p-1 rounded-md mr-2'>
+									<h2 className='flex items-center mb-4 text-xl font-semibold text-gray-800'>
+										<span className='p-1 mr-2 text-blue-600 bg-blue-100 rounded-md'>
 											<MapPin className='w-5 h-5' />
 										</span>
 										About this place
 									</h2>
 									<div className='p-4 bg-gray-50 rounded-xl'>
-										<p className='text-gray-600 leading-relaxed'>{homestay.description}</p>
+										<p className='leading-relaxed text-gray-600'>{homestay.description}</p>
 									</div>
+								</div>
+								<div className='mt-8'>
+									<h2 className='flex items-center mb-4 text-xl font-semibold text-gray-800'>
+										<span className='p-1 mr-2 text-blue-600 bg-blue-100 rounded-md'>
+											<Star className='w-5 h-5' />
+										</span>
+										Guest Reviews
+									</h2>
+
+									{homestay.feeback?.length > 0 ? (
+										<div className='space-y-4'>
+											{homestay.feeback.map((feedback, index) => (
+												<div
+													key={index}
+													className='p-4 transition-all border border-gray-100 bg-gray-50 rounded-xl hover:border-blue-200'
+												>
+													<div className='flex items-start gap-3'>
+														<div className='flex-shrink-0'>
+															<div className='relative w-12 h-12 overflow-hidden border-2 border-white rounded-full shadow-sm'>
+																{feedback.avatar ? (
+																	<Image
+																		src={feedback.avatar}
+																		alt={feedback.fullName}
+																		fill
+																		className='object-cover'
+																	/>
+																) : (
+																	<div className='flex items-center justify-center w-full h-full text-lg font-bold text-blue-600 bg-blue-100'>
+																		{feedback.fullName.charAt(0)}
+																	</div>
+																)}
+															</div>
+														</div>
+
+														<div className='flex-1'>
+															<div className='flex flex-wrap items-center justify-between gap-2'>
+																<div>
+																	<h3 className='font-semibold text-gray-800'>
+																		{feedback.fullName}
+																	</h3>
+																	<p className='text-sm text-gray-500'>
+																		{feedback.email}
+																	</p>
+																</div>
+
+																<div className='flex items-center'>
+																	{[...Array(5)].map((_, i) => (
+																		<Star
+																			key={i}
+																			className={`w-4 h-4 ${
+																				feedback.rating > i
+																					? 'text-yellow-400 fill-yellow-400'
+																					: 'text-gray-300'
+																			}`}
+																		/>
+																	))}
+																</div>
+															</div>
+
+															<div className='mt-2 text-gray-600'>
+																<p>{feedback.description}</p>
+															</div>
+														</div>
+													</div>
+												</div>
+											))}
+										</div>
+									) : (
+										<div className='p-6 text-center bg-gray-50 rounded-xl'>
+											<MessageSquare className='w-10 h-10 mx-auto text-gray-300' />
+											<p className='mt-2 text-gray-500'>No reviews yet for this property</p>
+										</div>
+									)}
 								</div>
 							</div>
 						</div>
 
-						<div className='sticky flex flex-col w-full gap-6 p-6 bg-white border rounded-xl shadow-lg md:w-1/2 lg:w-1/3 h-fit top-24'>
+						<div className='sticky flex flex-col w-full gap-6 p-6 bg-white border shadow-lg rounded-xl md:w-1/2 lg:w-1/3 h-fit top-24'>
 							<div className='pb-6 border-b'>
-								<h2 className='text-xl font-bold mb-1 text-gray-800'>Book your stay</h2>
-								<p className='text-gray-500 text-sm'>Select dates and payment method</p>
+								<h2 className='mb-1 text-xl font-bold text-gray-800'>Book your stay</h2>
+								<p className='text-sm text-gray-500'>Select dates and payment method</p>
 							</div>
 
 							{/* Calendar selection */}
 							<div className='flex flex-col gap-3'>
-								<h3 className='text-base font-semibold flex items-center text-gray-700'>
+								<h3 className='flex items-center text-base font-semibold text-gray-700'>
 									<Calendar className='w-4 h-4 mr-2 text-blue-500' />
 									Available Dates
 								</h3>
 
-								<div className='p-4 bg-gray-50 rounded-lg'>
+								<div className='p-4 rounded-lg bg-gray-50'>
 									{availableDates?.length > 0 ? (
 										<div className='flex flex-wrap gap-2'>
 											{homestay.calendar
@@ -513,7 +591,7 @@ const HomeStayDetail = () => {
 														>
 															<span className='text-sm'>{formattedDate}</span>
 															{date.isBooked && (
-																<span className='absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white ring-2 ring-white'>
+																<span className='absolute flex items-center justify-center w-5 h-5 text-xs text-white bg-red-500 rounded-full -top-2 -right-2 ring-2 ring-white'>
 																	!
 																</span>
 															)}
