@@ -270,6 +270,57 @@ const DetailHomeStay = () => {
 								</div>
 							)}
 						</div>
+						{data?.feeback && data.feeback.length > 0 && (
+							<div className='mt-8'>
+								<h3 className='mb-4 text-xl font-semibold'>Guest Feedback</h3>
+								<div className='space-y-4'>
+									{data.feeback
+										.filter((feedback) => !feedback.isDeleted)
+										.map((feedback) => (
+											<div
+												key={feedback.email}
+												className='p-4 border border-gray-200 rounded-lg shadow-sm'
+											>
+												<div className='flex items-center mb-3'>
+													{feedback.avatar ? (
+														<img
+															src={feedback.avatar}
+															alt={feedback.fullName}
+															className='object-cover w-10 h-10 mr-3 rounded-full'
+														/>
+													) : (
+														<div className='flex items-center justify-center w-10 h-10 mr-3 text-gray-600 bg-gray-300 rounded-full'>
+															{feedback.fullName?.charAt(0)}
+														</div>
+													)}
+													<div>
+														<h4 className='text-base font-medium text-gray-800'>
+															{feedback.fullName}
+														</h4>
+														<p className='text-sm text-gray-500'>{feedback.email}</p>
+													</div>
+													<div className='flex items-center ml-auto'>
+														{[...Array(5)].map((_, index) => (
+															<Star
+																key={index}
+																className={`w-4 h-4 ${
+																	feedback.rating > index
+																		? 'text-yellow-500 fill-yellow-500'
+																		: 'text-gray-300'
+																}`}
+															/>
+														))}
+														<span className='ml-1 text-sm text-gray-600'>
+															{feedback.rating}/5
+														</span>
+													</div>
+												</div>
+												<p className='text-gray-700'>{feedback.description}</p>
+											</div>
+										))}
+								</div>
+							</div>
+						)}
 					</div>
 				)}
 			</div>

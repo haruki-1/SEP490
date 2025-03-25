@@ -8,7 +8,6 @@ import { Calendar, ArrowLeft, Plus, Trash2, Edit2 } from 'lucide-react';
 import { Label } from '@/components/components/ui/label';
 import { Input } from '@/components/components/ui/input';
 import Swal from 'sweetalert2';
-import AdminLayout from 'pages/admin/layout';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/components/ui/card';
 import {
 	Dialog,
@@ -18,10 +17,11 @@ import {
 	DialogDescription,
 	DialogFooter,
 } from '@/components/components/ui/dialog';
-import { createCalendar } from 'pages/api/calendar/createCalendar';
-import { getHomeStayDetail } from 'pages/api/homestay/getHomeStayDetail';
-import { deleteCalendarEntry } from 'pages/api/calendar/deleteCalendar';
-import { updateCalendarEntry } from 'pages/api/calendar/updateCalendar';
+import { createCalendar } from '@/pages/api/calendar/createCalendar';
+import { getHomeStayDetail } from '@/pages/api/homestay/getHomeStayDetail';
+import { deleteCalendarEntry } from '@/pages/api/calendar/deleteCalendar';
+import { updateCalendarEntry } from '@/pages/api/calendar/updateCalendar';
+import AdminLayout from '@/pages/admin/layout';
 
 const HomeStayCalendar = () => {
 	const { id } = useParams() ?? {};
@@ -336,12 +336,15 @@ const HomeStayCalendar = () => {
 													formatDateForComparison(entryDate) ===
 													formatDateForComparison(new Date());
 												const isPast = isDateInPast(entry.date);
+												const isDeleted = entry.isDeleted;
 
 												return (
 													<div
 														key={entry.id}
 														className={`relative p-4 rounded-lg border ${
-															isToday
+															isDeleted
+																? 'bg-gray-300 border-gray-400 opacity-60 cursor-not-allowed'
+																: isToday
 																? 'bg-green-50 border-green-200'
 																: isPast
 																? 'bg-gray-50 border-gray-200 opacity-70'
@@ -370,6 +373,11 @@ const HomeStayCalendar = () => {
 																		Past
 																	</span>
 																)}
+																{isDeleted && (
+																	<span className='mt-1 inline-block px-2 py-0.5 text-xs font-medium rounded-full bg-red-100 text-red-800'>
+																		Deleted
+																	</span>
+																)}
 															</div>
 															<div className='flex gap-1'>
 																<Button
@@ -377,6 +385,7 @@ const HomeStayCalendar = () => {
 																	size='icon'
 																	className='text-blue-500 hover:text-blue-700 hover:bg-blue-50'
 																	onClick={() => openEditDialog(entry)}
+																	disabled={isDeleted}
 																>
 																	<Edit2 className='h-4 w-4' />
 																</Button>
@@ -385,6 +394,7 @@ const HomeStayCalendar = () => {
 																	size='icon'
 																	className='text-red-500 hover:text-red-700 hover:bg-red-50'
 																	onClick={() => handleDeleteCalendarEntry(entry.id)}
+																	disabled={isDeleted}
 																>
 																	<Trash2 className='h-4 w-4' />
 																</Button>

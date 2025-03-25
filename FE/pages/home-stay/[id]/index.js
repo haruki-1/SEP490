@@ -207,7 +207,7 @@ const HomeStayDetail = () => {
 							className='flex items-center mb-6 text-gray-600 transition-all hover:bg-gray-100'
 							onClick={() => router.back()}
 						>
-								<ArrowLeft className='w-4 h-4 mr-2' />
+							<ArrowLeft className='w-4 h-4 mr-2' />
 							Back to listings
 						</Button>
 
@@ -600,19 +600,19 @@ const HomeStayDetail = () => {
 												})}
 										</div>
 									) : (
-										<p className='text-gray-500 text-center py-2'>No available dates for booking</p>
+										<p className='py-2 text-center text-gray-500'>No available dates for booking</p>
 									)}
 								</div>
 
 								{selectedDates.length > 0 && (
-									<div className='flex items-center justify-between px-2 py-1 bg-blue-50 rounded-lg'>
+									<div className='flex items-center justify-between px-2 py-1 rounded-lg bg-blue-50'>
 										<span className='text-sm text-blue-700'>
 											<strong>{selectedDates.length}</strong>{' '}
 											{selectedDates.length === 1 ? 'date' : 'dates'} selected
 										</span>
 										<Button
 											variant='ghost'
-											className='h-8 text-xs text-blue-600 hover:text-blue-800 hover:bg-blue-100 p-0 px-2'
+											className='h-8 p-0 px-2 text-xs text-blue-600 hover:text-blue-800 hover:bg-blue-100'
 											onClick={() => setSelectedDates([])}
 										>
 											Clear
@@ -623,7 +623,7 @@ const HomeStayDetail = () => {
 
 							{/* Voucher input */}
 							<div className='flex flex-col gap-3'>
-								<h3 className='text-base font-semibold flex items-center text-gray-700'>
+								<h3 className='flex items-center text-base font-semibold text-gray-700'>
 									<Ticket className='w-4 h-4 mr-2 text-blue-500' />
 									Apply Voucher
 								</h3>
@@ -635,7 +635,7 @@ const HomeStayDetail = () => {
 											value={voucherCode}
 											onChange={(e) => setVoucherCode(e.target.value)}
 											placeholder='Enter voucher code...'
-											className='flex w-full h-10 px-3 py-2 text-sm border rounded-lg border-gray-200 bg-white focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50'
+											className='flex w-full h-10 px-3 py-2 text-sm bg-white border border-gray-200 rounded-lg focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50'
 											disabled={homestay.isBooked}
 										/>
 
@@ -669,9 +669,14 @@ const HomeStayDetail = () => {
 															<DropdownMenuItem
 																key={voucher.voucherID}
 																onClick={() => handleSelectVoucher(voucher.code)}
-																className='cursor-pointer hover:bg-blue-50'
+																className={`relative cursor-pointer hover:bg-blue-50 ${
+																	voucher.isUser
+																		? 'cursor-not-allowed opacity-75'
+																		: ''
+																}`}
+																disabled={voucher.isUser}
 															>
-																<div className='flex items-center justify-between w-full'>
+																<div className='relative flex items-center justify-between w-full'>
 																	<div className='flex flex-col'>
 																		<span className='font-medium'>
 																			{voucher.code}
@@ -680,13 +685,38 @@ const HomeStayDetail = () => {
 																			{voucher.discount}% off
 																		</span>
 																	</div>
-																	<Badge
-																		variant='outline'
-																		className='ml-2 bg-blue-50 border-blue-200 text-blue-600 hover:bg-blue-100'
-																	>
-																		Apply
-																	</Badge>
+
+																	{voucher.isUser ? (
+																		<div className='flex items-center px-3 py-1 text-xs font-medium text-gray-600 bg-gray-100 border border-gray-200 rounded-full'>
+																			<svg
+																				xmlns='http://www.w3.org/2000/svg'
+																				viewBox='0 0 20 20'
+																				fill='currentColor'
+																				className='w-3 h-3 mr-1 text-gray-500'
+																			>
+																				<path
+																					fillRule='evenodd'
+																					d='M10 18a8 8 0 100-16 8 8 0 000 16zm.75-13a.75.75 0 00-1.5 0v5.5a.75.75 0 001.5 0V5z'
+																					clipRule='evenodd'
+																				/>
+																			</svg>
+																			Used
+																		</div>
+																	) : (
+																		<Badge
+																			variant='outline'
+																			className='ml-2 text-blue-600 border-blue-200 bg-blue-50 hover:bg-blue-100'
+																		>
+																			Apply
+																		</Badge>
+																	)}
 																</div>
+
+																{voucher.isUser && (
+																	<div className='absolute inset-0 bg-white pointer-events-none bg-opacity-10'>
+																		<div className='absolute top-0 left-0 w-full h-full border-2 border-gray-200 rounded-md opacity-25'></div>
+																	</div>
+																)}
 															</DropdownMenuItem>
 														))
 													) : (
@@ -700,7 +730,7 @@ const HomeStayDetail = () => {
 									</div>
 
 									{voucherCode && (
-										<div className='flex items-center text-sm text-green-600 bg-green-50 px-3 py-2 rounded-lg'>
+										<div className='flex items-center px-3 py-2 text-sm text-green-600 rounded-lg bg-green-50'>
 											<Check className='w-4 h-4 mr-2' />
 											Voucher <span className='font-medium'>{voucherCode}</span> applied
 										</div>
@@ -710,13 +740,13 @@ const HomeStayDetail = () => {
 
 							{/* Payment method selection */}
 							<div className='flex flex-col gap-3'>
-								<h3 className='text-base font-semibold flex items-center text-gray-700'>
+								<h3 className='flex items-center text-base font-semibold text-gray-700'>
 									<CreditCard className='w-4 h-4 mr-2 text-blue-500' />
 									Payment Method
 								</h3>
 
 								<div className='flex flex-col gap-2'>
-									<label className='flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors'>
+									<label className='flex items-center p-3 transition-colors border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50'>
 										<input
 											type='radio'
 											checked={isOnline}
@@ -726,13 +756,13 @@ const HomeStayDetail = () => {
 										/>
 										<div className='ml-3'>
 											<span className='font-medium text-gray-700'>Online Payment</span>
-											<p className='text-xs text-gray-500 mt-1'>
+											<p className='mt-1 text-xs text-gray-500'>
 												Pay now with credit card, debit card or other methods
 											</p>
 										</div>
 									</label>
 
-									<label className='flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors'>
+									{/* <label className='flex items-center p-3 transition-colors border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50'>
 										<input
 											type='radio'
 											checked={!isOnline}
@@ -742,24 +772,24 @@ const HomeStayDetail = () => {
 										/>
 										<div className='ml-3'>
 											<span className='font-medium text-gray-700'>Cash on Arrival</span>
-											<p className='text-xs text-gray-500 mt-1'>
+											<p className='mt-1 text-xs text-gray-500'>
 												Pay in cash when you arrive at the property
 											</p>
 										</div>
-									</label>
+									</label> */}
 								</div>
 							</div>
 
 							{/* Status indicators and booking button */}
 							{homestay.isBooked && (
-								<div className='p-4 text-sm font-medium text-center text-red-600 border border-red-200 rounded-lg bg-red-50 flex items-center justify-center'>
-									<span className='w-2 h-2 bg-red-500 rounded-full mr-2 animate-pulse'></span>
+								<div className='flex items-center justify-center p-4 text-sm font-medium text-center text-red-600 border border-red-200 rounded-lg bg-red-50'>
+									<span className='w-2 h-2 mr-2 bg-red-500 rounded-full animate-pulse'></span>
 									This homestay is currently booked and unavailable
 								</div>
 							)}
 
 							{priceForToday !== null && !homestay.isBooked && selectedDates.length > 0 && (
-								<div className='flex justify-between items-center p-4 bg-blue-50 rounded-lg border border-blue-100'>
+								<div className='flex items-center justify-between p-4 border border-blue-100 rounded-lg bg-blue-50'>
 									<div>
 										<p className='text-sm text-gray-500'>Total for {selectedDates.length} nights</p>
 										<p className='text-xl font-bold text-gray-800'>
@@ -767,13 +797,13 @@ const HomeStayDetail = () => {
 										</p>
 									</div>
 									{voucherCode && (
-										<Badge className='bg-green-100 text-green-600 py-1'>Discount applied</Badge>
+										<Badge className='py-1 text-green-600 bg-green-100'>Discount applied</Badge>
 									)}
 								</div>
 							)}
 
 							<Button
-								className='w-full py-6 text-white bg-blue-600 hover:bg-blue-700 transition-all duration-300 rounded-xl shadow-md hover:shadow-lg flex items-center justify-center gap-2 mt-2'
+								className='flex items-center justify-center w-full gap-2 py-6 mt-2 text-white transition-all duration-300 bg-blue-600 shadow-md hover:bg-blue-700 rounded-xl hover:shadow-lg'
 								onClick={handleBookNow}
 								disabled={
 									bookingMutation.isPending ||
@@ -805,7 +835,7 @@ const HomeStayDetail = () => {
 								)}
 							</Button>
 
-							<p className='text-xs text-gray-500 text-center px-4'>
+							<p className='px-4 text-xs text-center text-gray-500'>
 								You won't be charged yet. Review your booking details before confirming.
 							</p>
 						</div>
