@@ -30,6 +30,7 @@ public class BookingControllerTesting
     private Mock<IConfiguration> _mockConfiguration;
     private Mock<IRepository<BusinessObject.Entities.Calendar>> _mockCalendarRepo;
     private BookingController _controller;
+    private Mock<IRepository<UserVoucher>> _mockUerVoucherRepo;
     [SetUp]
     public void Setup()
     {
@@ -50,10 +51,10 @@ public class BookingControllerTesting
             _mockEmailSender.Object,
             _mockPayOSService.Object,
             _mockConfiguration.Object,
-            _mockCalendarRepo.Object
+            _mockCalendarRepo.Object,
+            _mockUerVoucherRepo.Object
         );
     }
-
     [Test]
     public async Task GetBookingHistory_UserNotFound_ReturnsNotFound()
     {
@@ -484,12 +485,15 @@ public class BookingControllerTesting
     public async Task CancelBooking_Success_ReturnsOk()
     {
         // Arrange
-        var bookingId = Guid.NewGuid();
         var userId = Guid.NewGuid();
-
+        CancelBookingDTO cancel = new CancelBookingDTO
+        {
+            BookingID = Guid.NewGuid(),
+            ReasonCancel = "I Like"
+        };
         var booking = new Booking
         {
-            Id = bookingId,
+            Id = cancel.BookingID,
             UserID = userId,
             Status = "Pending",
             CheckInDate = DateTime.UtcNow.AddDays(2),
@@ -504,7 +508,8 @@ public class BookingControllerTesting
             FullName = "Nguyen Van A"
         };
 
-        _mockBookingRepo.Setup(x => x.GetByIdAsync(bookingId)).ReturnsAsync(booking);
+        string reasonCancel = "I like";
+        _mockBookingRepo.Setup(x => x.GetByIdAsync(cancel.BookingID)).ReturnsAsync(booking);
         _mockUserRepo.Setup(x => x.GetByIdAsync(userId)).ReturnsAsync(user);
         _mockConfiguration.Setup(x => x["Base:Url"]).Returns("https://client.example.com");
         _mockEmailSender.Setup(x => x.SendEmailAsync(
@@ -514,7 +519,7 @@ public class BookingControllerTesting
         )).Returns(Task.CompletedTask);
 
         // Act
-        var result = await _controller.CancelBooking(bookingId);
+        var result = await _controller.CancelBooking(cancel);
 
         // Assert
         Assert.IsInstanceOf<OkObjectResult>(result);
@@ -526,11 +531,16 @@ public class BookingControllerTesting
     [Test]
     public async Task CancelBooking_BookingNotFound_ReturnsNotFound()
     {
+        CancelBookingDTO cancel = new CancelBookingDTO
+        {
+            BookingID = Guid.NewGuid(),
+            ReasonCancel = "I Like"
+        };
         var bookingId = Guid.NewGuid();
 
         _mockBookingRepo.Setup(x => x.GetByIdAsync(bookingId)).ReturnsAsync((Booking?)null);
 
-        var result = await _controller.CancelBooking(bookingId);
+        var result = await _controller.CancelBooking(cancel);
 
         Assert.IsInstanceOf<NotFoundObjectResult>(result);
         var notFound = result as NotFoundObjectResult;
@@ -540,6 +550,11 @@ public class BookingControllerTesting
     [Test]
     public async Task CancelBooking_PaidBooking_ReturnsBadRequest()
     {
+        CancelBookingDTO cancel = new CancelBookingDTO
+        {
+            BookingID = Guid.NewGuid(),
+            ReasonCancel = "I Like"
+        };
         var booking = new Booking
         {
             Id = Guid.NewGuid(),
@@ -549,7 +564,7 @@ public class BookingControllerTesting
 
         _mockBookingRepo.Setup(x => x.GetByIdAsync(booking.Id)).ReturnsAsync(booking);
 
-        var result = await _controller.CancelBooking(booking.Id);
+        var result = await _controller.CancelBooking(cancel);
 
         Assert.IsInstanceOf<BadRequestObjectResult>(result);
         var badRequest = result as BadRequestObjectResult;
@@ -559,6 +574,11 @@ public class BookingControllerTesting
     [Test]
     public async Task CancelBooking_AlreadyCanceled_ReturnsBadRequest()
     {
+        CancelBookingDTO cancel = new CancelBookingDTO
+        {
+            BookingID = Guid.NewGuid(),
+            ReasonCancel = "I Like"
+        };
         var booking = new Booking
         {
             Id = Guid.NewGuid(),
@@ -568,7 +588,7 @@ public class BookingControllerTesting
 
         _mockBookingRepo.Setup(x => x.GetByIdAsync(booking.Id)).ReturnsAsync(booking);
 
-        var result = await _controller.CancelBooking(booking.Id);
+        var result = await _controller.CancelBooking(cancel);
 
         Assert.IsInstanceOf<BadRequestObjectResult>(result);
         var badRequest = result as BadRequestObjectResult;
@@ -578,6 +598,11 @@ public class BookingControllerTesting
     [Test]
     public async Task CancelBooking_LessThanOneDayBeforeCheckIn_ReturnsBadRequest()
     {
+        CancelBookingDTO cancel = new CancelBookingDTO
+        {
+            BookingID = Guid.NewGuid(),
+            ReasonCancel = "I Like"
+        };
         var booking = new Booking
         {
             Id = Guid.NewGuid(),
@@ -587,7 +612,7 @@ public class BookingControllerTesting
 
         _mockBookingRepo.Setup(x => x.GetByIdAsync(booking.Id)).ReturnsAsync(booking);
 
-        var result = await _controller.CancelBooking(booking.Id);
+        var result = await _controller.CancelBooking(cancel);
 
         Assert.IsInstanceOf<BadRequestObjectResult>(result);
         var badRequest = result as BadRequestObjectResult;
@@ -597,6 +622,11 @@ public class BookingControllerTesting
     [Test]
     public async Task CancelBooking_UserNotFound_ReturnsNotFound()
     {
+        CancelBookingDTO cancel = new CancelBookingDTO
+        {
+            BookingID = Guid.NewGuid(),
+            ReasonCancel = "I Like"
+        };
         var booking = new Booking
         {
             Id = Guid.NewGuid(),
@@ -608,7 +638,7 @@ public class BookingControllerTesting
         _mockBookingRepo.Setup(x => x.GetByIdAsync(booking.Id)).ReturnsAsync(booking);
         _mockUserRepo.Setup(x => x.GetByIdAsync(booking.UserID)).ReturnsAsync((User?)null);
 
-        var result = await _controller.CancelBooking(booking.Id);
+        var result = await _controller.CancelBooking(cancel);
 
         Assert.IsInstanceOf<NotFoundObjectResult>(result);
         var notFound = result as NotFoundObjectResult;
@@ -777,6 +807,281 @@ public class BookingControllerTesting
     }
 
     [Test]
+    public async Task HomeStayRevenueStatistics_ReturnsOk_WithCorrectData()
+    {
+        // Arrange
+        var homeStayId = Guid.NewGuid();
+        _mockCalendarRepo.Setup(x => x.FindWithInclude(It.IsAny<Expression<Func<BusinessObject.Entities.Calendar, object>>>()))
+            .Returns(new List<BusinessObject.Entities.Calendar>
+            {
+            new BusinessObject.Entities.Calendar
+            {
+                Booking = new Booking
+                {
+                    CheckInDate = new DateTime(2023, 5, 10),
+                    Status = "Paid",
+                    TotalPrice = 200,
+                },
+                HomeStayID = homeStayId
+            }
+            }.AsQueryable().BuildMockDbSet().Object);
+
+        // Act
+        var result = await _controller.HomeStayRevenueStatistics(homeStayId, 2023);
+        var objectResult = result as ObjectResult;
+
+        // Assert
+        Assert.IsNotNull(objectResult);
+        Assert.That(objectResult.StatusCode, Is.EqualTo(200));
+
+        // Chuyển kết quả sang list có kiểu cụ thể
+        var json = JsonConvert.SerializeObject(objectResult.Value);
+        var list = JsonConvert.DeserializeObject<List<RevenueStatisticResult>>(json);
+
+        Assert.IsNotNull(list);
+
+        var may = list.FirstOrDefault(x => x.Month == "May");
+        Assert.IsNotNull(may);
+        Assert.That(may.Booking, Is.EqualTo(1));
+        Assert.That(may.Revenue, Is.EqualTo(200));
+    }
+
+
+    [Test]
+    public async Task HomeStayRevenueStatistics_ReturnsEmptyList_WhenNoPaidBookings()
+    {
+        // Arrange
+        var homeStayId = Guid.NewGuid();
+
+        _mockCalendarRepo.Setup(x => x.FindWithInclude(It.IsAny<Expression<Func<BusinessObject.Entities.Calendar, object>>>()))
+            .Returns(new List<BusinessObject.Entities.Calendar>
+            {
+            new BusinessObject.Entities.Calendar
+            {
+                Booking = new Booking
+                {
+                    CheckInDate = new DateTime(2023, 5, 10),
+                    Status = "Pending", // not Paid
+                    TotalPrice = 100,
+                },
+                HomeStayID = homeStayId
+            }
+            }.AsQueryable().BuildMockDbSet().Object);
+
+        // Act
+        var result = await _controller.HomeStayRevenueStatistics(homeStayId, 2023);
+        var objectResult = result as ObjectResult;
+
+        // Assert
+        Assert.IsNotNull(objectResult);
+        Assert.That(objectResult.StatusCode, Is.EqualTo(200));
+
+        // Chuyển objectResult.Value sang List<RevenueStatisticResult>
+        var json = JsonConvert.SerializeObject(objectResult.Value);
+        var list = JsonConvert.DeserializeObject<List<RevenueStatisticResult>>(json);
+
+        Assert.IsNotNull(list);
+        foreach (var item in list)
+        {
+            Assert.That(item.Booking, Is.EqualTo(0));
+            Assert.That(item.Revenue, Is.EqualTo(0));
+        }
+    }
+
+
+
+    [Test]
+    public async Task HomeStayRevenueStatistics_Returns500_OnException()
+    {
+        // Arrange
+        _mockCalendarRepo
+            .Setup(x => x.FindWithInclude(It.IsAny<Expression<Func<BusinessObject.Entities.Calendar, object>>>()))
+            .Throws(new Exception("DB error"));
+
+
+        // Act
+        var result = await _controller.HomeStayRevenueStatistics(Guid.NewGuid(), 2025);
+
+        // Assert
+        var objectResult = result as ObjectResult;
+        Assert.IsNotNull(objectResult);
+        Assert.That(objectResult.StatusCode, Is.EqualTo(500));
+        Assert.That(objectResult.Value.ToString(), Does.Contain("DB error"));
+    }
+
+    [Test]
+    public async Task ExportBookingByHomeStayID_ReturnsExcelFile_WhenBookingsExist()
+    {
+        // Arrange
+        var homeStayId = Guid.NewGuid();
+        var bookingId = Guid.NewGuid();
+
+        var calendarList = new List<BusinessObject.Entities.Calendar>
+    {
+        new BusinessObject.Entities.Calendar
+        {
+            HomeStayID = homeStayId,
+            HomeStay = new HomeStay { Name = "Test Homestay" },
+            Booking = new Booking
+            {
+                Id = bookingId,
+                CheckInDate = DateTime.Today,
+                CheckOutDate = DateTime.Today.AddDays(2),
+                UnitPrice = 500000,
+                TotalPrice = 1000000,
+                Status = "Confirmed",
+                ReasonCancel = null
+            }
+        }
+    };
+
+        var mockQueryable = calendarList.AsQueryable().BuildMock();
+
+        _mockCalendarRepo
+            .Setup(repo => repo.FindWithInclude(It.IsAny<Expression<Func<BusinessObject.Entities.Calendar, object>>[]>()))
+            .Returns(mockQueryable);
+
+        var result = await _controller.ExportBookingByHomeStayID(homeStayId);
+
+        var fileResult = result as FileStreamResult;
+        Assert.IsNotNull(fileResult, "Kết quả trả về không phải file (null)");
+        Assert.AreEqual("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileResult.ContentType);
+        Assert.IsTrue(fileResult.FileDownloadName.Contains(homeStayId.ToString()), "Tên file không chứa đúng HomeStay ID");
+    }
+
+    [Test]
+    public async Task ExportBookingByHomeStayID_ReturnsNotFound_WhenNoBookingsExist()
+    {
+        // Arrange
+        var homeStayId = Guid.NewGuid();
+
+        // Setup repo trả về danh sách rỗng
+        var emptyList = new List<BusinessObject.Entities.Calendar>().AsQueryable().BuildMock();
+        _mockCalendarRepo
+            .Setup(repo => repo.FindWithInclude(It.IsAny<Expression<Func<BusinessObject.Entities.Calendar, object>>[]>()))
+            .Returns(emptyList);
+
+        // Act
+        var result = await _controller.ExportBookingByHomeStayID(homeStayId);
+
+        // Assert
+        var notFoundResult = result as NotFoundObjectResult;
+        Assert.IsNotNull(notFoundResult);
+        Assert.AreEqual(404, notFoundResult.StatusCode);
+    }
+
+    [Test]
+    public async Task ExportBookingByHomeStayID_ReturnsServerError_WhenExceptionThrown()
+    {
+
+        var homeStayId = Guid.NewGuid();
+
+        _mockCalendarRepo
+            .Setup(repo => repo.FindWithInclude(It.IsAny<Expression<Func<BusinessObject.Entities.Calendar, object>>[]>()))
+            .Throws(new Exception("Unexpected error"));
+
+        try
+        {
+            var result = await _controller.ExportBookingByHomeStayID(homeStayId);
+
+            var statusResult = result as ObjectResult;
+            Assert.IsNotNull(statusResult);
+            Assert.AreEqual(500, statusResult.StatusCode);
+            Assert.IsTrue(statusResult.Value.ToString().Contains("Unexpected error"));
+        }
+        catch (Exception ex)
+        {
+            Assert.AreEqual("Unexpected error", ex.Message);
+        }
+    }
+
+    [Test]
+    public async Task AnalyzeRevenueSystemHomeStay_ReturnsGroupedRevenueByHomeStay()
+    {
+        // Arrange
+        var homeStayId1 = Guid.NewGuid();
+        var homeStayId2 = Guid.NewGuid();
+
+        var bookings = new List<Booking>
+    {
+        new Booking
+        {
+            Id = Guid.NewGuid(),
+            TotalPrice = 1000000,
+            Calendars = new List<BusinessObject.Entities.Calendar>
+            {
+                new BusinessObject.Entities.Calendar
+                {
+                    HomeStay = new HomeStay
+                    {
+                        Id = homeStayId1,
+                        Name = "HomeStay 1",
+                        MainImage = "image1.jpg",
+                        Address = "Address 1"
+                    }
+                }
+            }
+        },
+        new Booking
+        {
+            Id = Guid.NewGuid(),
+            TotalPrice = 2000000,
+            Calendars = new List<BusinessObject.Entities.Calendar>
+            {
+                new BusinessObject.Entities.Calendar
+                {
+                    HomeStay = new HomeStay
+                    {
+                        Id = homeStayId1,
+                        Name = "HomeStay 1",
+                        MainImage = "image1.jpg",
+                        Address = "Address 1"
+                    }
+                },
+                new BusinessObject.Entities.Calendar
+                {
+                    HomeStay = new HomeStay
+                    {
+                        Id = homeStayId2,
+                        Name = "HomeStay 2",
+                        MainImage = "image2.jpg",
+                        Address = "Address 2"
+                    }
+                }
+            }
+        }
+    };
+
+        var mockBookingQueryable = bookings.AsQueryable().BuildMock();
+
+        _mockBookingRepo
+            .Setup(repo => repo.FindWithInclude(It.IsAny<Expression<Func<Booking, object>>[]>()))
+            .Returns(mockBookingQueryable);
+
+        // Act
+        var result = await _controller.AnalyzeRevenueSystemHomeStay();
+
+        // Assert
+        var okResult = result as OkObjectResult;
+        Assert.IsNotNull(okResult);
+
+        var list = ((IEnumerable<object>)okResult.Value)
+            .Select(x => JsonConvert.DeserializeObject<HomeStayRevenueDTO>(JsonConvert.SerializeObject(x)))
+            .ToList();
+
+        Assert.AreEqual(2, list.Count);
+
+        var hs1 = list.FirstOrDefault(x => x.HomeStayID == homeStayId1);
+        var hs2 = list.FirstOrDefault(x => x.HomeStayID == homeStayId2);
+
+        Assert.IsNotNull(hs1);
+        Assert.AreEqual(3000000, hs1.TotalRevenue);
+
+        Assert.IsNotNull(hs2);
+        Assert.AreEqual(2000000, hs2.TotalRevenue);
+    }
+
+    [Test]
     public async Task GetBookingByHomeStay_ReturnsBookings_ForValidHomeStayID()
     {
         // Arrange
@@ -828,7 +1133,43 @@ public class BookingControllerTesting
         Assert.IsNotNull(data);
     }
 
+    [Test]
+    public async Task GetBookingByHomeStay_ReturnsNotFound_WhenNoBookingMatchHomeStayID()
+    {
+        var homeStayId = Guid.NewGuid();
+
+        var bookings = new List<Booking>();
+
+        var mockBookingQueryable = bookings.AsQueryable().BuildMock();
+
+        _mockBookingRepo
+            .Setup(repo => repo.FindWithInclude(It.IsAny<Expression<Func<Booking, object>>[]>()))
+            .Returns(mockBookingQueryable);
 
 
+        var result = await _controller.GetBookingByHomeStay(homeStayId);
 
+
+        Assert.IsInstanceOf<NotFoundResult>(result);
+    }
+
+    [Test]
+    public async Task GetBookingByHomeStay_ReturnsServerError_WhenExceptionOccurs()
+    {
+        // Arrange
+        var homeStayId = Guid.NewGuid();
+
+        _mockBookingRepo
+            .Setup(repo => repo.FindWithInclude(It.IsAny<Expression<Func<Booking, object>>[]>()))
+            .Throws(new Exception("Database connection failed"));
+
+        // Act
+        var result = await _controller.GetBookingByHomeStay(homeStayId);
+
+        // Assert
+        var statusResult = result as ObjectResult;
+        Assert.IsNotNull(statusResult);
+        Assert.AreEqual(500, statusResult.StatusCode);
+        Assert.IsTrue(statusResult.Value.ToString().Contains("Database connection failed"));
+    }
 }
