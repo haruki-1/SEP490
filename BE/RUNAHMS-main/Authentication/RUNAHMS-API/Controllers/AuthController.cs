@@ -82,6 +82,10 @@ namespace API.Controllers
 
             if (!user.IsEmailConfirmed) throw new InvalidCredentialsException("Please confirm email");
 
+            if (user.IsDeleted == true)
+            {
+                return Forbid("Account has been blocked");
+            }
             var accessToken = _tokenService.GenerateJwtToken(user);
             var refreshToken = _tokenService.GenerateRefreshToken(64);
 
