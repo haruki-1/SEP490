@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Label } from '@/components/components/ui/label';
 import { Input } from '@/components/components/ui/input';
 import { Button } from '@/components/components/ui/button';
-import { useAuth } from 'context/AuthProvider';
+import { useAuth } from '@/context/AuthProvider';
 import { Textarea } from '@/components/components/ui/textarea';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import Swal from 'sweetalert2';

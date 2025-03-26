@@ -58,6 +58,8 @@ export default function LoginForm() {
 					? router.push('/manager')
 					: role === 'Admin'
 					? router.push('/admin')
+					: role === 'User'
+					? router.push('/')
 					: router.push('/');
 			} else {
 				toast.error(`Login failed: ${responseData.message || 'Unknown error'}`);
@@ -130,8 +132,8 @@ export default function LoginForm() {
 							{errors.password && <p className='text-sm text-red-500'>{errors.password.message}</p>}
 						</div>
 						<div className='text-sm'>
-							<Button className='background-white' >Login as staff{' '}
-							</Button>
+							{/* <Button className='background-white' >Login as staff{' '}
+							</Button> */}
 						</div>
 						<div className='text-sm'>
 							Don't have an account?{' '}
