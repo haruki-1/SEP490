@@ -1,15 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Image from 'next/image';
-import { FaSync, FaCheckCircle, FaTimesCircle, FaCalendarAlt, FaMoneyBillWave } from 'react-icons/fa';
+import { FaSync, FaCheckCircle, FaTimesCircle, FaCalendarAlt, FaMoneyBillWave, FaFilter } from 'react-icons/fa';
 import { getRefunds } from '@/pages/api/refunds/getRefunds';
 import { changeRefundStatus } from '@/pages/api/refunds/changeRefundStatus';
 import { toast } from 'sonner'; // Or your preferred toast library
 import AdminLayout from '../layout';
+import { getHomeStayByUser } from '@/pages/api/booking/bookingByUser';
+import { useAuth } from '@/context/AuthProvider';
 
 const Refund = () => {
 	const [selectedRefund, setSelectedRefund] = useState(null);
+	const [selectedHomeStay, setSelectedHomeStay] = useState('');
+	const [mounted, setMounted] = useState(false);
 	const queryClient = useQueryClient();
+	const { isAuthenticated, dataProfile } = useAuth();
+
+	useEffect(() => {
+		setMounted(true);
+	}, []);
+
+	const {
+		data: DataHomeStay,
+		isLoading: loadingHomeStay,
+		refetch: refetchHomeStays,
+		error: homeStayError,
+	} = useQuery({
+		queryKey: ['homeStaysByUser', dataProfile?.id],
+		queryFn: () => getHomeStayByUser(dataProfile?.id),
+		enabled: mounted && !!dataProfile?.id,
+	});
 
 	// Fetch refunds with React Query
 	const {
@@ -19,15 +39,22 @@ const Refund = () => {
 		error,
 		refetch,
 	} = useQuery({
-		queryKey: ['refunds'],
-		queryFn: getRefunds,
+		queryKey: ['refunds', selectedHomeStay],
+		queryFn: () => getRefunds(selectedHomeStay),
+		enabled: mounted,
+		onSuccess: (data) => {
+			// If the current selected refund isn't in the new data, clear the selection
+			if (selectedRefund && data && !data.some((refund) => refund.refundID === selectedRefund.refundID)) {
+				setSelectedRefund(null);
+			}
+		},
 	});
 
 	// Mutation for changing refund status
 	const statusMutation = useMutation({
 		mutationFn: (refundID) => changeRefundStatus(refundID),
 		onSuccess: () => {
-			queryClient.invalidateQueries(['refunds']);
+			queryClient.invalidateQueries(['refunds', selectedHomeStay]);
 			toast.success('Refund status updated successfully');
 			// Update the selected refund to show the new status
 			if (selectedRefund) {
@@ -69,30 +96,57 @@ const Refund = () => {
 			statusMutation.mutate(selectedRefund.refundID);
 		}
 	};
+	const handleHomeStayChange = (e) => {
+		setSelectedHomeStay(e.target.value);
+		// Clear selected refund when changing homestay filter
+		setSelectedRefund(null);
+	};
 
 	return (
 		<AdminLayout>
 			<div className='p-6'>
 				<div className='flex items-center justify-between mb-6'>
 					<h1 className='text-2xl font-bold text-gray-800'>Refund Management</h1>
-					<button
-						onClick={() => refetch()}
-						className='flex items-center px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700'
-					>
-						<FaSync className='mr-2' /> Refresh
-					</button>
+					<div className='flex items-center space-x-4'>
+						{/* HomeStay Filter Dropdown */}
+						<div className='relative'>
+							<select
+								value={selectedHomeStay}
+								onChange={handleHomeStayChange}
+								className='px-4 py-2 pr-8 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500'
+							>
+								<option value=''>All HomeStays</option>
+								{!loadingHomeStay &&
+									DataHomeStay?.map((homeStay) => (
+										<option key={homeStay.id} value={homeStay.name}>
+											{homeStay.name}
+										</option>
+									))}
+							</select>
+							<div className='absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none'>
+								<FaFilter className='text-gray-400' />
+							</div>
+						</div>
+
+						<button
+							onClick={() => refetch()}
+							className='flex items-center px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700'
+						>
+							<FaSync className='mr-2' /> Refresh
+						</button>
+					</div>
 				</div>
 
-				{isLoading ? (
+				{isLoading || loadingHomeStay ? (
 					<div className='flex items-center justify-center h-64'>
 						<div className='w-12 h-12 border-b-2 border-blue-500 rounded-full animate-spin'></div>
 					</div>
-				) : isError ? (
+				) : isError || homeStayError ? (
 					<div className='p-4 mb-4 border-l-4 border-red-500 rounded bg-red-50'>
 						<div className='flex'>
 							<div className='ml-3'>
 								<p className='text-sm text-red-700'>
-									Error loading refunds: {error?.message || 'Unknown error'}
+								Error loading data: {error?.message || homeStayError?.message || 'Unknown error'}
 								</p>
 							</div>
 						</div>
@@ -103,7 +157,9 @@ const Refund = () => {
 						<div className='lg:col-span-1'>
 							<div className='overflow-hidden bg-white rounded-lg shadow'>
 								<div className='p-4 border-b bg-gray-50'>
-									<h2 className='font-semibold text-gray-700'>Refund Requests</h2>
+									<h2 className='font-semibold text-gray-700'>
+										Refund Requests {selectedHomeStay && `- ${selectedHomeStay}`}
+									</h2>
 								</div>
 								<div className='divide-y divide-gray-200 max-h-[calc(100vh-240px)] overflow-auto'>
 									{refundsData?.length > 0 ? (

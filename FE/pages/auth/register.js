@@ -37,7 +37,7 @@ export default function RegisterForm() {
 				},
 				body: JSON.stringify({
 					...data,
-					roleId: role == 'manager' ? 2 : role =='user' ? 3 : 1,
+					roleId: role == 'manager' ? 2 : 3,
 				}),
 			});
 
