@@ -539,7 +539,7 @@ public class BookingControllerTesting
             Email = "test@example.com",
             FullName = "Nguyen Van A"
         };
-
+  
         string reasonCancel = "I like";
         _mockBookingRepo.Setup(x => x.GetByIdAsync(cancel.BookingID)).ReturnsAsync(booking);
         _mockUserRepo.Setup(x => x.GetByIdAsync(userId)).ReturnsAsync(user);
