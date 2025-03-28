@@ -7,7 +7,7 @@ using BusinessObject.DTO;
 
 namespace APITesting.DTO
 {
-     public class HomeStayDTO
+    public class HomeStayDTO
     {
         public string Name { get; set; }
         public string City { get; set; }

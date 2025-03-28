@@ -17,6 +17,13 @@ namespace API.Middlewares
             {
                 await _next(context);
 
+                if (context.Response.StatusCode >= 300 && context.Response.StatusCode < 400)
+                {
+                    responseBody.Seek(0, SeekOrigin.Begin);
+                    await responseBody.CopyToAsync(originalBodyStream);
+                    return;
+                }
+
                 if (context.Response.ContentType?.StartsWith("application/vnd.openxmlformats-officedocument") == true)
                 {
                     responseBody.Seek(0, SeekOrigin.Begin);
@@ -28,7 +35,7 @@ namespace API.Middlewares
 
                 var statusCode = context.Response.StatusCode;
                 var isSuccess = statusCode >= 200 && statusCode < 300;
-              
+
                 responseBody.Seek(0, SeekOrigin.Begin);
                 var bodyContent = await new StreamReader(responseBody).ReadToEndAsync();
 
@@ -37,7 +44,7 @@ namespace API.Middlewares
                     Success = isSuccess,
                     StatusCode = statusCode,
                     Message = MessageByStatusCode.GetMessageByStatusCode(statusCode),
-                    Data = isSuccess ? JsonSerializer.Deserialize<object>(bodyContent) : null
+                    Data = JsonSerializer.Deserialize<object>(bodyContent)
                 };
 
                 var response = JsonSerializer.Serialize(apiResponse);

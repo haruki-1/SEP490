@@ -74,8 +74,6 @@ namespace API.Controllers
             return Ok(new { Message = "Voucher updated successfully" });
         }
 
-
-
         [HttpPost("receive")]
         public async Task<IActionResult> ReceiveVoucher([FromBody] ReceiveVoucherRequest request)
         {
@@ -84,11 +82,11 @@ namespace API.Controllers
             {
                 var user = await _userRepository.Find(u => u.Id == request.UserID).FirstOrDefaultAsync();
                 var voucher = await _voucherRepository.Find(v => v.Id == request.VoucherID).FirstOrDefaultAsync();
-                var checkAlready = await _userVoucherRepository.Find(x => x.UserID == request.UserID && request.VoucherID == request.VoucherID)
+                var checkAlready = await _userVoucherRepository.Find(x => x.UserID == request.UserID && x.VoucherID == request.VoucherID)
                                                                     .FirstOrDefaultAsync();
                 if (checkAlready != null)
                 {
-                    return Conflict(new {Message = "You have already received this voucher" });
+                    return Conflict(new { Message = "You have already received this voucher" });
                 }
                 UserVoucher reciveVoucher = new UserVoucher
                 {
@@ -100,13 +98,15 @@ namespace API.Controllers
                 };
                 await _userVoucherRepository.AddAsync(reciveVoucher);
                 await _userVoucherRepository.SaveAsync();
-                return Ok(new {Message = "Recive Voucher Success" });
+                return Ok(new { Message = "Recive Voucher Success" });
             }
-            catch (Exception ex) { 
-            
+            catch (Exception ex)
+            {
+
                 return StatusCode(500, ex.Message);
             }
         }
+
         [HttpGet("list")]
         public async Task<IActionResult> GetVouchers([FromQuery] bool onlyValid = false)
         {
@@ -149,7 +149,7 @@ namespace API.Controllers
             }
 
             var userVouchers = await _userVoucherRepository
-                .Find(uv => uv.UserID == userId && !uv.isUsed && uv.voucher.EndDate >= DateTime.UtcNow && !uv.voucher.isDeleted)
+                .Find(uv => uv.UserID == userId && uv.voucher.EndDate >= DateTime.UtcNow && !uv.voucher.isDeleted)
                 .Include(uv => uv.voucher)
                 .Select(uv => new
                 {
@@ -159,7 +159,8 @@ namespace API.Controllers
                     Discount = uv.voucher.Discount,
                     StartDate = uv.voucher.StartDate,
                     EndDate = uv.voucher.EndDate,
-                    Image = uv.voucher.Image
+                    Image = uv.voucher.Image,
+                    isUser = uv.isUsed
                 })
                 .ToListAsync();
 
@@ -170,6 +171,8 @@ namespace API.Controllers
 
             return Ok(userVouchers);
         }
+
+
 
     }
 }

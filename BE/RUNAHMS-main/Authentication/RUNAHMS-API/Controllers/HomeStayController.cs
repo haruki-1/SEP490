@@ -384,7 +384,7 @@ namespace API.Controllers
                     fb.User.Email,
                     fb.Rating,
                     fb.Description,
-                    fb.isDeleted
+                    fb.IsReply
                 }).ToList()
             };
             return Ok(response);
@@ -485,7 +485,6 @@ namespace API.Controllers
                 return StatusCode(500, ex.ToString());
             }
         }
-
 
         [HttpGet("get-city-list")]
         public async Task<IActionResult> GetAllCity()
