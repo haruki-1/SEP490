@@ -383,7 +383,7 @@ namespace API.Controllers
                     fb.User.Email,
                     fb.Rating,
                     fb.Description,
-                    fb.isDeleted
+                    fb.IsReply
                 }).ToList()
             };
             return Ok(response);
