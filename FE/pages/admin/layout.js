@@ -4,6 +4,7 @@ import { AppSidebarAmin } from '@/components/components/ui/app-sidebar-admin';
 import { SidebarProvider, SidebarTrigger } from '@/components/components/ui/sidebar';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Toaster } from 'sonner';
 
 const AdminLayout = ({ children }) => {
 	return (
@@ -22,6 +23,7 @@ const AdminLayout = ({ children }) => {
 					<SidebarTrigger className='justify-start w-full' />
 					{children}
 					<ToastContainer />
+					<Toaster position='top-right' richColors />
 				</main>
 			</SidebarProvider>
 		</div>

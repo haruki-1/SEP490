@@ -8,7 +8,6 @@ import { Calendar, ArrowLeft, Plus, Trash2, Edit2 } from 'lucide-react';
 import { Label } from '@/components/components/ui/label';
 import { Input } from '@/components/components/ui/input';
 import Swal from 'sweetalert2';
-import AdminLayout from 'pages/admin/layout';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/components/ui/card';
 import {
 	Dialog,
@@ -18,10 +17,11 @@ import {
 	DialogDescription,
 	DialogFooter,
 } from '@/components/components/ui/dialog';
-import { createCalendar } from 'pages/api/calendar/createCalendar';
-import { getHomeStayDetail } from 'pages/api/homestay/getHomeStayDetail';
-import { deleteCalendarEntry } from 'pages/api/calendar/deleteCalendar';
-import { updateCalendarEntry } from 'pages/api/calendar/updateCalendar';
+import { createCalendar } from '@/pages/api/calendar/createCalendar';
+import { getHomeStayDetail } from '@/pages/api/homestay/getHomeStayDetail';
+import { deleteCalendarEntry } from '@/pages/api/calendar/deleteCalendar';
+import { updateCalendarEntry } from '@/pages/api/calendar/updateCalendar';
+import AdminLayout from '@/pages/admin/layout';
 
 const HomeStayCalendar = () => {
 	const { id } = useParams() ?? {};
@@ -285,21 +285,21 @@ const HomeStayCalendar = () => {
 							onClick={() => router.push('/admin/homestay')}
 							className='mr-2'
 						>
-							<ArrowLeft className='h-4 w-4' />
+							<ArrowLeft className='w-4 h-4' />
 						</Button>
 						<h1 className='text-2xl font-bold'>Calendar Management</h1>
 					</div>
 					<Button onClick={openCalendarDialog} className='flex items-center gap-2'>
-						<Plus className='h-4 w-4' /> Add Calendar Entries
+						<Plus className='w-4 h-4' /> Add Calendar Entries
 					</Button>
 				</div>
 
 				{isLoading ? (
-					<div className='flex justify-center items-center h-64'>
+					<div className='flex items-center justify-center h-64'>
 						<p>Loading...</p>
 					</div>
 				) : error ? (
-					<div className='flex justify-center items-center h-64'>
+					<div className='flex items-center justify-center h-64'>
 						<p className='text-red-500'>Error: {error.message}</p>
 					</div>
 				) : (
@@ -316,18 +316,18 @@ const HomeStayCalendar = () => {
 						<Card>
 							<CardHeader>
 								<CardTitle className='flex items-center gap-2'>
-									<Calendar className='h-5 w-5' /> Calendar Entries
+									<Calendar className='w-5 h-5' /> Calendar Entries
 								</CardTitle>
 								<CardDescription>Manage availability and pricing for this homestay</CardDescription>
 							</CardHeader>
 							<CardContent>
 								{!homestay?.calendar || homestay.calendar.length === 0 ? (
-									<div className='text-center py-10 text-gray-500'>
+									<div className='py-10 text-center text-gray-500'>
 										No calendar entries yet. Add some dates to make this homestay available for
 										booking.
 									</div>
 								) : (
-									<div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
+									<div className='grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'>
 										{homestay.calendar
 											.sort((a, b) => new Date(a.date) - new Date(b.date))
 											.map((entry) => {
@@ -336,19 +336,22 @@ const HomeStayCalendar = () => {
 													formatDateForComparison(entryDate) ===
 													formatDateForComparison(new Date());
 												const isPast = isDateInPast(entry.date);
+												const isDeleted = entry.isDeleted;
 
 												return (
 													<div
 														key={entry.id}
 														className={`relative p-4 rounded-lg border ${
-															isToday
+															isDeleted
+																? 'bg-gray-300 border-gray-400 opacity-60 cursor-not-allowed'
+																: isToday
 																? 'bg-green-50 border-green-200'
 																: isPast
 																? 'bg-gray-50 border-gray-200 opacity-70'
 																: 'bg-white border-gray-200'
 														}`}
 													>
-														<div className='flex justify-between items-start'>
+														<div className='flex items-start justify-between'>
 															<div>
 																<p className='font-medium'>
 																	{entryDate.toLocaleDateString('en-GB', {
@@ -370,6 +373,11 @@ const HomeStayCalendar = () => {
 																		Past
 																	</span>
 																)}
+																{isDeleted && (
+																	<span className='mt-1 inline-block px-2 py-0.5 text-xs font-medium rounded-full bg-red-100 text-red-800'>
+																		Deleted
+																	</span>
+																)}
 															</div>
 															<div className='flex gap-1'>
 																<Button
@@ -377,16 +385,18 @@ const HomeStayCalendar = () => {
 																	size='icon'
 																	className='text-blue-500 hover:text-blue-700 hover:bg-blue-50'
 																	onClick={() => openEditDialog(entry)}
+																	disabled={isDeleted}
 																>
-																	<Edit2 className='h-4 w-4' />
+																	<Edit2 className='w-4 h-4' />
 																</Button>
 																<Button
 																	variant='ghost'
 																	size='icon'
 																	className='text-red-500 hover:text-red-700 hover:bg-red-50'
 																	onClick={() => handleDeleteCalendarEntry(entry.id)}
+																	disabled={isDeleted}
 																>
-																	<Trash2 className='h-4 w-4' />
+																	<Trash2 className='w-4 h-4' />
 																</Button>
 															</div>
 														</div>
@@ -398,7 +408,7 @@ const HomeStayCalendar = () => {
 							</CardContent>
 							<CardFooter className='flex justify-end'>
 								<Button onClick={openCalendarDialog} className='flex items-center gap-2'>
-									<Plus className='h-4 w-4' /> Add Calendar Entries
+									<Plus className='w-4 h-4' /> Add Calendar Entries
 								</Button>
 							</CardFooter>
 						</Card>
@@ -419,7 +429,7 @@ const HomeStayCalendar = () => {
 						</DialogDescription>
 					</DialogHeader>
 					<div className='grid gap-4 py-4'>
-						<div className='grid grid-cols-4 items-center gap-4'>
+						<div className='grid items-center grid-cols-4 gap-4'>
 							<Label htmlFor='startDate' className='text-right'>
 								Start Date
 							</Label>
@@ -431,7 +441,7 @@ const HomeStayCalendar = () => {
 								className='col-span-3'
 							/>
 						</div>
-						<div className='grid grid-cols-4 items-center gap-4'>
+						<div className='grid items-center grid-cols-4 gap-4'>
 							<Label htmlFor='endDate' className='text-right'>
 								End Date
 							</Label>
@@ -477,7 +487,7 @@ const HomeStayCalendar = () => {
 						<DialogDescription>Update the date or price for this calendar entry.</DialogDescription>
 					</DialogHeader>
 					<div className='grid gap-4 py-4'>
-						<div className='grid grid-cols-4 items-center gap-4'>
+						<div className='grid items-center grid-cols-4 gap-4'>
 							<Label htmlFor='editDate' className='text-right'>
 								Date
 							</Label>
@@ -489,7 +499,7 @@ const HomeStayCalendar = () => {
 								className='col-span-3'
 							/>
 						</div>
-						<div className='grid grid-cols-4 items-center gap-4'>
+						<div className='grid items-center grid-cols-4 gap-4'>
 							<Label htmlFor='editPrice' className='text-right'>
 								Price ($)
 							</Label>

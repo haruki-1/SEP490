@@ -447,9 +447,9 @@ const Header = () => {
 						</Sheet>
 					</div>
 				</div>
-						<div className="w-full mt-4">
+						{/* <div className="w-full mt-4">
         					<AmenityList />
-    					</div>
+    					</div> */}
 			</div>
 		</header>
 	);

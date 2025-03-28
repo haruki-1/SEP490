@@ -20,7 +20,7 @@ const items = [
 	{ title: 'Homestay', url: '/admin/homestay', icon: Hotel },
 	{ title: 'Facility', url: '/admin/facility', icon: Boxes },
 	{ title: 'Amenity', url: '/admin/amenity', icon: Bath },
-	{ title: 'Settings', url: '/settings', icon: Settings },
+	// { title: 'Settings', url: '/settings', icon: Settings },
 	{ title: 'Account', url: '/admin/profile', icon: User },
 ];
 

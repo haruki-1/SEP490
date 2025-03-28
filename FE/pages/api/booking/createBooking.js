@@ -11,8 +11,6 @@ export const createBooking = async (userId, bookingData) => {
 			isOnline: bookingData.isOnline,
 		};
 
-		console.log('Sending booking data:', JSON.stringify(formattedData));
-
 		const response = await fetch(url, {
 			method: 'POST',
 			headers: {
@@ -24,15 +22,14 @@ export const createBooking = async (userId, bookingData) => {
 		});
 
 		if (!response.ok) {
-			const errorText = await response.text();
-			console.error('Server error response:', errorText);
-			throw new Error(`HTTP error! Status: ${response.status}`);
+			const errorData = await response.json();
+			throw new Error(errorData.message || 'Failed to create booking');
 		}
 
 		const data = await response.json();
 		return data;
 	} catch (error) {
 		console.error('Error creating booking:', error);
-		throw error; // Re-throw to allow proper handling in the component
+		throw error;
 	}
 };

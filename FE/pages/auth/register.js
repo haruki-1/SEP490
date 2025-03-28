@@ -37,7 +37,7 @@ export default function RegisterForm() {
 				},
 				body: JSON.stringify({
 					...data,
-					roleId: role == 'manager' ? 2 : role =='staff' ? 3 : role == 'user' ? 4 : 1,
+					roleId: role == 'manager' ? 2 : 3,
 				}),
 			});
 
@@ -176,14 +176,14 @@ export default function RegisterForm() {
 								)}
 							</div>
 
-							<div className='relative space-y-2'>
+							{/* <div className='relative space-y-2'>
 								<Label className='flex items-center gap-1'>Register as</Label>
 									<select className='w-full p-2 border rounded' value={role} onChange={(e) => setRole(e.target.value)}>
                                     <option value='user'>User</option>
                                     <option value='staff'>Staff</option>
                                     <option value='manager'>Manager</option>
                                 </select>
-							</div>
+							</div> */}
 							<div className='mt-4 text-center'>
 								<p>
 									Already have an account?{' '}

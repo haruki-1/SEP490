@@ -20,6 +20,9 @@ import {
 	X,
 	Filter,
 	Search,
+	Loader,
+	FilterX,
+	Eye,
 } from 'lucide-react';
 import { Label } from '@/components/components/ui/label';
 import Link from 'next/link';
@@ -607,155 +610,192 @@ const Homestay = () => {
 
 			{/* Results section */}
 			{isLoading ? (
-				<div className='flex items-center justify-center h-64'>
-					<p>Loading homestays...</p>
+				<div className='flex items-center justify-center rounded-lg h-80 bg-gray-50'>
+				<div className='flex flex-col items-center space-y-3'>
+					<Loader className='w-8 h-8 text-primary animate-spin' />
+					<p className='font-medium text-gray-600'>Loading homestays...</p>
+				</div>
 				</div>
 			) : error ? (
-				<div className='flex items-center justify-center h-64'>
-					<p className='text-red-500'>Error: {error.message}</p>
+				<div className='flex items-center justify-center rounded-lg h-80 bg-red-50'>
+					<div className='flex flex-col items-center space-y-3'>
+						<AlertCircle className='w-10 h-10 text-red-500' />
+						<p className='font-medium text-red-600'>Error: {error.message}</p>
+						<Button variant='outline' onClick={() => window.location.reload()}>
+							<RefreshCw className='w-4 h-4 mr-2' /> Try Again
+						</Button>
+					</div>
 				</div>
 			) : homestay?.length === 0 ? (
-				<div className='flex flex-col items-center justify-center h-64 p-6 bg-white rounded-lg shadow-md'>
-					<p className='mb-4 text-xl text-gray-500'>No homestays found</p>
-					<p className='mb-6 text-gray-400'>Try adjusting your filters to find what you're looking for</p>
-					<Button onClick={clearFilters} disabled={activeFiltersCount === 0}>
-						Clear All Filters
+				<div className='flex flex-col items-center justify-center p-8 bg-white border border-gray-100 rounded-lg shadow-sm h-80'>
+					<Search className='w-12 h-12 mb-4 text-gray-300' />
+					<p className='mb-3 text-xl font-semibold text-gray-700'>No homestays found</p>
+					<p className='max-w-md mb-6 text-center text-gray-500'>
+						Try adjusting your filters or broadening your search criteria
+					</p>
+					<Button onClick={clearFilters} disabled={activeFiltersCount === 0} className='px-6'>
+						<FilterX className='w-4 h-4 mr-2' /> Clear All Filters
 					</Button>
 				</div>
 			) : (
-				<>
-					<div className='grid grid-cols-1 gap-6 overflow-x-hidden sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'>
-						{homestay?.map((homeStay) => {
-							const priceForToday = getPriceForToday(homeStay.calendar);
+				<div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
+					{homestay?.map((homeStay) => {
+						const priceForToday = getPriceForToday(homeStay.calendar);
 
-							return (
-								<div
-									key={homeStay.id}
-									className='group [perspective:1000px] w-full h-[400px] overflow-y-hidden overflow-x-hidden'
-								>
-									<div
-										className={`relative w-full h-full transition-transform duration-500 [transform-style:preserve-3d] ${
-											homeStay?.isDeleted ? '' : 'group-hover:[transform:rotateY(180deg)]'
-										}`}
-									>
-										<div className='absolute w-full h-full backface-hidden [backface-visibility:hidden]'>
-											<img
-												src={homeStay?.mainImage}
-												className='object-cover w-full h-full rounded-lg shadow-lg cursor-pointer'
-											/>
+						return (
+							<div
+								key={homeStay.id}
+								className='group relative h-[420px] rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300'
+							>
+								{/* Card Front */}
+								<div className='absolute inset-0 z-10 w-full h-full overflow-hidden transition-all duration-500 ease-in-out transform rounded-xl group-hover:opacity-0 group-hover:scale-95'>
+									{/* Main Image */}
+									<div className='relative w-full h-full'>
+										<img
+											src={homeStay?.mainImage}
+											alt={homeStay.name}
+											className='object-cover w-full h-full rounded-xl'
+										/>
+
+										{/* Overlay Gradient */}
+										<div className='absolute inset-0 bg-gradient-to-t from-black/70 to-transparent rounded-xl'></div>
+
+										{/* Status Tags */}
+										<div className='absolute top-0 left-0 right-0 flex items-start justify-between p-4'>
 											{homeStay?.isDeleted === true && (
-												<div className='absolute px-2 py-1 rounded-md top-3 left-3 bg-rose-500'>
-													<span className='text-sm [text-shadow:2px_2px_4px_rgba(0,0,0,0.9)] font-bold text-white'>
-														<span>Deleted</span>
-													</span>
-												</div>
+												<span className='px-3 py-1 text-xs font-bold tracking-wider text-white uppercase bg-red-500 rounded-full shadow-lg'>
+													Deleted
+												</span>
 											)}
-											<div className='absolute top-3 right-3'>
-												<span className='text-[1.2rem] [text-shadow:2px_2px_4px_rgba(0,0,0,0.9)] font-bold text-white'>
+											<div className='ml-auto'>
+											<span className='px-3 py-1 text-xs font-bold tracking-wider text-white uppercase rounded-full shadow-lg bg-blue-500/90'>
 													{homeStay?.openIn}
 												</span>
 											</div>
-											<div className='text-[1.5rem] [text-shadow:2px_2px_4px_rgba(0,0,0,0.9)] font-bold text-white absolute bottom-5 left-1/2 w-full -translate-x-1/2 flex justify-center items-center flex-col'>
-												<h2 className='text-[1.5rem] [text-shadow:2px_2px_4px_rgba(0,0,0,0.9)] font-bold text-white '>
-													{homeStay.name}
-												</h2>
-												<p className='flex items-center'>
-													{[...Array(5)].map((_, index) => (
-														<svg
-															key={index}
-															className={`w-5 h-5 ${
-																homeStay.standar > index
-																	? 'text-yellow-500'
-																	: 'text-gray-300'
-															}`}
-															fill='currentColor'
-															xmlns='http://www.w3.org/2000/svg'
-															viewBox='0 0 20 20'
-														>
-															<path d='M10 15l-5.09 3.09 1.64-6.88L0 6.91l6.91-.59L10 0l2.09 6.32 6.91.59-4.55 4.3 1.64 6.88L10 15z' />
-														</svg>
-													))}
-												</p>
-											</div>
 										</div>
 
-										<div className='absolute w-full h-full bg-white rounded-lg shadow-lg [transform:rotateY(180deg)] [backface-visibility:hidden] p-4 flex flex-col justify-between'>
-											<h2 className='text-[1.2rem] font-semibold text-gray-800'>
-												{homeStay.name}
-											</h2>
-											<p className='text-gray-600 line-clamp-1'>
+										{/* Content at Bottom */}
+										<div className='absolute bottom-0 left-0 right-0 p-5'>
+											<h2 className='mb-2 text-2xl font-bold text-white'>{homeStay.name}</h2>
+											<div className='flex items-center mb-1'>
+												{[...Array(5)].map((_, index) => (
+													<svg
+														key={index}
+														className={`w-5 h-5 ${
+															homeStay.standar > index
+																? 'text-yellow-400'
+																: 'text-gray-400/50'
+														}`}
+														fill='currentColor'
+														viewBox='0 0 20 20'
+													>
+														<path d='M10 15l-5.09 3.09 1.64-6.88L0 6.91l6.91-.59L10 0l2.09 6.32 6.91.59-4.55 4.3 1.64 6.88L10 15z' />
+													</svg>
+												))}
+												<span className='ml-2 text-sm text-white'>
+													{homeStay.standar} out of 5
+												</span>
+											</div>
+											<p className='text-sm truncate text-white/80'>
 												{homeStay.address}, {homeStay.city}
 											</p>
-											<div>
-												<strong>Price for Today:</strong>
+											</div>
+									</div>
+								</div>
+
+								{/* Card Back (Details) */}
+								<div className='absolute inset-0 z-20 flex flex-col w-full h-full p-5 transition-all duration-500 ease-in-out transform bg-white opacity-0 rounded-xl group-hover:opacity-100 group-hover:scale-100'>
+									<div className='flex-1'>
+										<h2 className='mb-2 text-xl font-semibold text-gray-800'>{homeStay.name}</h2>
+										<p className='mb-4 text-gray-600'>
+											{homeStay.address}, {homeStay.city}
+										</p>
+
+										<div className='p-3 mb-4 rounded-lg bg-gray-50'>
+											<div className='flex items-center justify-between'>
+												<span className='font-medium text-gray-700'>Today's Rate:</span>
 												{priceForToday !== null ? (
-													<p className='text-xl text-green-600'>${priceForToday}</p>
+													<span className='text-xl font-bold text-green-600'>
+													${priceForToday}
+												</span>
 												) : (
-													<p className='text-red-500'>Decommission</p>
+													<span className='px-2 py-1 text-sm text-red-600 bg-red-100 rounded'>
+														Not Available
+													</span>
 												)}
 											</div>
-											<div className='w-full'>
-												<Link href={`/admin/homestay/${homeStay.id}`}>
-													<Button className='w-full'>View Detail</Button>
-												</Link>
 											</div>
-											<div className='flex items-center gap-2 flex-wrap'>
-												<Link href={`/admin/homestay/edit/${homeStay.id}`} className='w-1/5'>
-													<Button
-														className='w-full bg-green-500 hover:bg-green-700'
-														title='Edit'
-													>
-														<Pencil className='w-4 h-4' />
-													</Button>
-												</Link>
+									</div>
+
+									{/* Actions Section */}
+									<div className='mt-2 space-y-3'>
+										<Link href={`/admin/homestay/${homeStay.id}`} className='block'>
+											<Button className='w-full font-medium'>
+												<Eye className='w-4 h-4 mr-2' /> View Details
+											</Button>
+										</Link>
+
+										<div className='grid grid-cols-5 gap-2'>
+											<Link href={`/admin/homestay/edit/${homeStay.id}`} className='col-span-1'>
 												<Button
-													variant='destructive'
-													className='w-1/5'
-													onClick={() => handleDelete(homeStay.id)}
+													className='w-full bg-emerald-500 hover:bg-emerald-600'
+													title='Edit'
 													disabled={homeStay?.isDeleted === true}
-													title='Delete'
 												>
-													<Trash2 className='w-4 h-4' />
+													<Pencil className='w-4 h-4' />
 												</Button>
+												</Link>
+
+											<Button
+												variant='destructive'
+												className='col-span-1'
+												onClick={() => handleDelete(homeStay.id)}
+												disabled={homeStay?.isDeleted === true}
+												title='Delete'
+											>
+												<Trash2 className='w-4 h-4' />
+											</Button>
+
+											<Button
+												variant='outline'
+												className='col-span-1'
+												onClick={() => openManageFacilitiesDialog(homeStay.id)}
+												disabled={homeStay?.isDeleted === true}
+												title='Manage Facilities'
+											>
+												<List className='w-4 h-4' />
+											</Button>
+
+											<Button
+												variant='outline'
+												className='col-span-1'
+												onClick={() => openManageAmenitiesDialog(homeStay.id)}
+												disabled={homeStay?.isDeleted === true}
+												title='Manage Amenities'
+											>
+												<Grid className='w-4 h-4' />
+											</Button>
+
+											<Link
+												href={`/manager/homestay/calendar/${homeStay.id}`}
+												className='col-span-1'
+											></Link>
 												<Button
 													variant='outline'
-													className='w-1/5'
-													onClick={() => openManageFacilitiesDialog(homeStay.id)}
+													className='w-full'
 													disabled={homeStay?.isDeleted === true}
-													title='Manage Facilities'
+													title='Manage Calendar'
 												>
-													<List className='w-4 h-4' />
+													<Calendar className='w-4 h-4' />
 												</Button>
-												<Button
-													variant='outline'
-													className='w-1/5'
-													onClick={() => openManageAmenitiesDialog(homeStay.id)}
-													disabled={homeStay?.isDeleted === true}
-													title='Manage Amenities'
-												>
-													<Grid className='w-4 h-4' />
-												</Button>
-												<Link
-													href={`/admin/homestay/calendar/${homeStay.id}`}
-													className='w-1/5'
-												>
-													<Button
-														variant='outline'
-														className='w-full'
-														disabled={homeStay?.isDeleted === true}
-														title='Manage Calendar'
-													>
-														<Calendar className='w-4 h-4' />
-													</Button>
-												</Link>
-											</div>
+												
 										</div>
 									</div>
 								</div>
-							);
-						})}
-					</div>
-				</>
+							</div>
+						);
+					})}
+				</div>
 			)}
 
 			{/* Dialogs (unchanged) */}

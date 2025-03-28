@@ -20,10 +20,10 @@ const items = [
 	{ title: 'Homestay', url: '/manager/homestay', icon: Hotel },
 	{ title: 'Facility', url: '/manager/facility', icon: Boxes },
 	{ title: 'Amenity', url: '/manager/amenity', icon: Bath },
-	{ title: 'Cost', url: '/manager/cost', icon: Currency },
+	// { title: 'Cost', url: '/manager/cost', icon: Currency },
 	{ title: 'Posts', url: '/manager/posts', icon: Newspaper },
 	{ title: 'Voucher', url: '/manager/voucher', icon: Ticket },
-	{ title: 'Cleaning', url: '/manager/cleaning', icon: PaintRoller },
+	// { title: 'Cleaning', url: '/manager/cleaning', icon: PaintRoller },
 	{ title: 'Account', url: '/manager/profile', icon: User },
 ];
 
