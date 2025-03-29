@@ -20,17 +20,17 @@ namespace DataAccess.Context
         public DbSet<PostImage> PostImages { get; set; }
         public DbSet<Post> Posts { get; set; }
         public DbSet<HomeStayImage> HomeStayImages { get; set; }
-        public DbSet<HomestayAmenity>HomestayAmenities { get; set; }
+        public DbSet<HomestayAmenity> HomestayAmenities { get; set; }
         public DbSet<HomeStay> HomeStays { get; set; }
         public DbSet<FeedBack> FeedBacks { get; set; }
         public DbSet<CommentPost> CommentPosts { get; set; }
-        public DbSet<Calendar> Calendars {  get; set; }
+        public DbSet<Calendar> Calendars { get; set; }
         public DbSet<Booking> Bookings { get; set; }
-        public DbSet<Amenity> Amennities {  get; set; } 
-        public DbSet<Transaction> Transactions { get; set; }    
+        public DbSet<Amenity> Amennities { get; set; }
+        public DbSet<Transaction> Transactions { get; set; }
         public DbSet<HomeStayFacility> HomeStayFacilities { get; set; }
         public DbSet<Facility> Facilities { get; set; }
-
+        public DbSet<Refunds> Refunds { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -38,7 +38,7 @@ namespace DataAccess.Context
             builder.Entity<UserVoucher>().HasKey(u => new { u.UserID, u.VoucherID });
             builder.Entity<HomestayAmenity>().HasKey(ha => new { ha.HomeStayID, ha.AmenityId });
             builder.Entity<HomeStayFacility>().HasKey(hf => new { hf.HomeStayID, hf.FacilityID });
-            
+
             builder.Entity<Booking>()
             .Property(b => b.TotalPrice)
             .HasPrecision(18, 4);
@@ -49,13 +49,13 @@ namespace DataAccess.Context
 
             builder.Entity<Calendar>()
                 .Property(c => c.Price)
-            .HasPrecision(18, 4); 
-            
+            .HasPrecision(18, 4);
+
             foreach (var relationship in builder.Model.GetEntityTypes()
             .SelectMany(e => e.GetForeignKeys()))
-                    {
-                        relationship.DeleteBehavior = DeleteBehavior.NoAction;
-                    }
+            {
+                relationship.DeleteBehavior = DeleteBehavior.NoAction;
+            }
 
 
             base.OnModelCreating(builder);
@@ -76,9 +76,9 @@ namespace DataAccess.Context
                     {
                         Id = adminId,
                         Email = "admin@gmail.com",
-                        PasswordHash = BCrypt.Net.BCrypt.HashPassword("aA@123"),
+                        PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123@"),
                         FullName = "admin",
-                        Address = "Ninh Kiều, Cần Thơ",
+                        Address = "Hà Nội",
                         Phone = "0987654321",
                         IsEmailConfirmed = true,
                         RoleId = 1
@@ -86,10 +86,10 @@ namespace DataAccess.Context
                     new User()
                     {
                         Id = staffId,
-                        Email = "staff@gmail.com",
-                        PasswordHash = BCrypt.Net.BCrypt.HashPassword("aA@123"),
-                        FullName = "staff",
-                        Address = "Bình Thủy, Cần Thơ",
+                        Email = "manager@gmail.com",
+                        PasswordHash = BCrypt.Net.BCrypt.HashPassword("Manager123@"),
+                        FullName = "manager",
+                        Address = "Hà Nội",
                         Phone = "0987654123",
                         IsEmailConfirmed = true,
                         RoleId = 2
@@ -98,9 +98,9 @@ namespace DataAccess.Context
                     {
                         Id = userId,
                         Email = "user@gmail.com",
-                        PasswordHash = BCrypt.Net.BCrypt.HashPassword("aA@123"),
+                        PasswordHash = BCrypt.Net.BCrypt.HashPassword("User123@"),
                         FullName = "user",
-                        Address = "Phong Điền, Cần Thơ",
+                        Address = "Hà Nội",
                         Phone = "0987654312",
                         IsEmailConfirmed = true,
                         RoleId = 3
