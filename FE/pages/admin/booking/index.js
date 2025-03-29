@@ -134,6 +134,17 @@ const BookingHomestay = () => {
 				return 'Update Status';
 		}
 	};
+	// Helper function to get initials for avatar fallback
+	const getInitials = (name) => {
+		if (!name) return 'G';
+		return name
+			.split(' ')
+			.map((part) => part[0])
+			.join('')
+			.toUpperCase()
+			.substring(0, 2);
+	};
+
 
 	return (
 		<AdminLayout>
@@ -218,7 +229,7 @@ const BookingHomestay = () => {
 								<thead className='bg-gray-50'>
 									<tr>
 										<th className='px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase'>
-											Avatar
+											Guest
 										</th>
 										<th className='px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase'>
 											Guest Name
@@ -244,16 +255,27 @@ const BookingHomestay = () => {
 									{bookings.map((booking) => (
 										<tr key={booking.id}>
 											<td className='px-6 py-4 text-sm text-gray-500 whitespace-nowrap'>
-												<Image
-													src={booking.user.avatar}
-													alt='avatar'
-													width={50}
-													height={50}
-													className='size-8'
-												/>
+											<Avatar className='flex-shrink-0 w-10 h-10 border-2 border-white shadow'>
+													{booking.user && booking.user.avatar ? (
+														<AvatarImage
+															src={booking.user.avatar}
+															alt={booking.user.fullName || 'Guest'}
+														/>
+													) : (
+														<AvatarImage
+															src={`https://api.dicebear.com/6.x/avataaars/svg?seed=${
+																booking.user?.email || booking.id || 'guest'
+															}`}
+															alt='Guest'
+														/>
+													)}
+													<AvatarFallback className='font-medium text-white bg-indigo-600'>
+														{getInitials(booking.user?.fullName)}
+													</AvatarFallback>
+												</Avatar>
 											</td>
 											<td className='px-6 py-4 text-sm text-gray-500 whitespace-nowrap'>
-												{booking.user.fullName}
+												{booking.user?.fullName || 'Unknown Guest'}
 											</td>
 											<td className='px-6 py-4 text-sm text-gray-500 whitespace-nowrap'>
 												{booking.checkInDate}
@@ -262,7 +284,7 @@ const BookingHomestay = () => {
 												{booking.checkOutDate}
 											</td>
 											<td className='px-6 py-4 text-sm text-gray-500 whitespace-nowrap'>
-												{booking.totalPrice.toLocaleString()}
+												{booking.totalPrice?.toLocaleString() || 'N/A'}
 											</td>
 											<td className='px-6 py-4 whitespace-nowrap'>
 												<span
