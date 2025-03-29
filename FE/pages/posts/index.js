@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { getAllPost } from '@/pages/api/posts/getPosts';
+import MainLayout from '@/pages/layout';
 import React, { useState } from 'react';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
@@ -7,53 +8,52 @@ import Link from 'next/link';
 import { Calendar, MapPin, ArrowRight, Clock, Eye, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/components/ui/button';
 import { Badge } from '@/components/components/ui/badge';
-import MainLayout from '../layout';
 
 const PostCard = ({ post }) => {
 	const formattedDate = format(new Date(post.publishDate), 'dd MMMM, yyyy', { locale: vi });
 
 	return (
-		<div className='bg-white rounded-xl shadow-sm overflow-hidden transition-all duration-300 hover:shadow-md group border border-gray-100 h-full flex flex-col'>
-			<div className='relative h-64 overflow-hidden flex-shrink-0'>
+		<div className='flex flex-col h-full overflow-hidden transition-all duration-300 bg-white border border-gray-100 shadow-sm rounded-xl hover:shadow-md group'>
+			<div className='relative flex-shrink-0 h-64 overflow-hidden'>
 				{post.images && post.images.length > 0 ? (
 					<img
 						src={post.images[0]}
 						alt={post.title}
-						className='w-full h-full object-cover transition-transform duration-500 group-hover:scale-105'
+						className='object-cover w-full h-full transition-transform duration-500 group-hover:scale-105'
 					/>
 				) : (
-					<div className='w-full h-full bg-gray-100 flex items-center justify-center'>
+					<div className='flex items-center justify-center w-full h-full bg-gray-100'>
 						<span className='text-gray-400'>No image available</span>
 					</div>
 				)}
 
 				{/* Location badge */}
-				<Badge className='absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-blue-600 border-0 shadow-sm'>
+				<Badge className='absolute text-blue-600 border-0 shadow-sm top-3 left-3 bg-white/90 backdrop-blur-sm'>
 					<MapPin className='w-3 h-3 mr-1' />
 					{post.location}
 				</Badge>
 
 				{/* Date badge */}
-				<Badge className='absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-gray-700 border-0 shadow-sm'>
+				<Badge className='absolute text-gray-700 border-0 shadow-sm top-3 right-3 bg-white/90 backdrop-blur-sm'>
 					<Calendar className='w-3 h-3 mr-1' />
 					{formattedDate}
 				</Badge>
 
 				{/* Gradient overlay */}
-				<div className='absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-60 group-hover:opacity-80 transition-opacity'></div>
+				<div className='absolute inset-0 transition-opacity bg-gradient-to-t from-black/70 to-transparent opacity-60 group-hover:opacity-80'></div>
 			</div>
 
-			<div className='p-5 flex flex-col flex-grow'>
-				<h3 className='text-xl font-bold text-gray-800 mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors'>
+			<div className='flex flex-col flex-grow p-5'>
+				<h3 className='mb-3 text-xl font-bold text-gray-800 transition-colors line-clamp-2 group-hover:text-blue-600'>
 					{post.title}
 				</h3>
 
-				<p className='text-gray-600 text-sm line-clamp-3 mb-4 flex-grow'>{post.description}</p>
+				<p className='flex-grow mb-4 text-sm text-gray-600 line-clamp-3'>{post.description}</p>
 
 				<Link href={`/posts/${post.id}`}>
 					<Button
 						variant='outline'
-						className='w-full justify-center mt-auto border-blue-200 text-blue-600 hover:bg-blue-50 hover:text-blue-700 group-hover:border-blue-300 transition-colors'
+						className='justify-center w-full mt-auto text-blue-600 transition-colors border-blue-200 hover:bg-blue-50 hover:text-blue-700 group-hover:border-blue-300'
 					>
 						Read More
 						<ArrowRight className='w-4 h-4 ml-2 transition-transform group-hover:translate-x-1' />
@@ -68,22 +68,22 @@ const FeaturedPost = ({ post }) => {
 	const formattedDate = format(new Date(post.publishDate), 'dd MMMM, yyyy', { locale: vi });
 
 	return (
-		<div className='bg-white rounded-xl shadow-sm overflow-hidden mb-12 border border-gray-100 group hover:shadow-md transition-all duration-300'>
+		<div className='mb-12 overflow-hidden transition-all duration-300 bg-white border border-gray-100 shadow-sm rounded-xl group hover:shadow-md'>
 			<div className='md:flex'>
-				<div className='md:w-2/3 relative overflow-hidden'>
+				<div className='relative overflow-hidden md:w-2/3'>
 					{post.images && post.images.length > 0 ? (
-						<div className='relative h-96 overflow-hidden'>
+						<div className='relative overflow-hidden h-96'>
 							<img
 								src={post.images[0]}
 								alt={post.title}
-								className='w-full h-full object-cover transition-transform duration-500 group-hover:scale-105'
+								className='object-cover w-full h-full transition-transform duration-500 group-hover:scale-105'
 							/>
 							<div className='absolute inset-0 bg-gradient-to-r from-black/50 via-black/30 to-transparent md:bg-gradient-to-t'></div>
 
 							<div className='absolute bottom-0 left-0 p-6 md:hidden'>
-								<Badge className='bg-blue-600 border-0 text-white mb-2'>Featured Post</Badge>
-								<h2 className='text-2xl font-bold text-white mb-2'>{post.title}</h2>
-								<div className='flex items-center space-x-3 text-white/80 text-sm'>
+								<Badge className='mb-2 text-white bg-blue-600 border-0'>Featured Post</Badge>
+								<h2 className='mb-2 text-2xl font-bold text-white'>{post.title}</h2>
+								<div className='flex items-center space-x-3 text-sm text-white/80'>
 									<span className='flex items-center'>
 										<Calendar className='w-4 h-4 mr-1' />
 										{formattedDate}
@@ -96,22 +96,22 @@ const FeaturedPost = ({ post }) => {
 							</div>
 						</div>
 					) : (
-						<div className='w-full h-96 bg-gray-100 flex items-center justify-center'>
+						<div className='flex items-center justify-center w-full bg-gray-100 h-96'>
 							<span className='text-gray-400'>No image available</span>
 						</div>
 					)}
 				</div>
 
-				<div className='md:w-1/3 p-6 flex flex-col'>
+				<div className='flex flex-col p-6 md:w-1/3'>
 					<div className='flex-grow'>
-						<Badge className='bg-blue-600 border-0 text-white mb-3 hidden md:inline-flex'>
+						<Badge className='hidden mb-3 text-white bg-blue-600 border-0 md:inline-flex'>
 							Featured Post
 						</Badge>
-						<h2 className='text-2xl md:text-3xl font-bold text-gray-800 mb-3 hidden md:block group-hover:text-blue-600 transition-colors'>
+						<h2 className='hidden mb-3 text-2xl font-bold text-gray-800 transition-colors md:text-3xl md:block group-hover:text-blue-600'>
 							{post.title}
 						</h2>
 
-						<div className='flex items-center space-x-3 text-gray-500 text-sm mb-3 hidden md:flex'>
+						<div className='items-center hidden mb-3 space-x-3 text-sm text-gray-500 md:flex'>
 							<span className='flex items-center'>
 								<Calendar className='w-4 h-4 mr-1' />
 								{formattedDate}
@@ -122,11 +122,11 @@ const FeaturedPost = ({ post }) => {
 							</span>
 						</div>
 
-						<p className='text-gray-600 line-clamp-6 text-sm md:block hidden'>{post.description}</p>
+						<p className='hidden text-sm text-gray-600 line-clamp-6 md:block'>{post.description}</p>
 					</div>
 
 					<Link href={`/posts/${post.id}`} className='mt-4 md:mt-auto'>
-						<Button className='w-full bg-blue-600 hover:bg-blue-700 text-white'>
+						<Button className='w-full text-white bg-blue-600 hover:bg-blue-700'>
 							Read the Article
 							<ArrowRight className='w-4 h-4 ml-2 transition-transform group-hover:translate-x-1' />
 						</Button>
@@ -138,20 +138,20 @@ const FeaturedPost = ({ post }) => {
 };
 
 const Loading = () => (
-	<div className='flex flex-col space-y-4 w-full'>
+	<div className='flex flex-col w-full space-y-4'>
 		<div className='w-full h-64 bg-gray-100 animate-pulse rounded-xl'></div>
-		<div className='w-3/4 h-8 bg-gray-100 animate-pulse rounded-lg'></div>
-		<div className='w-full h-20 bg-gray-100 animate-pulse rounded-lg'></div>
-		<div className='w-1/2 h-10 bg-gray-100 animate-pulse rounded-lg'></div>
+		<div className='w-3/4 h-8 bg-gray-100 rounded-lg animate-pulse'></div>
+		<div className='w-full h-20 bg-gray-100 rounded-lg animate-pulse'></div>
+		<div className='w-1/2 h-10 bg-gray-100 rounded-lg animate-pulse'></div>
 	</div>
 );
 
 const ErrorDisplay = ({ message }) => (
-	<div className='bg-red-50 border border-red-100 rounded-xl p-8 text-center'>
-		<div className='w-16 h-16 mx-auto mb-4 rounded-full bg-red-100 flex items-center justify-center'>
+	<div className='p-8 text-center border border-red-100 bg-red-50 rounded-xl'>
+		<div className='flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full'>
 			<svg
 				xmlns='http://www.w3.org/2000/svg'
-				className='h-8 w-8 text-red-500'
+				className='w-8 h-8 text-red-500'
 				fill='none'
 				viewBox='0 0 24 24'
 				stroke='currentColor'
@@ -164,11 +164,11 @@ const ErrorDisplay = ({ message }) => (
 				/>
 			</svg>
 		</div>
-		<h3 className='text-xl font-bold text-red-800 mb-2'>Something went wrong</h3>
-		<p className='text-red-600 mb-6'>{message || 'Unable to load articles. Please try again later.'}</p>
+		<h3 className='mb-2 text-xl font-bold text-red-800'>Something went wrong</h3>
+		<p className='mb-6 text-red-600'>{message || 'Unable to load articles. Please try again later.'}</p>
 		<Button
 			variant='outline'
-			className='border-red-200 text-red-600 hover:bg-red-50'
+			className='text-red-600 border-red-200 hover:bg-red-50'
 			onClick={() => window.location.reload()}
 		>
 			Try Again
@@ -177,11 +177,11 @@ const ErrorDisplay = ({ message }) => (
 );
 
 const EmptyState = () => (
-	<div className='bg-blue-50 border border-blue-100 rounded-xl p-8 text-center'>
-		<div className='w-16 h-16 mx-auto mb-4 rounded-full bg-blue-100 flex items-center justify-center'>
+	<div className='p-8 text-center border border-blue-100 bg-blue-50 rounded-xl'>
+		<div className='flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-blue-100 rounded-full'>
 			<svg
 				xmlns='http://www.w3.org/2000/svg'
-				className='h-8 w-8 text-blue-500'
+				className='w-8 h-8 text-blue-500'
 				fill='none'
 				viewBox='0 0 24 24'
 				stroke='currentColor'
@@ -194,8 +194,8 @@ const EmptyState = () => (
 				/>
 			</svg>
 		</div>
-		<h3 className='text-xl font-bold text-blue-800 mb-2'>No posts yet</h3>
-		<p className='text-blue-600 mb-6'>There are currently no travel articles. Please check back later!</p>
+		<h3 className='mb-2 text-xl font-bold text-blue-800'>No posts yet</h3>
+		<p className='mb-6 text-blue-600'>There are currently no published travel articles. Please check back later!</p>
 	</div>
 );
 
@@ -208,11 +208,13 @@ const PostPage = () => {
 	// State to manage visible posts
 	const [visiblePostCount, setVisiblePostCount] = useState(6);
 
+	// Filter posts by status (only show posts with status "Publish")
+	const filteredPosts = data ? data.filter((post) => post.status === 'Publish') : [];
+
 	// Process returned data
-	const posts = data || [];
-	const hasPosts = posts.length > 0;
-	const featuredPost = hasPosts ? posts[0] : null;
-	const otherPosts = hasPosts ? posts.slice(1) : [];
+	const hasPosts = filteredPosts.length > 0;
+	const featuredPost = hasPosts ? filteredPosts[0] : null;
+	const otherPosts = hasPosts ? filteredPosts.slice(1) : [];
 
 	// Get currently visible posts based on the state
 	const visiblePosts = otherPosts.slice(0, visiblePostCount);
@@ -231,10 +233,10 @@ const PostPage = () => {
 			<section className='sec-com bg-gray-50'>
 				<div className='container-lg'>
 					<div className='mb-12 text-center'>
-						<h1 className='text-4xl font-bold mb-4'>
+						<h1 className='mb-4 text-4xl font-bold'>
 							Explore <span className='text-blue-600'>Destinations</span>
 						</h1>
-						<p className='text-gray-600 max-w-3xl mx-auto'>
+						<p className='max-w-3xl mx-auto text-gray-600'>
 							Discover exciting destinations, share experiences and find new perspectives on the world
 							around us.
 						</p>
@@ -243,7 +245,7 @@ const PostPage = () => {
 					{isLoading ? (
 						<div className='space-y-12'>
 							<Loading />
-							<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+							<div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
 								<Loading />
 								<Loading />
 								<Loading />
@@ -261,10 +263,10 @@ const PostPage = () => {
 								<div className='space-y-8'>
 									<div className='flex items-center'>
 										<h2 className='text-2xl font-bold text-gray-800'>Latest Articles</h2>
-										<div className='ml-4 flex-grow h-px bg-gray-200'></div>
+										<div className='flex-grow h-px ml-4 bg-gray-200'></div>
 									</div>
 
-									<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+									<div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
 										{visiblePosts.map((post) => (
 											<PostCard key={post.id} post={post} />
 										))}
@@ -276,7 +278,7 @@ const PostPage = () => {
 								<div className='mt-12 text-center'>
 									<Button
 										onClick={handleSeeMoreArticles}
-										className='bg-blue-600 hover:bg-blue-700 px-8'
+										className='px-8 bg-blue-600 hover:bg-blue-700'
 									>
 										Load More Articles
 										<ChevronDown className='w-4 h-4 ml-2' />
