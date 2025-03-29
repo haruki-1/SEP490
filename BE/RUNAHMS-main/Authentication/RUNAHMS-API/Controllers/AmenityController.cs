@@ -2,6 +2,8 @@
 using BusinessObject.Entities;
 using BusinessObject.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace API.Controllers
 {
@@ -14,6 +16,17 @@ namespace API.Controllers
         [HttpPost("add-system-amenity")]
         public async Task<IActionResult> AddAmenitySystem([FromBody] AddSystemAmenityRequest request)
         {
+            if (request == null || request.AmenityNames.Count == 0)
+            {
+                return BadRequest(new ProblemDetails
+                {
+                    Type = "https://tools.ietf.org/html/rfc9110#section-15.5.1",
+                    Title = "Bad Request",
+                    Status = 400,
+                    Detail = "AmenityNames cannot be empty.",
+                    Extensions = { ["traceId"] = Guid.NewGuid().ToString() }
+                });
+            }
             var existingAmenityNames = (await _amenityRepository
                 .GetAllAsync())
                 .Select(a => a.Name.ToLower())
@@ -25,7 +38,7 @@ namespace API.Controllers
 
             foreach (var amenityName in request.AmenityNames)
             {
-                if (existingAmenityNames.Equals(amenityName.ToLower()))
+                if (existingAmenityNames.Contains(amenityName.ToLower()))
                 {
                     duplicateNames.Add(amenityName);
                 }
@@ -61,7 +74,11 @@ namespace API.Controllers
         [HttpGet("get-all-system-amenity")]
         public async Task<IActionResult> GetAllSystemAmenity()
         {
-            var amenityList = await _amenityRepository.GetAllAsync();
+            var amenityList = await _amenityRepository
+                                  .FindWithInclude()
+                                  .GroupBy(x => x.Name.ToLower())
+                                  .Select(g => g.First())
+                                  .ToListAsync();
             return Ok(amenityList);
         }
     }
