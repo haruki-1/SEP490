@@ -1,4 +1,4 @@
-import api from 'utils/api';
+import api from '@/utils/api';
 
 export const getHomeStayByUser = async (userID) => {
 	try {
@@ -9,3 +9,4 @@ export const getHomeStayByUser = async (userID) => {
 		throw error;
 	}
 };
+

@@ -27,12 +27,7 @@ import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
 import { useAuth } from '@/context/AuthProvider';
 import AmenityList from './AmenityList';
-
-// Define the navigation items with their paths
-const NAV_ITEMS = [
-	{ href: '/home-stay', label: 'Homestay' },
-	{ href: '/posts', label: 'Posts' },
-];
+import { useTranslation } from 'next-i18next';
 
 const Header = () => {
 	const router = useRouter();
@@ -41,6 +36,7 @@ const Header = () => {
 	const [scrolled, setScrolled] = useState(false);
 	const [isMounted, setIsMounted] = useState(false);
 	const [isSearching, setIsSearching] = useState(false);
+	const { t } = useTranslation('common');
 
 	// Date selection states
 	const [checkInDate, setCheckInDate] = useState(null);
@@ -170,22 +166,34 @@ const Header = () => {
 
 						{/* Desktop Navigation */}
 						<nav className='hidden md:flex items-center ml-6 space-x-1'>
-							{NAV_ITEMS.map((item) => (
-								<Link
-									key={item.href}
-									href={item.href}
-									className={`
-                    px-3 py-2 rounded-md text-sm font-medium transition-colors
-                    ${
-						isActivePath(item.href)
+							<Link
+								key='/home-stay'
+								href='/home-stay'
+								className={`
+                    			px-3 py-2 rounded-md text-sm font-medium transition-colors
+                   				${
+								isActivePath('/home-stay')
 							? 'text-blue-600 bg-blue-50'
 							: 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
-					}
-                  `}
-								>
-									{item.label}
-								</Link>
-							))}
+						}
+                  	`}
+				 	 >
+				 	{t('homestays')}
+							</Link>
+									<Link
+										key='/posts'
+										href='/posts'
+										className={`
+									px-3 py-2 rounded-md text-sm font-medium transition-colors
+									${
+										isActivePath('/posts')
+										? 'text-blue-600 bg-blue-50'
+										: 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
+									}
+									`}
+									>
+							{t('posts')}
+							</Link>
 						</nav>
 					</div>
 
@@ -194,7 +202,7 @@ const Header = () => {
 						<form onSubmit={handleSearch} className='relative flex w-full items-center gap-2'>
 							<Input
 								type='text'
-								placeholder='Where are you going?'
+								placeholder={t('where')}
 								value={location}
 								onChange={(e) => setLocation(e.target.value)}
 								className='border-gray-200 rounded-l-full focus:ring-blue-500 focus:border-blue-500 rounded-r-none'
@@ -214,15 +222,15 @@ const Header = () => {
 												{format(checkInDate, 'MMM d')} - {format(checkOutDate, 'MMM d')}
 											</span>
 										) : (
-											<span>Select dates</span>
+											<span>{t('select-dates')}</span>
 										)}
 									</Button>
 								</PopoverTrigger>
 								<PopoverContent className='w-auto p-0' align='center'>
 									<div className='p-3'>
 										<div className='space-y-1 mb-2'>
-											<h4 className='font-medium text-sm'>Check in - Check out</h4>
-											<p className='text-xs text-gray-500'>Select your stay dates</p>
+											<h4 className='text-sm font-medium'>{t('check-dates')}</h4>
+											<p className='text-xs text-gray-500'>{t('select-stay')}</p>
 										</div>
 										<DayPicker
 											mode='range'
@@ -235,7 +243,7 @@ const Header = () => {
 										/>
 										<div className='flex justify-end mt-4'>
 											<Button size='sm' onClick={() => setDatePickerOpen(false)}>
-												Apply
+												{t('apply')}
 											</Button>
 										</div>
 									</div>
@@ -248,7 +256,7 @@ const Header = () => {
 								) : (
 									<Search className='w-4 h-4 mr-1' />
 								)}
-								Search
+								{t('search')}
 							</Button>
 						</form>
 					</div>
@@ -307,7 +315,7 @@ const Header = () => {
 											className='cursor-pointer'
 										>
 											<User className='mr-2 h-4 w-4' />
-											<span>Profile</span>
+											<span>{t('profile')}</span>
 										</DropdownMenuItem>
 										<DropdownMenuItem
 											onClick={() => router.push('/bookings')}
@@ -316,14 +324,21 @@ const Header = () => {
 											<Settings className='mr-2 h-4 w-4' />
 											<span>My Bookings</span>
 										</DropdownMenuItem>
+										<DropdownMenuItem
+											onClick={() => router.push('/help')}
+											className='cursor-pointer'
+										>
+											<User className='mr-2 h-4 w-4' />
+											<span>{t('Help-center')}</span>
+										</DropdownMenuItem>
 									</DropdownMenuGroup>
-									<DropdownMenuSeparator />
-									<DropdownMenuItem
+								<DropdownMenuSeparator />
+							<DropdownMenuItem
 										onClick={logout}
 										className='cursor-pointer text-red-600 focus:text-red-600'
 									>
 										<LogOut className='mr-2 h-4 w-4' />
-										<span>Log out</span>
+										<span>{t('logout')}</span>
 									</DropdownMenuItem>
 								</DropdownMenuContent>
 							</DropdownMenu>
@@ -331,12 +346,12 @@ const Header = () => {
 							<div className='flex gap-2'>
 								<Link href='/auth/login'>
 									<Button variant='ghost' size='sm' className='hidden sm:inline-flex'>
-										Log in
+										{t('login')}
 									</Button>
 								</Link>
 								<Link href='/auth/register'>
 									<Button size='sm' className='bg-blue-600 hover:bg-blue-700'>
-										Sign up
+									{t('sign-up')}
 									</Button>
 								</Link>
 							</div>
@@ -354,7 +369,7 @@ const Header = () => {
 									<div className='relative h-10 w-10 overflow-hidden rounded-full'>
 										<Image src='/images/logo.jpg' alt='logo' fill className='object-cover' />
 									</div>
-									<span className='font-semibold text-lg'>HomeStay</span>
+									<span className='text-lg font-semibold'>{t('homestay')}</span>
 								</div>
 
 								{/* Mobile search form */}
@@ -371,7 +386,7 @@ const Header = () => {
 									</div>
 
 									<div className='space-y-2'>
-										<label className='text-sm font-medium'>Check in - Check out</label>
+										<label className='text-sm font-medium'>{t('check-dates')}</label>
 										<Popover>
 											<PopoverTrigger asChild>
 												<Button
@@ -385,7 +400,7 @@ const Header = () => {
 															{format(checkOutDate, 'MMM d')}
 														</span>
 													) : (
-														<span>Select dates</span>
+														<span>{t('select-dates')}</span>
 													)}
 												</Button>
 											</PopoverTrigger>
@@ -410,27 +425,39 @@ const Header = () => {
 										) : (
 											<Search className='w-4 h-4 mr-2' />
 										)}
-										Search Homestays
+										{t('search')}
 									</Button>
 								</form>
 								{/* Mobile navigation */}
 								<nav className='space-y-1 mb-6'>
-									{NAV_ITEMS.map((item) => (
-										<Link
-											key={item.href}
-											href={item.href}
-											className={`
-                        flex items-center px-3 py-3 rounded-md text-base font-medium transition-colors
-                        ${
-							isActivePath(item.href)
-								? 'text-blue-600 bg-blue-50'
-								: 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
-						}
-                      `}
-										>
-											{item.label}
-										</Link>
-									))}
+								<Link
+										key='/home-stay'
+										href='/home-stay'
+										className={`
+                    px-3 py-2 rounded-md text-sm font-medium transition-colors
+                    ${
+						isActivePath('/home-stay')
+							? 'text-blue-600 bg-blue-50'
+							: 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
+					}
+                  `}
+									>
+										{t('homestays')}
+									</Link>
+									<Link
+										key='/posts'
+										href='/posts'
+										className={`
+                    px-3 py-2 rounded-md text-sm font-medium transition-colors
+                    ${
+						isActivePath('/posts')
+							? 'text-blue-600 bg-blue-50'
+							: 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
+					}
+                  `}
+									>
+										{t('posts')}
+									</Link>
 								</nav>
 
 								<div className='mt-auto space-y-4'>

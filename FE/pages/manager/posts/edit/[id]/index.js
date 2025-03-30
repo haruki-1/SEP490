@@ -7,7 +7,6 @@ import { Label } from '@/components/components/ui/label';
 import { ImagePlus, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { Textarea } from '@/components/components/ui/textarea';
-import api from 'utils/api';
 import { useParams } from 'next/navigation';
 import { editPost } from '@/pages/api/posts/updatePost';
 import { getPostDetail } from '@/pages/api/posts/getPostDetail';
@@ -126,7 +125,7 @@ const EditPostPage = () => {
 								className='hidden'
 								id='imagesInput'
 							/>
-							<div className='grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4'>
+							<div className='grid grid-cols-4 gap-4 md:grid-cols-6 lg:grid-cols-8'>
 								{formData.images.map((url, index) => (
 									<div key={index} className='relative group'>
 										<img

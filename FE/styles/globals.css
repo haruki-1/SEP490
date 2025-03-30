@@ -229,3 +229,6 @@ body {
 .rdp-button:hover:not([disabled]):not(.rdp-day_selected) {
 	background-color: var(--rdp-background-color);
 }
+.my-custom-swal-z-index {
+	z-index: 9999 !important;
+}

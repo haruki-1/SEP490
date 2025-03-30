@@ -7,8 +7,10 @@ import { format } from 'date-fns';
 import { toast } from 'sonner';
 import { Copy, Check, Calendar, Tag, ArrowRight, Gift, Loader2 } from 'lucide-react';
 import { useAuth } from '@/context/AuthProvider';
+import { useTranslation } from 'next-i18next';
 
 const VoucherCard = () => {
+	const { t } = useTranslation('common');
 	const [copiedVoucher, setCopiedVoucher] = useState(null);
 	const { dataProfile } = useAuth();
 
@@ -69,11 +71,8 @@ const VoucherCard = () => {
 		<div className='sec-com bg-gradient-to-b from-blue-50 to-white'>
 			<div className='container-lg'>
 				<div className='mb-10 text-center'>
-					<h1 className='mb-2 text-3xl font-bold text-gray-800 md:text-4xl'>Special Offers</h1>
-					<p className='max-w-2xl mx-auto text-gray-600'>
-						Discover exclusive vouchers to save on your next homestay booking. Get a voucher and use it
-						during checkout.
-					</p>
+				<h1 className='mb-2 text-3xl font-bold text-gray-800 md:text-4xl'>{t('specialoffers')}</h1>
+				<p className='max-w-2xl mx-auto text-gray-600'>{t('specialdescription')}</p>
 				</div>
 
 				{isLoading ? (
