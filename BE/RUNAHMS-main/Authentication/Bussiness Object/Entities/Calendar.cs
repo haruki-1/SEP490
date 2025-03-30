@@ -12,7 +12,7 @@ namespace BusinessObject.Entities
     public class Calendar : BaseEntity<Guid>
     {
         public DateTime Date { get; set; }
-        public Decimal Price { get; set; }
+        public Decimal Price {  get; set; }
         public bool isBooked { get; set; } = false;
 
         public Guid HomeStayID { get; set; }
@@ -24,6 +24,6 @@ namespace BusinessObject.Entities
         [ForeignKey("BookingID")]
         public Booking? Booking { get; set; }
 
-        public bool isDeleted { get; set; } = false;
+        public bool isDeleted {  get; set; } = false;
     }
 }

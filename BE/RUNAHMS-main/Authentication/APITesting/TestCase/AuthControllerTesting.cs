@@ -36,8 +36,8 @@ public class AuthControllerTesting
             _mockTokenService.Object,
             _mockPasswordHasher.Object,
             _mockEmailSender.Object,
-            _mockConfiguration.Object
-            
+            _mockConfiguration.Object,
+            null
         );
     }
 
