@@ -322,7 +322,7 @@ const Header = () => {
 											className='cursor-pointer'
 										>
 											<Settings className='mr-2 h-4 w-4' />
-											<span>My Bookings</span>
+											<span>{t('my-bookings')}</span>
 										</DropdownMenuItem>
 										<DropdownMenuItem
 											onClick={() => router.push('/help')}

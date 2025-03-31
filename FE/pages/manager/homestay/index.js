@@ -23,14 +23,11 @@ import {
 	FilterX,
 	Eye,
 	Lock,
-	AlertCircle,
-	RefreshCw,
 } from 'lucide-react';
 import { Label } from '@/components/components/ui/label';
 import Link from 'next/link';
 import { deleteHomeStay } from '@/pages/api/homestay/deleteHomeStay';
 import Swal from 'sweetalert2';
-import AdminLayout from '../layout';
 import {
 	Dialog,
 	DialogContent,
@@ -55,6 +52,7 @@ import { addTTLockAccount } from '@/pages/api/ttlock/addTTLockAccount';
 import { getTTLockUserLocks } from '@/pages/api/ttlock/getTTLockUserLocks';
 import TTLockUserLocksDialog from '@/components/TTLockUserLocksDialog';
 import { editTTLockAccount } from '@/pages/api/ttlock/editTTLockAccount';
+import ManagerLayout from '../layout';
 
 const Homestay = () => {
 	const queryClient = useQueryClient();
@@ -620,7 +618,7 @@ const Homestay = () => {
 	});
 
 	return (
-		<AdminLayout>
+		<ManagerLayout>
 			<div className='flex items-center justify-between mb-4'>
 				<div className='flex items-center'>
 					<h1 className='text-2xl font-bold'>Homestay List</h1>
@@ -963,7 +961,7 @@ const Homestay = () => {
 													</Button>
 												</Link>
 
-												{homeStay.tTlockAccuont.length > 0 ? (
+												{homeStay.tTlockAccuont?.length > 0 ? (
 													<Button
 														variant='outline'
 														className='col-span-1'
@@ -1371,7 +1369,7 @@ const Homestay = () => {
 					</DialogFooter>
 				</DialogContent>
 			</Dialog>
-		</AdminLayout>
+		</ManagerLayout>
 	);
 };
 
