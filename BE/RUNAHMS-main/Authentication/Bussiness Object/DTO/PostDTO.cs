@@ -16,7 +16,7 @@ namespace BusinessObject.DTO
         public Guid UserID { get; set; }
         public List<string> Images { get; set; }
         public string Status { get; set; }
-        public string ReasonReject { get; set; }
+        public string ReasonReject {  get; set; }
         public List<CommentDTO> Comments { get; set; }
     }
 
@@ -63,7 +63,7 @@ namespace BusinessObject.DTO
         public DateTime CommentDate { get; set; }
         public Guid UserID { get; set; }
         public string FullName { get; set; }
-        public string Avatar { get; set; }
+        public string Avatar {  get; set; }
         public Guid PostID { get; set; }
         public List<CommentResponseDTO> Replies { get; set; }
     }

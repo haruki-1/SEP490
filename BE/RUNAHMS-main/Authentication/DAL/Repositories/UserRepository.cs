@@ -109,7 +109,7 @@ namespace DataAccess.Repositories
             var token = await _context.RefreshTokens
                 .Include(t => t.User)
                 .ThenInclude(t => t.Role)
-                .FirstOrDefaultAsync(t => t.Token.ToLower().Equals(refreshToken.ToLower()) 
+                .FirstOrDefaultAsync(t => t.Token.ToLower().Equals(refreshToken.ToLower())
                 && t.ExpirationDate >= DateUtility.GetCurrentDateTime());
 
             return token?.User;
@@ -129,7 +129,6 @@ namespace DataAccess.Repositories
         public async Task<PagedResponse<List<UserListResponse>>> GetUsers(PagedRequest request)
         {
             var query = _context.Users
-                .Where(u => !u.IsDeleted)
                 .Include(u => u.Role)
                 .OrderBy(u => u.FullName)
                 .Skip((request.PageNumber - 1) * request.PageSize)
@@ -141,7 +140,8 @@ namespace DataAccess.Repositories
                     Id = u.Id,
                     FullName = u.FullName,
                     Email = u.Email,
-                    Role = u.Role.Name
+                    Role = u.Role.Name,
+                    isDelete = u.IsDeleted
                 })
                 .ToListAsync();
 

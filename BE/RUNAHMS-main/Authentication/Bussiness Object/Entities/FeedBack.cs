@@ -12,8 +12,8 @@ namespace BusinessObject.Entities
     [Table("FeedBack")]
     public class FeedBack : BaseEntity<Guid>
     {
-        public int Rating { get; set; }
-        public string Description { get; set; }
+        public int Rating {  get; set; }
+        public string Description {  get; set; }
         public bool IsReply { get; set; } = false;
 
         public Guid UserID { get; set; }

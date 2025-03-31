@@ -126,8 +126,10 @@ namespace API.Controllers
                     Discount = v.Discount,
                     StartDate = v.StartDate,
                     EndDate = v.EndDate,
-                    Image = v.Image
+                    Image = v.Image,
+                    QuantityUsed = v.QuantityUsed
                 })
+                .Where(x => x.QuantityUsed > 0)
                 .ToListAsync();
 
             if (!vouchers.Any())
@@ -160,7 +162,9 @@ namespace API.Controllers
                     StartDate = uv.voucher.StartDate,
                     EndDate = uv.voucher.EndDate,
                     Image = uv.voucher.Image,
-                    isUser = uv.isUsed
+                    isUser = uv.isUsed,
+                    uv.voucher.QuantityUsed
+
                 })
                 .ToListAsync();
 
