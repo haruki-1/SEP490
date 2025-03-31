@@ -33,6 +33,7 @@ namespace BusinessObject.Entities
         [MaxLength(255)]
         public string City { get; set; }
 
+
         [MaxLength(255)]
         public string CheckInTime {  get; set; }
 
@@ -50,6 +51,8 @@ namespace BusinessObject.Entities
         public ICollection<FeedBack> FeedBacks { get; set; }
 
         public ICollection<HomeStayFacility> HomestayFacilities { get; set; }
+
+        public ICollection<TTlockAccuont> TTlockAccuonts { get; set; }
 
     }
 }

@@ -17,13 +17,13 @@ namespace BusinessObject.Entities
 
         public DateTime CheckOutDate { get; set; }
 
-        public Decimal TotalPrice { get; set; }
+        public Decimal TotalPrice {  get; set; }
 
-        public Decimal UnitPrice { get; set; }
+        public Decimal UnitPrice {  get; set; }
 
-        public String Status { get; set; }
+        public String Status {  get; set; }
 
-        public String? ReasonCancel { get; set; }
+        public String? ReasonCancel {  get; set; }
         public bool isDeleted { get; set; } = false;
 
         [MaxLength(255)]
@@ -33,12 +33,12 @@ namespace BusinessObject.Entities
         public string? HomeStayAddress { get; set; }
 
         [MaxLength(255)]
-        public string? HomeStayImage { get; set; }
+        public string? HomeStayImage {  get; set; }
 
         public Guid UserID { get; set; }
 
         [ForeignKey("UserID")]
-        public User User { get; set; }
+        public User User { get; set; }     
         public ICollection<Calendar> Calendars { get; set; }
 
     }

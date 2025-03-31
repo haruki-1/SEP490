@@ -6,8 +6,12 @@ using System.Threading.Tasks;
 
 namespace BusinessObject.DTO
 {
-    public class GoogleLoginRequest
+    public class LockInfroDTO
     {
-        public string IdToken { get; set; }
+        public int LockID {  get; set; }
+
+        public long LockPassword { get; set; }
+
+        public string LockName { get; set; }
     }
 }
