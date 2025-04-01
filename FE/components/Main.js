@@ -4,6 +4,7 @@ import SearchForm from './SearchForm';
 import { useAuth } from '@/context/AuthProvider';
 import { useTranslation } from 'next-i18next';
 import { ChevronRight } from 'lucide-react';
+import React from 'react';
 
 const Main = () => {
 	const { dataProfile } = useAuth();
@@ -55,7 +56,7 @@ const Main = () => {
 								size='lg'
 								className='border-white border text-white hover:bg-white/10 font-medium px-6'
 							>
-								Explore HomeStays
+								{t('main.cta')}
 								<ChevronRight className='ml-1 h-4 w-4 transition-transform group-hover:translate-x-1' />
 							</Button>
 						</Link>

@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Label } from '@/components/components/ui/label';
 import { Input } from '@/components/components/ui/input';
 import { Button } from '@/components/components/ui/button';
-import { useAuth } from 'context/AuthProvider';
+import { useAuth } from '@/context/AuthProvider';
 import { Textarea } from '@/components/components/ui/textarea';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import Swal from 'sweetalert2';
@@ -15,17 +15,22 @@ import { Eye, EyeOff, User, ShieldCheck, Calendar, Home, MapPin, Ticket, CreditC
 import { changePassword } from '@/pages/api/auth/changePassword';
 import Image from 'next/image';
 import { uploadImage } from '@/pages/api/image/uploadImage';
+import MainLayout from '../layout';
 import { Badge } from '@/components/components/ui/badge';
 import Link from 'next/link';
 import { getUserVouchers } from '@/pages/api/voucher/getUserVouchers';
-import { getHomeStayByUser } from '@/pages/api/homestay/getHomeStayByUser';
-import MainLayout from '../layout';
+import { getBookingHistory } from '@/pages/api/homestay/getHomeStayByUser';
+import { cancelBooking } from '@/pages/api/booking/cancelBooking';
+import FeedbackModal from '@/components/FeedbackModal';
 
 export default function ProfilePage() {
 	const { dataProfile, refetch } = useAuth();
 	const queryClient = useQueryClient();
 	const [activeTab, setActiveTab] = useState('profile');
 	const [isMounted, setIsMounted] = useState(false);
+	const [statusFilter, setStatusFilter] = useState('All');
+	const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
+	const [selectedHomeStay, setSelectedHomeStay] = useState(null);
 
 	// Profile state
 	const [profile, setProfile] = useState({
@@ -63,10 +68,91 @@ export default function ProfilePage() {
 		isLoading: bookingsLoading,
 		error: bookingsError,
 	} = useQuery({
-		queryKey: ['userBookings'],
-		queryFn: () => getHomeStayByUser(dataProfile?.id),
+		queryKey: ['historyBooking'],
+		queryFn: getBookingHistory,
 		enabled: isMounted && !!dataProfile?.id,
 	});
+
+	const handleOpenFeedbackModal = (booking) => {
+		setSelectedHomeStay({
+			id: booking.homeStay.id || booking.homestayID,
+			name: booking.homeStay.name || 'Homestay',
+		});
+		setFeedbackModalOpen(true);
+	};
+
+	// Filter bookings based on selected status
+	const filteredBookings = bookings?.filter((booking) => {
+		if (statusFilter === 'All') return true;
+		return booking.status === statusFilter;
+	});
+
+	// Calculate booking statistics
+	const getBookingStats = () => {
+		if (!bookings || bookings.length === 0) return null;
+
+		const stats = {
+			total: bookings.length,
+			pending: bookings.filter((b) => b.status === 'Pending').length,
+			completed: bookings.filter((b) => b.status === 'Completed').length,
+			canceled: bookings.filter((b) => b.status === 'Canceled').length,
+			confirmed: bookings.filter((b) => b.status === 'Confirmed').length,
+			paid: bookings.filter((b) => b.status === 'Paid').length,
+		};
+
+		return stats;
+	};
+
+	const handleCancelBooking = (bookingId) => {
+		Swal.fire({
+			title: 'Cancel Booking',
+			text: 'Please provide a reason for cancellation:',
+			input: 'textarea',
+			inputPlaceholder: 'Enter your reason here...',
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#d33',
+			cancelButtonColor: '#3085d6',
+			confirmButtonText: 'Yes, cancel it!',
+			cancelButtonText: 'No, keep it',
+			inputValidator: (value) => {
+				if (!value) {
+					return 'You need to provide a reason for cancellation!';
+				}
+			},
+		}).then((result) => {
+			if (result.isConfirmed) {
+				const reasonCancel = result.value;
+				Swal.fire({
+					title: 'Cancelling...',
+					text: 'Processing your request',
+					allowOutsideClick: false,
+					didOpen: () => {
+						Swal.showLoading();
+					},
+				});
+
+				cancelBooking(bookingId, reasonCancel)
+					.then(() => {
+						Swal.fire({
+							title: 'Cancelled!',
+							text: 'Your booking has been cancelled successfully.',
+							icon: 'success',
+						});
+
+						queryClient.invalidateQueries({ queryKey: ['historyBooking'] });
+					})
+					.catch((error) => {
+						console.error('Error cancelling booking:', error);
+						Swal.fire({
+							title: 'Error!',
+							text: error?.response?.data?.message || 'Failed to cancel the booking. Please try again.',
+							icon: 'error',
+						});
+					});
+			}
+		});
+	};
 
 	useEffect(() => {
 		setIsMounted(true);
@@ -181,7 +267,6 @@ export default function ProfilePage() {
 		});
 	};
 
-	// Format date for display
 	const formatDate = (dateString) => {
 		if (!isMounted) return '';
 		return new Date(dateString).toLocaleDateString('vi', {
@@ -200,7 +285,7 @@ export default function ProfilePage() {
 						<p className='text-gray-500'>Manage your profile, bookings and vouchers</p>
 					</div>
 
-					<div className='grid gap-6 md:grid-cols-3'>
+					<div className='grid gap-6 md:grid-cols-4'>
 						{/* Profile summary sidebar */}
 						<div className='md:col-span-1'>
 							<Card className='sticky top-24'>
@@ -215,7 +300,7 @@ export default function ProfilePage() {
 												className='object-cover w-full h-full'
 											/>
 										) : (
-											<div className='flex items-center justify-center w-full h-full text-3xl bg-gray-200 text-gray-600'>
+											<div className='flex items-center justify-center w-full h-full text-3xl text-gray-600 bg-gray-200'>
 												<User size={40} />
 											</div>
 										)}
@@ -269,7 +354,7 @@ export default function ProfilePage() {
 						</div>
 
 						{/* Main content area */}
-						<div className='md:col-span-2'>
+						<div className='md:col-span-3'>
 							{/* Profile Tab */}
 							{activeTab === 'profile' && (
 								<Card>
@@ -281,7 +366,7 @@ export default function ProfilePage() {
 										<form onSubmit={handleProfileSubmit} className='space-y-4'>
 											<div className='space-y-2'>
 												<Label htmlFor='avatar'>Profile Photo</Label>
-												<div className='flex flex-col items-center gap-2 w-full'>
+												<div className='flex flex-col items-center w-full gap-2'>
 													{profile.avatar && isMounted && (
 														<div className='relative w-32 h-32 overflow-hidden rounded-md'>
 															<Image
@@ -362,6 +447,89 @@ export default function ProfilePage() {
 									<CardHeader>
 										<CardTitle>My Bookings</CardTitle>
 										<CardDescription>View and manage your homestay bookings</CardDescription>
+
+										{/* Booking Statistics */}
+										{bookings && bookings.length > 0 && (
+											<div className='grid grid-cols-3 gap-2 mt-4 sm:grid-cols-5'>
+												{['total', 'pending', 'completed', 'canceled', 'paid'].map((stat) => {
+													const stats = getBookingStats();
+													if (!stats) return null;
+
+													const count = stats[stat];
+													const statColor =
+														stat === 'total'
+															? 'bg-blue-50 text-blue-700 border-blue-200'
+															: stat === 'pending'
+															? 'bg-yellow-50 text-yellow-700 border-yellow-200'
+															: stat === 'completed'
+															? 'bg-green-50 text-green-700 border-green-200'
+															: stat === 'canceled'
+															? 'bg-red-50 text-red-700 border-red-200'
+															: stat === 'paid'
+															? 'bg-purple-50 text-purple-700 border-purple-200'
+															: 'bg-gray-50 text-gray-700 border-gray-200';
+
+													const statIcon =
+														stat === 'total' ? (
+															<Home className='w-4 h-4' />
+														) : stat === 'pending' ? (
+															<Clock className='w-4 h-4' />
+														) : stat === 'completed' ? (
+															<ShieldCheck className='w-4 h-4' />
+														) : (
+															<Info className='w-4 h-4' />
+														);
+
+													return (
+														<div
+															key={stat}
+															className={`border rounded-md p-3 flex items-center justify-between ${statColor}`}
+															onClick={() =>
+																setStatusFilter(
+																	stat === 'total'
+																		? 'All'
+																		: stat.charAt(0).toUpperCase() + stat.slice(1)
+																)
+															}
+															style={{ cursor: 'pointer' }}
+														>
+															<div>
+																<div className='text-xs font-medium capitalize'>
+																	{stat}
+																</div>
+																<div className='text-xl font-bold'>{count}</div>
+															</div>
+															<div className='p-2 rounded-full bg-white/50'>
+																{statIcon}
+															</div>
+														</div>
+													);
+												})}
+											</div>
+										)}
+
+										{/* Status Filter */}
+										<div className='flex flex-wrap items-center justify-between mt-4'>
+											<div className='text-sm text-gray-500'>Filter by status:</div>
+											<div className='flex flex-wrap gap-2 mt-2 sm:mt-0'>
+												{['All', 'Pending', 'Completed', 'Canceled', 'Confirmed'].map(
+													(status) => (
+														<Badge
+															key={status}
+															variant={statusFilter === status ? 'default' : 'outline'}
+															className={`cursor-pointer ${
+																statusFilter === status
+																	? 'bg-primary'
+																	: 'hover:bg-primary/10'
+															}`}
+															onClick={() => setStatusFilter(status)}
+														>
+															{status}
+														</Badge>
+													)
+												)}
+											</div>
+										</div>
 									</CardHeader>
 									<CardContent>
 										{bookingsLoading ? (
@@ -372,28 +540,57 @@ export default function ProfilePage() {
 											<div className='p-4 text-red-500'>
 												Error loading bookings. Please try again later.
 											</div>
-										) : bookings?.length === 0 ? (
-											<div className='p-6 text-center bg-gray-50 rounded-lg'>
-												<Home className='w-10 h-10 mx-auto text-gray-400' />
-												<h3 className='mt-4 text-lg font-medium'>No bookings yet</h3>
-												<p className='mt-2 text-gray-500'>
-													You haven't made any homestay bookings yet. Start exploring
-													available properties!
-												</p>
-												<Button className='mt-4' asChild>
-													<Link href='/'>Browse Homestays</Link>
-												</Button>
+										) : !filteredBookings || filteredBookings.length === 0 ? (
+											<div className='p-6 text-center rounded-lg bg-gray-50'>
+												{bookings && bookings.length > 0 ? (
+													<>
+														<Home className='w-10 h-10 mx-auto text-gray-400' />
+														<h3 className='mt-4 text-lg font-medium'>
+															No {statusFilter !== 'All' ? statusFilter : ''} bookings
+															found
+														</h3>
+														<p className='mt-2 text-gray-500'>
+															{statusFilter !== 'All'
+																? `You don't have any bookings with "${statusFilter}" status.`
+																: "You haven't made any homestay bookings yet."}
+														</p>
+														{statusFilter !== 'All' && (
+															<Button
+																variant='outline'
+																className='mt-4'
+																onClick={() => setStatusFilter('All')}
+															>
+																Show All Bookings
+															</Button>
+														)}
+													</>
+												) : (
+													<>
+														<Home className='w-10 h-10 mx-auto text-gray-400' />
+														<h3 className='mt-4 text-lg font-medium'>No bookings yet</h3>
+														<p className='mt-2 text-gray-500'>
+															You haven't made any homestay bookings yet. Start exploring
+															available properties!
+														</p>
+														<Button className='mt-4' asChild>
+															<Link href='/'>Browse Homestays</Link>
+														</Button>
+													</>
+												)}
 											</div>
 										) : (
 											<div className='space-y-4'>
-												{bookings?.map((booking) => (
-													<Card key={booking.id} className='overflow-hidden'>
+												{filteredBookings.map((booking) => (
+													<Card
+														key={booking.id || booking.bookingID}
+														className='overflow-hidden'
+													>
 														<div className='flex flex-col md:flex-row'>
-															<div className='relative w-full md:w-1/3 h-48'>
-																{booking.homestay?.mainImage ? (
+															<div className='relative w-full h-48 md:w-1/3'>
+																{booking.homeStay?.mainImage ? (
 																	<Image
-																		src={booking.homestay.mainImage}
-																		alt={booking.homestay.name}
+																		src={booking.homeStay?.mainImage}
+																		alt='homestay-history'
 																		fill
 																		className='object-cover'
 																	/>
@@ -407,14 +604,11 @@ export default function ProfilePage() {
 																<div className='flex flex-col justify-between h-full'>
 																	<div>
 																		<h3 className='text-lg font-semibold'>
-																			{booking.homestay?.name || 'Homestay'}
+																			{booking.homeStay?.name || 'Homestay'}
 																		</h3>
 																		<div className='flex items-center mt-1 text-sm text-gray-500'>
 																			<MapPin className='w-4 h-4 mr-1' />
-																			<span>
-																				{booking.homestay?.address},{' '}
-																				{booking.homestay?.city}
-																			</span>
+																			<span>{booking.homeStay?.address}</span>
 																		</div>
 
 																		<div className='grid grid-cols-2 gap-4 mt-4'>
@@ -422,47 +616,91 @@ export default function ProfilePage() {
 																				<p className='text-sm text-gray-500'>
 																					Check-in
 																				</p>
-																				<p className='flex items-center'>
+																				<p className='flex items-center text-sm'>
 																					<Calendar className='w-4 h-4 mr-1' />
-																					{formatDate(booking.checkInDate)}
+																					{booking.checkInDate}
 																				</p>
 																			</div>
 																			<div>
 																				<p className='text-sm text-gray-500'>
 																					Check-out
 																				</p>
-																				<p className='flex items-center'>
+																				<p className='flex items-center text-sm'>
 																					<Calendar className='w-4 h-4 mr-1' />
-																					{formatDate(booking.checkOutDate)}
+																					{booking.checkOutDate}
 																				</p>
 																			</div>
 																		</div>
 																	</div>
 
 																	<div className='flex flex-wrap items-center justify-between mt-4'>
-																		<div>
-																			<Badge
-																				className={`${
-																					booking.status === 'Completed'
-																						? 'bg-green-100 text-green-800'
-																						: booking.status === 'Cancelled'
-																						? 'bg-red-100 text-red-800'
-																						: booking.status === 'Pending'
-																						? 'bg-yellow-100 text-yellow-800'
-																						: 'bg-blue-100 text-blue-800'
-																				}`}
-																			>
-																				{booking.status}
-																			</Badge>
-																			<p className='mt-2 text-xl font-bold'>
-																				${booking.totalAmount?.toLocaleString()}
+																		<div className='flex items-center justify-between w-full'>
+																			<div className='flex items-center gap-2'>
+																				<Badge
+																					className={`${
+																						booking.status === 'Completed'
+																							? 'bg-green-100 text-green-800'
+																							: booking.status ===
+																							  'Canceled'
+																							? 'bg-red-100 text-red-800'
+																							: booking.status ===
+																							  'Pending'
+																							? 'bg-yellow-100 text-yellow-800'
+																							: 'bg-blue-100 text-blue-800'
+																					} hover:bg-transparent`}
+																				>
+																					{booking.status}
+																				</Badge>
+																				{booking.status === 'Canceled' && (
+																					<div className='flex items-center gap-2 text-sm'>
+																						Reason:
+																						<p className='line-clamp-1'>
+																							{booking.reasonCancel}
+																						</p>
+																					</div>
+																				)}
+																			</div>
+																			<p className='text-xl font-bold'>
+																				${booking.totalPrice?.toLocaleString()}
 																			</p>
 																		</div>
-																		<Button asChild size='sm' variant='outline'>
-																			<Link href={`/bookings/${booking.id}`}>
-																				View Details
-																			</Link>
-																		</Button>
+																		<div className='flex mt-3 space-x-2'>
+																			{(booking.status === 'Pending' ||
+																				booking.status === 'Confirmed') && (
+																				<Button
+																					size='sm'
+																					variant='destructive'
+																					onClick={() =>
+																						handleCancelBooking(
+																							booking.bookingID
+																						)
+																					}
+																				>
+																					Cancel Booking
+																				</Button>
+																			)}
+																			{booking.status === 'Completed' && (
+																				<Button
+																					size='sm'
+																					variant='default'
+																					onClick={() =>
+																						handleOpenFeedbackModal(booking)
+																					}
+																				>
+																					Leave Feedback
+																				</Button>
+																			)}
+																			{selectedHomeStay && (
+																				<FeedbackModal
+																					isOpen={feedbackModalOpen}
+																					onClose={() =>
+																						setFeedbackModalOpen(false)
+																					}
+																					homestayID={selectedHomeStay.id}
+																					homestayName={selectedHomeStay.name}
+																				/>
+																			)}
+																		</div>
 																	</div>
 																</div>
 															</div>
@@ -488,7 +726,7 @@ export default function ProfilePage() {
 												<div className='w-10 h-10 border-t-4 border-blue-500 rounded-full animate-spin'></div>
 											</div>
 										) : !userVouchers || userVouchers.length === 0 ? (
-											<div className='p-6 text-center bg-gray-50 rounded-lg'>
+											<div className='p-6 text-center rounded-lg bg-gray-50'>
 												<Ticket className='w-10 h-10 mx-auto text-gray-400' />
 												<h3 className='mt-4 text-lg font-medium'>No vouchers available</h3>
 												<p className='mt-2 text-gray-500'>
@@ -503,20 +741,20 @@ export default function ProfilePage() {
 														key={voucher.voucherID}
 														className='relative overflow-hidden border-2 border-dashed'
 													>
-														<CardHeader className='bg-blue-50 relative h-36'>
+														<CardHeader className='relative bg-blue-50 h-36'>
 															<div className='absolute inset-0 z-0'>
 																<Image
 																	src={voucher.image}
 																	width={400}
 																	height={300}
 																	alt='voucher-image'
-																	className='h-full w-full object-cover'
+																	className='object-cover w-full h-full'
 																/>
 															</div>
 														</CardHeader>
 														<CardContent className='p-4'>
-															<CardTitle className='flex items-center justify-between relative z-20'>
-																<span className='text-lg font-mono'>
+															<CardTitle className='relative z-20 flex items-center justify-between'>
+																<span className='font-mono text-lg'>
 																	{voucher.code}
 																</span>
 																<Badge variant='outline' className='text-lg'>

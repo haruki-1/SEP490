@@ -11,6 +11,7 @@ import Provider from '../utils/Provider';
 import { SessionProvider } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import { appWithTranslation } from 'next-i18next';
+import nextI18nextConfig from '@/next-i18next.config';
 
 
 // Cấu hình NProgress
@@ -72,4 +73,4 @@ function MyApp({ Component, pageProps, session }) {
 	);
 
 }
-export default appWithTranslation(MyApp);
+export default appWithTranslation(MyApp, nextI18nextConfig);

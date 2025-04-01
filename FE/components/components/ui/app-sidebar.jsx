@@ -1,5 +1,5 @@
 import { usePathname } from 'next/navigation';
-import { Bath, Boxes, ChevronUp, Currency, Home, Hotel, Newspaper, PaintRoller, Ticket, User, User2 } from 'lucide-react';
+import { Bath, Boxes, ChevronUp, Home, Hotel, Newspaper, Ticket, User, User2, Users } from 'lucide-react';
 import {
 	Sidebar,
 	SidebarContent,
@@ -12,38 +12,31 @@ import {
 	SidebarMenuItem,
 } from './sidebar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './dropdown-menu';
-import Image from 'next/image';
 import { useAuth } from '@/context/AuthProvider';
+import Image from 'next/image';
 
 const items = [
-	{ title: 'Home', url: '/manager', icon: Home },
-	{ title: 'Homestay', url: '/manager/homestay', icon: Hotel },
-	{ title: 'Facility', url: '/manager/facility', icon: Boxes },
-	{ title: 'Amenity', url: '/manager/amenity', icon: Bath },
-	{ title: 'Cost', url: '/manager/cost', icon: Currency },
-	{ title: 'Posts', url: '/manager/posts', icon: Newspaper },
-	{ title: 'Voucher', url: '/manager/voucher', icon: Ticket },
-	{ title: 'Cleaning', url: '/manager/cleaning', icon: PaintRoller },
-	{ title: 'Account', url: '/manager/profile', icon: User },
+	{ title: 'Home', url: '/admin', icon: Home },
+	{ title: 'Posts', url: '/admin/posts', icon: Newspaper },
+	{ title: 'Users', url: '/admin/users', icon: Users },
+	{ title: 'Voucher', url: '/admin/voucher', icon: Ticket },
+	{ title: 'Account', url: '/admin/profile', icon: User },
 ];
 
 export function AppSidebar() {
 	const { logout, dataProfile } = useAuth();
 	const pathname = usePathname();
 
-	console.log(dataProfile);
-
 	return (
-		<Sidebar className='z-0'>
+		<Sidebar className='z-0 bg-white'>
 			<SidebarContent>
 				<SidebarGroup>
-					<SidebarGroupLabel className='text-base'>Manager Homestay</SidebarGroupLabel>
+					<SidebarGroupLabel className='text-base'>Admin Homestay</SidebarGroupLabel>
 					<SidebarGroupContent>
 						<SidebarMenu>
 							{items.map((item) => {
 								const isActive =
-									pathname === item.url ||
-									(item.url !== '/manager' && pathname?.startsWith(item.url));
+									pathname === item.url || (item.url !== '/admin' && pathname?.startsWith(item.url));
 
 								return (
 									<SidebarMenuItem key={item.title}>

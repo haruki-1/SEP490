@@ -1,8 +1,8 @@
 import api from '@/utils/api';
 
-export const getHomeStayByUser = async (id) => {
+export const getBookingHistory = async () => {
 	try {
-		const response = await api.get(`/HomeStay/get-home-stay-by-user?userID=${id}`);
+		const response = await api.get(`/Booking/history`);
 		return response.data;
 	} catch (error) {
 		console.error('Error fetching homestay user:', error);

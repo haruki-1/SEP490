@@ -23,7 +23,7 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreatePayment(Guid bookingID)
         {
-            string paymentLink;
+            string paymentLink = "";
             var booking = await _bookingRepository.GetByIdAsync(bookingID) ?? throw new NotFoundException("Booking not found");
 
             var transactions = await _transactionRepository.FindAsync(c =>
@@ -85,7 +85,7 @@ namespace API.Controllers
             await _bookingRepository.UpdateAsync(booking);
             await _bookingRepository.SaveAsync();
 
-            return Redirect(_payOSConfig.ClientRedirectUrl);
+            return Ok(new { success = true, redirectUrl = _payOSConfig.ReturnUrl });
         }
     }
 }

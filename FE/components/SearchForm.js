@@ -12,6 +12,7 @@ import { getCityList } from '@/pages/api/city/getCityList';
 import { useQuery } from '@tanstack/react-query';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from './components/ui/command';
 import { cn } from './lib/utils';
+import { useTranslation } from 'next-i18next';
 
 export default function SearchForm() {
 	const router = useRouter();
@@ -20,6 +21,7 @@ export default function SearchForm() {
 	const [openCalendar, setOpenCalendar] = useState(false);
 	const [selectedCity, setSelectedCity] = useState('');
 	const [isSearching, setIsSearching] = useState(false);
+	const { t } = useTranslation('common');
 
 	const {
 		data: cities,
@@ -71,7 +73,7 @@ export default function SearchForm() {
 								<div className='flex items-center'>
 									<MapPin className='mr-2 h-5 w-5 text-blue-500' />
 									<span className={selectedCity ? 'text-gray-900 font-medium' : 'text-gray-500'}>
-										{selectedCity || 'Where are you going?'}
+										{selectedCity || t('wheree')}
 									</span>
 								</div>
 								<ChevronsUpDown className='h-4 w-4 text-gray-400' />
@@ -139,7 +141,7 @@ export default function SearchForm() {
 										</span>
 									)
 								) : (
-									'Select dates'
+									t('select-dates')
 								)}
 							</Button>
 						</PopoverTrigger>
@@ -147,8 +149,8 @@ export default function SearchForm() {
 						<PopoverContent className='w-auto p-0 border-gray-200' align='start'>
 							<div className='p-3 bg-white rounded-lg'>
 								<div className='space-y-1 mb-2'>
-									<h4 className='font-medium text-sm'>Check in - Check out</h4>
-									<p className='text-xs text-gray-500'>Select your stay dates</p>
+									<h4 className='font-medium text-sm'>{t('check-dates')}</h4>
+									<p className='text-xs text-gray-500'>{t('select-stay')}</p>
 								</div>
 								<DayPicker
 									mode='range'
@@ -182,7 +184,7 @@ export default function SearchForm() {
 										className='bg-blue-600 hover:bg-blue-700'
 										onClick={() => setOpenCalendar(false)}
 									>
-										Apply
+										{t('apply')}
 									</Button>
 								</div>
 							</div>
@@ -200,12 +202,12 @@ export default function SearchForm() {
 						{isSearching ? (
 							<div className='flex items-center'>
 								<div className='h-4 w-4 border-t-2 border-b-2 border-white rounded-full animate-spin mr-2'></div>
-								<span>Searching...</span>
+								<span>{t('searching')}</span>
 							</div>
 						) : (
 							<div className='flex items-center'>
 								<Search className='mr-2 h-5 w-5' />
-								<span>Search</span>
+								<span>{t('search')}</span>
 							</div>
 						)}
 					</Button>

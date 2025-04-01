@@ -24,6 +24,8 @@ namespace API.Controllers
                     Location = p.Location,
                     PublishDate = p.PublishDate,
                     UserID = p.UserID,
+                    Status = p.Status,
+                    ReasonReject = p.ReasonReject,
                     Images = p.PostImages.Select(i => i.Image).ToList()
                 })
                 .ToListAsync();
@@ -51,7 +53,7 @@ namespace API.Controllers
                     UserID = p.UserID,
                     Images = p.PostImages.Select(i => i.Image).ToList(),
                     Comments = p.CommentPosts
-                        .Where(c => !c.isDeleted)
+                        .Where(c => !c.isDeleted && c.ParrentID == null)
                         .OrderByDescending(c => c.CommontDate)
                         .Select(c => new CommentResponseDTO
                         {
@@ -60,9 +62,10 @@ namespace API.Controllers
                             CommentDate = c.CommontDate,
                             UserID = c.UserID,
                             FullName = c.User.FullName,
+                            Avatar = c.User.Avatar!,
                             PostID = c.PostID,
                             Replies = p.CommentPosts
-                                .Where(r => r.ParrentID == c.Id && !r.isDeleted)
+                                .Where(r => r.ParrentID == c.Id && !r.isDeleted && r.ParrentID != null)
                                 .OrderBy(r => r.CommontDate)
                                 .Select(r => new CommentResponseDTO
                                 {
@@ -71,6 +74,7 @@ namespace API.Controllers
                                     CommentDate = r.CommontDate,
                                     UserID = r.UserID,
                                     FullName = r.User.FullName,
+                                    Avatar = r.User.Avatar!,
                                     PostID = r.PostID
                                 })
                                 .ToList()
@@ -116,6 +120,8 @@ namespace API.Controllers
 
             return Ok(new { Message = "Post created successfully", PostID = newPost.Id });
         }
+
+
         [HttpPut("edit/{id}")]
         public async Task<IActionResult> EditPost(Guid id, [FromBody] EditPostDTO updatedPost)
         {
@@ -172,6 +178,7 @@ namespace API.Controllers
 
             return Ok(new { Message = "Post deleted successfully" });
         }
+
         [HttpPost("create-comment")]
         public async Task<IActionResult> CreateComment(
         [FromHeader(Name = "X-User-Id")] Guid userId,
@@ -237,7 +244,77 @@ namespace API.Controllers
             return Ok(new { Message = "Comment deleted successfully" });
         }
 
+        [HttpPut("approval-post")]
+        public async Task<IActionResult> ApprovalPost([FromForm] Guid postID)
+        {
+            try
+            {
+                var getPost = await _postRepository.GetByIdAsync(postID);
+                if (getPost == null)
+                {
+                    return NotFound();
+                }
 
-       
+                getPost.Status = "Publish";
+                await _postRepository.UpdateAsync(getPost);
+                await _postRepository.SaveAsync();
+                return Ok("Publish post success");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Server Error{ex.ToString()}");
+            }
+        }
+
+
+        [HttpPut("reject-post")]
+        public async Task<IActionResult> RejectPost([FromBody] RejectPostDTO request)
+        {
+            try
+            {
+                var getPost = await _postRepository.GetByIdAsync(request.PostID);
+                if (getPost == null)
+                {
+                    return NotFound();
+                }
+                getPost.Status = "Rejected";
+                getPost.ReasonReject = request.ReasonReject;
+                await _postRepository.UpdateAsync(getPost);
+                await _postRepository.SaveAsync();
+                return Ok("Reject Post Success");
+            }
+            catch (Exception ex)
+            {
+
+                return StatusCode(500, $"Internal Server Error{ex.ToString()}");
+            }
+        }
+
+
+        [HttpGet("get-post-by-user")]
+        public async Task<IActionResult> GetPostByUser([FromHeader(Name = "X-User-Id")] Guid userId)
+        {
+            var posts = await _postRepository.Find(p => !p.isDeleted)
+                                            .Select(p => new PostDTO
+                                            {
+                                                Id = p.Id,
+                                                Title = p.Title,
+                                                Description = p.Description,
+                                                Location = p.Location,
+                                                PublishDate = p.PublishDate,
+                                                UserID = p.UserID,
+                                                Status = p.Status,
+                                                ReasonReject = p.ReasonReject,
+                                                Images = p.PostImages.Select(i => i.Image).ToList()
+                                            }).Where(x => x.UserID == userId)
+                                            .ToListAsync();
+            if (!posts.Any())
+                return NotFound(new { Message = "No posts found" });
+
+            return Ok(posts);
+        }
+
+
+
     }
 }
