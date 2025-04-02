@@ -18,8 +18,7 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController(IUserRepository _userRepository,
-        ITokenService _tokenService
+    public class AuthController(IUserRepository _userRepository, ITokenService _tokenService
         , IPasswordHasher _passwordHasher
         , IEmailSender _emailSender
         , IConfiguration _configuration) : ControllerBase
@@ -45,7 +44,10 @@ namespace API.Controllers
 
             var existingUser = await _userRepository.GetByEmailAsync(command.Email);
 
-            if (existingUser != null) throw new InvalidCredentialsException("User already exists");
+            if (existingUser != null)
+            {
+                return Conflict(new { Message = "Email Already Exist" });
+            }
 
             Guid userId = Guid.NewGuid();
 

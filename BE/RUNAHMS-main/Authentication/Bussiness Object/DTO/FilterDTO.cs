@@ -8,9 +8,11 @@ namespace BusinessObject.DTO
 {
     public class FilterDTO
     {
-       public List<string>? AmenityNames {  get; set; }
-       public decimal? MinPrice {  get; set; }
-       public decimal? MaxPrice { get; set; }
-       public List<int>? Standard {  get; set; }
+        public List<string>? AmenityNames { get; set; }
+        public decimal? MinPrice { get; set; }
+        public decimal? MaxPrice { get; set; }
+        public List<int>? Standard { get; set; }
+
+        public string? SearchText { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using API.Controllers;
 using BusinessObject.Entities;
 using BusinessObject.Exceptions;
 using BusinessObject.Interfaces;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -19,7 +20,9 @@ public class PaymentControllerTesting
     private Mock<IRepository<Booking>> _mockBookingRepo;
     private Mock<IRepository<Transaction>> _mockTransactionRepo;
     private Mock<IPayOSService> _mockPayOSService;
+    private Mock<IRepository<BusinessObject.Entities.Calendar>> _mockCalendarRepo;
     private IOptions<PayOSConfig> _payosConfigOptions;
+    private Mock<IEmailSender> _emailSenderRepo;
     private PaymentController _controller;
     [SetUp]
     public void Setup()
@@ -32,7 +35,11 @@ public class PaymentControllerTesting
         _controller = new PaymentController(
             _mockBookingRepo.Object,
             _mockTransactionRepo.Object,
+            _mockCalendarRepo.Object,
+            _emailSenderRepo.Object,
             _mockPayOSService.Object,
+
+        
             _payosConfigOptions
         );
     }
@@ -178,6 +185,8 @@ public class PaymentControllerTesting
         _controller = new PaymentController(
             _mockBookingRepo.Object,
             _mockTransactionRepo.Object,
+            _mockCalendarRepo.Object,
+            _emailSenderRepo.Object,
             _mockPayOSService.Object,
             _payosConfigOptions
         );
@@ -255,13 +264,15 @@ public class PaymentControllerTesting
         var expectedRedirectUrl = "https://client-redirect.com";
         var config = new PayOSConfig
         {
-            ReturnUrl = expectedRedirectUrl // sửa đúng property controller dùng
+            ReturnUrl = expectedRedirectUrl
         };
 
         _payosConfigOptions = Options.Create(config);
         _controller = new PaymentController(
             _mockBookingRepo.Object,
             _mockTransactionRepo.Object,
+            _mockCalendarRepo.Object,
+            _emailSenderRepo.Object,
             _mockPayOSService.Object,
             _payosConfigOptions
         );

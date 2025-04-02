@@ -69,17 +69,61 @@ namespace API.Controllers
             }
         }
 
+        [HttpGet("search-autocomplete-agoda")]
+        public async Task<IActionResult> GetBookingHotel([FromQuery] String city)
+        {
+            var request = new HttpRequestMessage
+            {
+                Method = HttpMethod.Get,
+                RequestUri = new Uri($"https://agoda-com.p.rapidapi.com/hotels/auto-complete?query={city}"),
+                Headers =
+            {
+                { "x-rapidapi-key", "52bcd7f98bmsh281c68c3f9d7c44p169949jsn21d2e2049b30" },
+                { "x-rapidapi-host", "agoda-com.p.rapidapi.com" },
+            },
+            };
+
+            using (var response = await _httpClient.SendAsync(request))
+            {
+                response.EnsureSuccessStatusCode();
+                var body = await response.Content.ReadAsStringAsync();
+                return Ok(body);
+            }
+
+        }
+
+        [HttpGet("search-hotel-by-location")]
+        public async Task<IActionResult> GetHotelByLocation([FromQuery] string location)
+        {
+            var request = new HttpRequestMessage
+            {
+                Method = HttpMethod.Get,
+                RequestUri = new Uri($"https://booking-com.p.rapidapi.com/v1/hotels/locations?name={location}&locale=en-gb"),
+                Headers ={
+                    { "x-rapidapi-key", "52bcd7f98bmsh281c68c3f9d7c44p169949jsn21d2e2049b30" },
+                    { "x-rapidapi-host", "booking-com.p.rapidapi.com" }
+                }
+            };
+            using (var reponse = await _httpClient.SendAsync(request))
+            {
+                reponse.EnsureSuccessStatusCode();
+                var responseBody = await reponse.Content.ReadAsStringAsync();
+                return Ok(responseBody);
+            }
+        }
+
         [HttpPost("add-home-stay")]
         public async Task<IActionResult> AddHomeStay([FromHeader(Name = "X-User-Id")] Guid userID, [FromBody] AddHomeStayRequest request)
         {
             try
             {
                 if (request == null) return BadRequest();
-                var getHomeStay = _homeStayRepository.FindWithInclude()
-                                                     .FirstOrDefaultAsync(x => x.Name.Equals(request.Name) && x.UserID == userID);
+                var getHomeStay = await _homeStayRepository.FindWithInclude()
+                    .FirstOrDefaultAsync(x => x.Name.Trim().ToLower() == request.Name.Trim().ToLower() && x.UserID == userID);
+
                 if (getHomeStay != null)
                 {
-                    return Conflict("Home Stay Name Already Exist");
+                    return Conflict(new { Message = "Home Stay Name Already Exists" });
                 }
                 Guid homeStayID = Guid.NewGuid();
                 HomeStay createHomeStay = new HomeStay
@@ -176,13 +220,17 @@ namespace API.Controllers
                     return NotFound();
                 }
 
-                var checkAlreadyName = _homeStayRepository.FindWithInclude()
-                                     .FirstOrDefaultAsync(x => x.Name.Equals(request.Name) && x.UserID == getHomeStay.UserID);
-
-                if (checkAlreadyName != null)
+                if (!request.Name.Equals(getHomeStay.Name, StringComparison.OrdinalIgnoreCase))
                 {
-                    return Conflict(new { Message = "Home Stay Name Already Exist" });
+                    var checkAlreadyName = await _homeStayRepository.FindWithInclude()
+                        .FirstOrDefaultAsync(x => x.Name.Equals(request.Name) && x.UserID == getHomeStay.UserID);
+
+                    if (checkAlreadyName != null)
+                    {
+                        return Conflict(new { Message = "Home Stay Name Already Exists" });
+                    }
                 }
+
                 getHomeStay.Name = request.Name ?? getHomeStay.Name;
                 getHomeStay.MainImage = request.MainImage ?? getHomeStay.MainImage;
                 getHomeStay.Standar = getHomeStay.Standar = request.Standar != 0 ? request.Standar : getHomeStay.Standar;
@@ -191,6 +239,7 @@ namespace API.Controllers
                 getHomeStay.Address = request.Address ?? getHomeStay.Address;
                 getHomeStay.OpenIn = request.OpenIn = request.OpenIn != 0 ? request.OpenIn : getHomeStay.OpenIn;
                 getHomeStay.Description = request.Description ?? getHomeStay.Description;
+                getHomeStay.City = request.City ?? getHomeStay.City;
                 await _homeStayRepository.UpdateAsync(getHomeStay);
                 await _homeStayRepository.SaveAsync();
                 return Ok(new { Message = "Update Home Stay Success" });
@@ -563,17 +612,44 @@ namespace API.Controllers
         }
 
         [HttpGet("get-home-stay-by-user")]
-        public async Task<IActionResult> GetHomeStayByUser([FromQuery] Guid userID)
+        public async Task<IActionResult> GetHomeStayByUser([FromQuery] Guid userID, [FromQuery] FilterDTO filter)
         {
-            var listHomeStay = await _homeStayRepository
-                        .FindWithInclude(h => h.Calendars!)
-                        .Include(h => h.HomestayAmenities!)
-                        .ThenInclude(ha => ha.Amenity)
-                        .Include(hf => hf.HomestayFacilities)
-                        .ThenInclude(fa => fa.Facility)
-                        .Include(t => t.TTlockAccuonts)
-                        .Where(u => u.UserID == userID).ToListAsync();
-            if (listHomeStay.Count == 0)
+            var query = _homeStayRepository
+                .FindWithInclude(h => h.Calendars!)
+                .Include(h => h.HomestayAmenities!)
+                .ThenInclude(ha => ha.Amenity)
+                .Include(hf => hf.HomestayFacilities)
+                .ThenInclude(fa => fa.Facility)
+                .Include(t => t.TTlockAccuonts)
+                .Where(u => u.UserID == userID)
+                .AsQueryable();
+
+            if (filter.Standard is { Count: > 0 })
+            {
+                query = query.Where(h => filter.Standard.Contains(h.Standar));
+            }
+
+            if (filter.AmenityNames is { Count: > 0 })
+            {
+                query = query.Where(h => h.HomestayAmenities!.Any(ha => filter.AmenityNames.Contains(ha.Amenity.Name)));
+            }
+
+            if (filter.MinPrice.HasValue || filter.MaxPrice.HasValue)
+            {
+                query = query.Where(h => h.Calendars!.Any(c =>
+                    (!filter.MinPrice.HasValue || c.Price >= filter.MinPrice.Value) &&
+                    (!filter.MaxPrice.HasValue || c.Price <= filter.MaxPrice.Value)
+                ));
+            }
+
+            if (filter.SearchText != null)
+            {
+                query = query.Where(x => x.Name.Contains(filter.SearchText));
+            }
+
+            var listHomeStay = await query.ToListAsync();
+
+            if (!listHomeStay.Any())
             {
                 return NotFound();
             }
@@ -591,37 +667,15 @@ namespace API.Controllers
                 h.Description,
                 h.Standar,
                 h.isDeleted,
-
-
-                Calendar = h.Calendars!.Select(c => new
-                {
-                    c.Id,
-                    c.Date,
-                    c.Price,
-                    c.isBooked
-                }).ToList(),
-
-                Amenities = h.HomestayAmenities!
-                    .Select(ha => new
-                    {
-                        ha.Amenity.Id,
-                        ha.Amenity.Name
-                    }).ToList(),
-                Facility = h.HomestayFacilities!.Select(hf => new
-                {
-                    hf.FacilityID,
-                    hf.Facility.Name,
-                    hf.Facility.Description
-                }).ToList(),
-                TTlockAccuont = h.TTlockAccuonts.Select(ta => new
-                {
-                    ta.TTLockID,
-                    ta.TTLockUserName,
-                    ta.Password
-                })
+                Calendar = h.Calendars!.Select(c => new { c.Id, c.Date, c.Price, c.isBooked }).ToList(),
+                Amenities = h.HomestayAmenities!.Select(ha => new { ha.Amenity.Id, ha.Amenity.Name }).ToList(),
+                Facility = h.HomestayFacilities!.Select(hf => new { hf.FacilityID, hf.Facility.Name, hf.Facility.Description }).ToList(),
+                TTlockAccuont = h.TTlockAccuonts.Select(ta => new { ta.TTLockID, ta.TTLockUserName, ta.Password })
             }).ToList();
+
             return Ok(response);
         }
+
 
         [HttpGet("search-home-stay")]
         public async Task<IActionResult> SearchHomeStay([FromQuery] SearchHomeStayDTO request)
@@ -638,6 +692,7 @@ namespace API.Controllers
                     c.isBooked == false &&
                     c.Date >= request.CheckInDate &&
                     c.Date <= request.CheckOutDate
+                    && c.HomeStay.City == request.City
                 ))
                 .ToListAsync();
 
