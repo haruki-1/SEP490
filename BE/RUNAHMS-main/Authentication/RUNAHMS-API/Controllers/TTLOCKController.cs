@@ -518,7 +518,4 @@ public class TTLOCKController(HttpClient _client, IConfiguration _configuration,
             });
         }
     }
-
-
-
 }
