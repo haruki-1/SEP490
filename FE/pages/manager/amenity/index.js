@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import ManagerLayout from '../layout';
+import { getAllAmenity } from '@/pages/api/amenity/getAmenity';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/components/ui/button';
 import {
@@ -17,7 +18,6 @@ import { Card, CardContent } from '@/components/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/components/ui/select';
 import { Pencil, Trash2 } from 'lucide-react';
-import { getAllAmenity } from '@/pages/api/amenity/getAmenity';
 
 const Amenity = () => {
 	const [dialogOpen, setDialogOpen] = useState(false);
@@ -81,8 +81,8 @@ const Amenity = () => {
 				</div>
 				{isLoading ? (
 					<div className='fixed top-0 left-0 flex items-center justify-center w-full h-full bg-white bg-opacity-50 z-50'>
-					<div className='w-16 h-16 border-t-4 border-blue-500 rounded-full animate-spin'></div>
-				</div>
+						<div className='w-16 h-16 border-t-4 border-blue-500 rounded-full animate-spin'></div>
+					</div>
 				) : error ? (
 					<p>Error: {error.message}</p>
 				) : (
@@ -110,7 +110,7 @@ const Amenity = () => {
 												<TableCell>
 													{facility.isDeleted === false && <span>false</span>}
 												</TableCell>
-												{/* <TableCell className='flex items-center gap-1'> */}
+												{/* <TableCell className='flex items-center gap-1'>
 													<Button size='sm' onClick={() => openEditDialog(facility)}>
 														<Pencil />
 													</Button>
@@ -121,7 +121,7 @@ const Amenity = () => {
 													>
 														<Trash2 />
 													</Button>
-												{/* </TableCell> */}
+												</TableCell> */}
 											</TableRow>
 										))
 									) : (

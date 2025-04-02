@@ -10,13 +10,16 @@ import { AuthProvider } from '../context/AuthProvider';
 import Provider from '../utils/Provider';
 import { SessionProvider } from 'next-auth/react';
 import { useEffect, useState } from 'react';
+import { appWithTranslation } from 'next-i18next';
+import nextI18nextConfig from '@/next-i18next.config';
+
 
 // Cấu hình NProgress
 NProgress.configure({ showSpinner: false });
 
 
 
-export default function MyApp({ Component, pageProps, session }) {
+function MyApp({ Component, pageProps, session }) {
 	const [loading, setLoading] = useState(false);
 
 	useEffect(() => {
@@ -58,7 +61,7 @@ export default function MyApp({ Component, pageProps, session }) {
 				</div>
 			)}
 			<Provider>
-			<AuthProvider dynamic>
+			<AuthProvider>
 					<SessionProvider session={session}>
 						<Component {...pageProps} />
 						<ToastContainer />
@@ -70,3 +73,4 @@ export default function MyApp({ Component, pageProps, session }) {
 	);
 
 }
+export default appWithTranslation(MyApp, nextI18nextConfig);

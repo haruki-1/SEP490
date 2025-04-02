@@ -8,32 +8,40 @@ import {
 	Car,
 	ChefHat,
 	PocketIcon as Pool,
-	Cigarette,
 	MapPin,
 	Wifi,
 	Tv,
 	Coffee,
-	PocketKnife,
 	Kitchen,
 	Check,
 	Loader2,
 	ChevronUp,
 	ChevronDown,
 	Ticket,
+	Calendar,
+	CreditCard,
+	DollarSign,
+	Star,
+	MessageSquare,
 } from 'lucide-react';
 import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
-import { getHomeStayDetail } from '@/pages/api/homestay/getHomeStayDetail';
+import MainLayout from '@/pages/layout';
 import React, { useState } from 'react';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
 import 'react-photo-view/dist/react-photo-view.css';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/navigation';
-import { Navigation } from 'swiper/modules';
+import 'swiper/css/pagination';
+import 'swiper/css/effect-fade';
+import { Navigation, Pagination, EffectFade, Autoplay } from 'swiper/modules';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
+import { createBooking } from '@/pages/api/booking/createBooking';
+import { useAuth } from '@/context/AuthProvider';
 import { toast } from 'sonner';
+import { getUserVouchers } from '@/pages/api/voucher/getUserVouchers';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -42,10 +50,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from '@/components/components/ui/dropdown-menu';
-import { createBooking } from '@/pages/api/booking/createBooking';
-import MainLayout from '@/pages/layout';
-import { useAuth } from '@/context/AuthProvider';
-import { getUserVouchers } from '@/pages/api/voucher/getUserVouchers';
+import { getHomeStayDetail } from '@/pages/api/homestay/getHomeStayDetail';
 
 // Helper function to format dates consistently for comparison
 const formatDateForComparison = (dateInput) => {
@@ -59,16 +64,18 @@ const formatDateForComparison = (dateInput) => {
 // Helper function to get icon for amenities
 const getAmenitiesIcon = (name) => {
 	const lowercaseName = name.toLowerCase();
-	if (lowercaseName.includes('wifi')) return <Wifi className='w-5 h-5' />;
-	if (lowercaseName.includes('tv')) return <Tv className='w-5 h-5' />;
-	if (lowercaseName.includes('parking') || lowercaseName.includes('car')) return <Car className='w-5 h-5' />;
-	if (lowercaseName.includes('kitchen')) return <Kitchen className='w-5 h-5' />;
-	if (lowercaseName.includes('coffee') || lowercaseName.includes('breakfast')) return <Coffee className='w-5 h-5' />;
-	if (lowercaseName.includes('bath')) return <Bath className='w-5 h-5' />;
-	if (lowercaseName.includes('bed')) return <Bed className='w-5 h-5' />;
-	if (lowercaseName.includes('pool')) return <Pool className='w-5 h-5' />;
+	if (lowercaseName.includes('wifi')) return <Wifi className='w-5 h-5 text-blue-500' />;
+	if (lowercaseName.includes('tv')) return <Tv className='w-5 h-5 text-blue-500' />;
+	if (lowercaseName.includes('parking') || lowercaseName.includes('car'))
+		return <Car className='w-5 h-5 text-blue-500' />;
+	if (lowercaseName.includes('kitchen')) return <Kitchen className='w-5 h-5 text-blue-500' />;
+	if (lowercaseName.includes('coffee') || lowercaseName.includes('breakfast'))
+		return <Coffee className='w-5 h-5 text-blue-500' />;
+	if (lowercaseName.includes('bath')) return <Bath className='w-5 h-5 text-blue-500' />;
+	if (lowercaseName.includes('bed')) return <Bed className='w-5 h-5 text-blue-500' />;
+	if (lowercaseName.includes('pool')) return <Pool className='w-5 h-5 text-blue-500' />;
 	// Default icon for other amenities
-	return <Check className='w-5 h-5' />;
+	return <Check className='w-5 h-5 text-blue-500' />;
 };
 
 // Helper function to get price for today
@@ -121,8 +128,7 @@ const HomeStayDetail = () => {
 	const [voucherCode, setVoucherCode] = useState('');
 	const [isOnline, setIsOnline] = useState(true);
 	const [selectedDates, setSelectedDates] = useState([]);
-	const { dataProfile } = useAuth();
-	const [showVouchers, setShowVouchers] = useState(false);
+	const { dataProfile, isAuthenticated } = useAuth();
 
 	const toggleDateSelection = (calenderID) => {
 		setSelectedDates((prevSelected) =>
@@ -150,7 +156,11 @@ const HomeStayDetail = () => {
 		mutationFn: (bookingData) => createBooking(dataProfile.id, bookingData),
 		onSuccess: (data) => {
 			toast.success('Booking successful!');
-			router.push(`/payment/?bookingID=${data.bookingID}`);
+			if (isOnline) {
+				router.push(`/payment/?bookingID=${data.bookingID}`);
+			} else {
+				router.push(`/payment/successfully`);
+			}
 		},
 		onError: (error) => {
 			toast.error(`Booking failed: ${error}`);
@@ -158,6 +168,11 @@ const HomeStayDetail = () => {
 	});
 
 	const handleBookNow = () => {
+		if (!isAuthenticated) {
+			toast.error('Please log in to book this homestay');
+			return;
+		}
+
 		if (homestay.isBooked) {
 			toast.error('This homestay is already booked');
 			return;
@@ -174,53 +189,60 @@ const HomeStayDetail = () => {
 			isOnline: isOnline,
 		};
 
-		console.log('Booking data:', bookingData);
 		bookingMutation.mutate(bookingData);
 	};
 
 	const handleSelectVoucher = (code) => {
 		setVoucherCode(code);
-		setShowVouchers(false);
 		toast.success(`Voucher ${code} applied`);
 	};
 
 	if (isLoading) {
 		return (
 			<MainLayout>
-				<div className='container-lg p-4'>
-					<div className='space-y-4'>
-						<Skeleton height={300} className='rounded-lg' />
+				<div className='px-4 py-8 container-lg'>
+					<div className='space-y-6'>
+						<Button
+							variant='ghost'
+							className='flex items-center mb-6 text-gray-600 transition-all hover:bg-gray-100'
+							onClick={() => router.back()}
+						>
+							<ArrowLeft className='w-4 h-4 mr-2' />
+							Back to listings
+						</Button>
 
-						<div className='space-y-2'>
-							<Skeleton width={250} height={30} />
+						<Skeleton height={400} className='rounded-xl' />
+
+						<div className='space-y-3'>
+							<Skeleton width={300} height={36} />
 							<div className='flex items-center'>
 								<MapPin className='w-4 h-4 mr-1 text-gray-400' />
-								<Skeleton width={200} height={20} />
+								<Skeleton width={250} height={20} />
 							</div>
 						</div>
 
 						<div className='flex justify-between'>
-							<Skeleton width={150} height={30} />
-							<Skeleton width={80} height={30} />
+							<Skeleton width={180} height={36} />
+							<Skeleton width={100} height={36} />
 						</div>
 
-						<div className='space-y-2'>
-							<Skeleton width={150} height={25} />
-							<div className='grid grid-cols-4 gap-4'>
-								{Array(4)
+						<div className='space-y-4'>
+							<Skeleton width={180} height={30} />
+							<div className='grid grid-cols-2 gap-4 md:grid-cols-4'>
+								{Array(8)
 									.fill(null)
 									.map((_, i) => (
-										<Skeleton key={i} height={20} />
+										<Skeleton key={i} height={40} className='rounded-lg' />
 									))}
 							</div>
 						</div>
 
-						<div className='space-y-2'>
-							<Skeleton width={200} height={25} />
-							<Skeleton count={3} />
+						<div className='space-y-4'>
+							<Skeleton width={200} height={30} />
+							<Skeleton count={4} className='py-1' />
 						</div>
 
-						<Skeleton height={40} className='rounded-lg' />
+						<Skeleton height={50} className='rounded-xl' />
 					</div>
 				</div>
 			</MainLayout>
@@ -230,62 +252,89 @@ const HomeStayDetail = () => {
 	const priceData = getPriceForToday(homestay.calendar);
 	const priceForToday = priceData ? priceData.price : null;
 
+	const availableDates = homestay.calendar
+		?.filter(
+			(date) =>
+				new Date(date.date).setHours(0, 0, 0, 0) >= new Date().setHours(0, 0, 0, 0) &&
+				!date.isDeleted &&
+				!date.isBooked
+		)
+		.sort((a, b) => new Date(a.date) - new Date(b.date));
+
 	return (
 		<MainLayout>
-			<div className='sec-com'>
-				<div className='container-lg'>
-					<div className='relative flex gap-5 flex-col items-center lg:items-start lg:flex-row'>
-						<div className='flex flex-col space-y-4 w-full lg:w-3/4'>
+			<div className='sec-com bg-gradient-to-b from-blue-50 to-white'>
+				<div className='px-4 container-lg'>
+					<Button
+						variant='ghost'
+						className='flex items-center mb-6 text-gray-600 transition-all hover:bg-white/80'
+						onClick={() => router.back()}
+					>
+						<ArrowLeft className='w-4 h-4 mr-2' />
+						Back to listings
+					</Button>
+
+					<div className='relative flex flex-col items-center gap-8 lg:items-start lg:flex-row'>
+						<div className='flex flex-col w-full space-y-8 lg:w-2/3'>
 							<PhotoProvider>
-								<div className='flex flex-col h-full gap-2'>
-									<div className='relative overflow-hidden rounded-lg'>
-										<PhotoView src={homestay?.mainImage}>
-											<Image
-												src={homestay.mainImage}
-												alt='Star Sun Hotel exterior'
-												className='object-cover w-full'
-												width={1000}
-												height={800}
-											/>
-										</PhotoView>
+								<div className='flex flex-col h-full gap-4'>
+									<div className='relative overflow-hidden shadow-lg rounded-2xl aspect-video'>
+										<Swiper
+											modules={[Navigation, Pagination, EffectFade, Autoplay]}
+											effect='fade'
+											navigation
+											pagination={{ clickable: true }}
+											autoplay={{ delay: 5000, disableOnInteraction: false }}
+											loop={homestay?.homeStayImage?.length > 1}
+											className='w-full h-full'
+										>
+											<SwiperSlide>
+												<PhotoView src={homestay?.mainImage}>
+													<div className='relative h-full'>
+														<Image
+															src={homestay.mainImage}
+															alt={homestay.name}
+															fill
+															className='object-cover'
+															priority
+														/>
+													</div>
+												</PhotoView>
+											</SwiperSlide>
 
-										{homestay.isBooked && (
-											<div className='absolute top-0 left-0 bg-red-500 text-white font-bold px-4 py-2 rounded-br-lg'>
-												BOOKED
-											</div>
-										)}
-									</div>
-
-									<div className='md:hidden'>
-										<Swiper spaceBetween={10} slidesPerView={3} navigation modules={[Navigation]}>
 											{homestay?.homeStayImage?.map((img, index) => (
 												<SwiperSlide key={index}>
 													<PhotoView src={img.image}>
-														<div className='relative rounded-lg flex justify-center h-full border p-3'>
+														<div className='relative h-full'>
 															<Image
 																src={img.image}
-																alt='Hotel room'
-																width={100}
-																height={100}
-																className='object-cover rounded-lg'
+																alt={`${homestay.name} - image ${index + 1}`}
+																fill
+																className='object-cover'
 															/>
 														</div>
 													</PhotoView>
 												</SwiperSlide>
 											))}
 										</Swiper>
+
+										{homestay.isBooked && (
+											<div className='absolute z-10 flex items-center px-4 py-2 font-bold text-white bg-red-500 rounded-lg shadow-md top-4 left-4'>
+												<span className='mr-1 animate-pulse'>●</span>
+												BOOKED
+											</div>
+										)}
 									</div>
 
-									<div className='hidden md:grid grid-cols-4 lg:grid-cols-8 gap-2 justify-items-center'>
-										{homestay?.homeStayImage?.map((img, index) => (
+									<div className='hidden grid-cols-5 gap-3 md:grid'>
+										{homestay?.homeStayImage?.slice(0, 5).map((img, index) => (
 											<PhotoView key={index} src={img.image}>
-												<div className='relative rounded-lg h-full border p-3'>
+												<div className='relative overflow-hidden transition-all border-2 border-white shadow-sm cursor-pointer aspect-square rounded-xl hover:border-blue-500'>
 													<Image
 														src={img.image}
-														alt='Hotel room'
-														width={100}
-														height={100}
-														className='object-cover rounded-lg'
+														alt={`Room view ${index + 1}`}
+														fill
+														className='object-cover transition-transform duration-500 hover:scale-110'
 													/>
 												</div>
 											</PhotoView>
@@ -293,256 +342,502 @@ const HomeStayDetail = () => {
 									</div>
 								</div>
 							</PhotoProvider>
-							<div className='flex justify-between flex-col md:flex-row'>
-								<div className='flex flex-col gap-2'>
-									<h1 className='text-xl md:text-2xl font-bold'>{homestay.name}</h1>
-									<div className='flex items-center text-gray-500 text-sm md:text-base'>
-										<MapPin className='w-4 h-4 mr-1' />
-										<span>
-											{homestay.address}, {homestay.city}
-										</span>
+
+							<div className='flex flex-col justify-between p-6 bg-white border border-gray-100 shadow-sm rounded-xl'>
+								<div className='flex flex-col justify-between gap-4 mb-6 md:flex-row'>
+									<div className='flex flex-col gap-2'>
+										<h1 className='text-2xl font-bold text-gray-800 md:text-3xl'>
+											{homestay.name}
+										</h1>
+										<div className='flex items-center text-gray-500'>
+											<MapPin className='w-4 h-4 mr-1 text-blue-500' />
+											<span>
+												{homestay.address}, {homestay.city}
+											</span>
+										</div>
+										<div className='flex items-center mt-1'>
+											{[...Array(5)].map((_, i) => (
+												<Star
+													key={i}
+													className={`w-5 h-5 ${
+														homestay.standar > i
+															? 'text-yellow-400 fill-yellow-400'
+															: 'text-gray-300'
+													}`}
+												/>
+											))}
+											<span className='ml-2 text-sm text-gray-600'>
+												{homestay.standar}-star rating
+											</span>
+										</div>
+									</div>
+
+									<div className='flex flex-col items-start justify-center md:items-end'>
+										<div className='flex flex-col gap-1'>
+											<span className='text-sm font-medium text-gray-500'>Price per night</span>
+											<div className='flex items-baseline gap-2'>
+												{priceForToday !== null ? (
+													<span className='text-3xl font-bold text-blue-600'>
+														${priceForToday.toLocaleString()}
+													</span>
+												) : (
+													<span className='px-3 py-1 text-lg font-medium text-red-500 rounded-md bg-red-50'>
+														Decommissioned
+													</span>
+												)}
+											</div>
+										</div>
+
+										{homestay.isBooked && (
+											<Badge className='mt-2 text-red-600 bg-red-100 border-0'>
+												Currently booked
+											</Badge>
+										)}
 									</div>
 								</div>
-								<div className='flex flex-col gap-2'>
-									<div className='flex items-center'>
-										{[...Array(homestay.standar)].map((_, i) => (
-											<svg
-												key={i}
-												className='w-5 h-5 text-yellow-400'
-												fill='currentColor'
-												viewBox='0 0 20 20'
-											>
-												<path d='M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z' />
-											</svg>
-										))}
-									</div>
-									<h2 className='text-base md:text-base font-semibold'>Price</h2>
-									<div className='flex items-baseline gap-2'>
-										<span className='text-xl md:text-2xl font-bold text-blue-600'>
-											{priceForToday !== null ? (
-												<p className='text-xl text-blue-600'>
-													${priceForToday.toLocaleString()}
-												</p>
+
+								<div className='flex flex-col gap-8'>
+									<div className='space-y-6'>
+										<div>
+											<h2 className='flex items-center mb-4 text-xl font-semibold text-gray-800'>
+												<span className='p-1 mr-2 text-blue-600 bg-blue-100 rounded-md'>
+													<Bed className='w-5 h-5' />
+												</span>
+												Amenities
+											</h2>
+
+											{homestay.amenities?.length > 0 ? (
+												<div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
+													{homestay.amenities.map((ameniti) => (
+														<div
+															key={ameniti.id}
+															className='flex items-center p-3 transition-colors rounded-lg bg-gray-50 hover:bg-blue-50'
+														>
+															{getAmenitiesIcon(ameniti.name)}
+															<span className='ml-3 font-medium text-gray-700'>
+																{ameniti.name}
+															</span>
+														</div>
+													))}
+												</div>
 											) : (
-												<p>Decommission</p>
+												<p className='italic text-gray-500'>No amenities listed</p>
 											)}
-										</span>
-										<span className='text-sm'>For One Day</span>
+										</div>
+									</div>
+
+									<div className='space-y-6'>
+										<div>
+											<h2 className='flex items-center mb-4 text-xl font-semibold text-gray-800'>
+												<span className='p-1 mr-2 text-blue-600 bg-blue-100 rounded-md'>
+													<Coffee className='w-5 h-5' />
+												</span>
+												Facilities
+											</h2>
+
+											{homestay.facility?.length > 0 ? (
+												<div className='grid grid-cols-2 gap-3 sm:grid-cols-3'>
+													{homestay.facility.map((facility) => (
+														<div
+															key={facility.facilityID}
+															className='flex items-center p-3 transition-colors rounded-lg bg-gray-50 hover:bg-blue-50'
+														>
+															<Check className='w-5 h-5 text-blue-500' />
+															<span className='ml-3 font-medium text-gray-700'>
+																{facility.name}
+															</span>
+														</div>
+													))}
+												</div>
+											) : (
+												<p className='italic text-gray-500'>No facilities listed</p>
+											)}
+										</div>
 									</div>
 								</div>
-							</div>
 
-							<div className='flex flex-col gap-3'>
-								<h2 className='text-base md:text-base font-semibold'>Amenities</h2>
-								{homestay.amenities?.length > 0 ? (
-									<div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4'>
-										{homestay.amenities.map((ameniti) => (
-											<div key={ameniti.id} className='flex items-center bg-gray-50'>
-												{getAmenitiesIcon(ameniti.name)}
-												<span className='ml-2 text-gray-700'>{ameniti.name}</span>
-											</div>
-										))}
+								<div className='mt-8'>
+									<h2 className='flex items-center mb-4 text-xl font-semibold text-gray-800'>
+										<span className='p-1 mr-2 text-blue-600 bg-blue-100 rounded-md'>
+											<MapPin className='w-5 h-5' />
+										</span>
+										About this place
+									</h2>
+									<div className='p-4 bg-gray-50 rounded-xl'>
+										<p className='leading-relaxed text-gray-600'>{homestay.description}</p>
 									</div>
-								) : (
-									<span>No amenities</span>
-								)}
-							</div>
+								</div>
+								<div className='mt-8'>
+									<h2 className='flex items-center mb-4 text-xl font-semibold text-gray-800'>
+										<span className='p-1 mr-2 text-blue-600 bg-blue-100 rounded-md'>
+											<Star className='w-5 h-5' />
+										</span>
+										Guest Reviews
+									</h2>
 
-							<div className='flex flex-col gap-3'>
-								<h2 className='text-base md:text-lg font-semibold'>Facilities</h2>
-								{homestay.facility?.length > 0 ? (
-									<div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4'>
-										{homestay.facility.map((facility) => (
-											<div key={facility.facilityID} className='flex items-center bg-gray-50'>
-												<span className='text-gray-700'>{facility.name}</span>
-											</div>
-										))}
-									</div>
-								) : (
-									<span>No facilities</span>
-								)}
-							</div>
+									{homestay.feeback?.length > 0 ? (
+										<div className='space-y-4'>
+											{homestay.feeback.map((feedback, index) => (
+												<div
+													key={index}
+													className='p-4 transition-all border border-gray-100 bg-gray-50 rounded-xl hover:border-blue-200'
+												>
+													<div className='flex items-start gap-3'>
+														<div className='flex-shrink-0'>
+															<div className='relative w-12 h-12 overflow-hidden border-2 border-white rounded-full shadow-sm'>
+																{feedback.avatar ? (
+																	<Image
+																		src={feedback.avatar}
+																		alt={feedback.fullName}
+																		fill
+																		className='object-cover'
+																	/>
+																) : (
+																	<div className='flex items-center justify-center w-full h-full text-lg font-bold text-blue-600 bg-blue-100'>
+																		{feedback.fullName.charAt(0)}
+																	</div>
+																)}
+															</div>
+														</div>
 
-							<div className='flex flex-col gap-2'>
-								<h2 className='text-base md:text-lg font-semibold'>Description</h2>
-								<p className='text-gray-600 text-sm md:text-base'>{homestay.description}</p>
+														<div className='flex-1'>
+															<div className='flex flex-wrap items-center justify-between gap-2'>
+																<div>
+																	<h3 className='font-semibold text-gray-800'>
+																		{feedback.fullName}
+																	</h3>
+																	<p className='text-sm text-gray-500'>
+																		{feedback.email}
+																	</p>
+																</div>
+
+																<div className='flex items-center'>
+																	{[...Array(5)].map((_, i) => (
+																		<Star
+																			key={i}
+																			className={`w-4 h-4 ${
+																				feedback.rating > i
+																					? 'text-yellow-400 fill-yellow-400'
+																					: 'text-gray-300'
+																			}`}
+																		/>
+																	))}
+																</div>
+															</div>
+
+															<div className='mt-2 text-gray-600'>
+																<p>{feedback.description}</p>
+															</div>
+														</div>
+													</div>
+												</div>
+											))}
+										</div>
+									) : (
+										<div className='p-6 text-center bg-gray-50 rounded-xl'>
+											<MessageSquare className='w-10 h-10 mx-auto text-gray-300' />
+											<p className='mt-2 text-gray-500'>No reviews yet for this property</p>
+										</div>
+									)}
+								</div>
 							</div>
 						</div>
-						<div className='w-full md:w-1/2 lg:w-1/3 h-fit sticky top-24 rounded-md border p-3 flex flex-col gap-3 shadow-lg'>
-							{/* Add voucher input */}
-							<div className='flex flex-col gap-2'>
-								<h2 className='text-sm md:text-base font-semibold'>Have a voucher?</h2>
+
+						<div className='sticky flex flex-col w-full gap-6 p-6 bg-white border shadow-lg rounded-xl md:w-1/2 lg:w-1/3 h-fit top-24'>
+							<div className='pb-6 border-b'>
+								<h2 className='mb-1 text-xl font-bold text-gray-800'>Book your stay</h2>
+								<p className='text-sm text-gray-500'>Select dates and payment method</p>
+							</div>
+
+							{/* Calendar selection */}
+							<div className='flex flex-col gap-3'>
+								<h3 className='flex items-center text-base font-semibold text-gray-700'>
+									<Calendar className='w-4 h-4 mr-2 text-blue-500' />
+									Available Dates
+								</h3>
+
+								<div className='p-4 rounded-lg bg-gray-50'>
+									{availableDates?.length > 0 ? (
+										<div className='flex flex-wrap gap-2'>
+											{homestay.calendar
+												?.slice()
+												?.filter(
+													(date) =>
+														new Date(date.date).setHours(0, 0, 0, 0) >=
+															new Date().setHours(0, 0, 0, 0) && !date.isDeleted
+												)
+												.sort((a, b) => new Date(a.date) - new Date(b.date))
+												.map((date) => {
+													const dateObj = new Date(date.date);
+													const formattedDate = dateObj.toLocaleDateString('en-US', {
+														day: 'numeric',
+														month: 'short',
+													});
+
+													return (
+														<button
+															key={date.id}
+															onClick={() =>
+																!date.isBooked && toggleDateSelection(date.id)
+															}
+															className={`relative py-2 px-3 rounded-lg transition-all ${
+																date.isBooked
+																	? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+																	: selectedDates.includes(date.id)
+																	? 'bg-blue-500 text-white font-medium shadow-md hover:bg-blue-600'
+																	: 'bg-white border border-gray-200 hover:border-blue-300 hover:bg-blue-50'
+															}`}
+															disabled={homestay.isBooked || date.isBooked}
+														>
+															<span className='text-sm'>{formattedDate}</span>
+															{date.isBooked && (
+																<span className='absolute flex items-center justify-center w-5 h-5 text-xs text-white bg-red-500 rounded-full -top-2 -right-2 ring-2 ring-white'>
+																	!
+																</span>
+															)}
+														</button>
+													);
+												})}
+										</div>
+									) : (
+										<p className='py-2 text-center text-gray-500'>No available dates for booking</p>
+									)}
+								</div>
+
+								{selectedDates.length > 0 && (
+									<div className='flex items-center justify-between px-2 py-1 rounded-lg bg-blue-50'>
+										<span className='text-sm text-blue-700'>
+											<strong>{selectedDates.length}</strong>{' '}
+											{selectedDates.length === 1 ? 'date' : 'dates'} selected
+										</span>
+										<Button
+											variant='ghost'
+											className='h-8 p-0 px-2 text-xs text-blue-600 hover:text-blue-800 hover:bg-blue-100'
+											onClick={() => setSelectedDates([])}
+										>
+											Clear
+										</Button>
+									</div>
+								)}
+							</div>
+
+							{/* Voucher input */}
+							<div className='flex flex-col gap-3'>
+								<h3 className='flex items-center text-base font-semibold text-gray-700'>
+									<Ticket className='w-4 h-4 mr-2 text-blue-500' />
+									Apply Voucher
+								</h3>
+
 								<div className='flex flex-col gap-2'>
-									<div className='flex gap-2 flex-col'>
+									<div className='flex gap-2'>
 										<input
 											type='text'
 											value={voucherCode}
 											onChange={(e) => setVoucherCode(e.target.value)}
 											placeholder='Enter voucher code...'
-											className='flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm'
+											className='flex w-full h-10 px-3 py-2 text-sm bg-white border border-gray-200 rounded-lg focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50'
 											disabled={homestay.isBooked}
 										/>
-										<DropdownMenu>
-											<DropdownMenuTrigger
-												asChild
-												disabled={homestay.isBooked || vouchersLoading || !userVouchers?.length}
-											>
-												<Button variant='outline' className='flex items-center justify-between'>
-													{/* <Ticket className='h-4 w-4 mr-2' /> */}
-													<span>Your Voucher</span>
-													<ChevronDown className='h-4 w-4' />
-												</Button>
-											</DropdownMenuTrigger>
-											<DropdownMenuContent className='w-full min-w-[240px]' align='start'>
-												<DropdownMenuLabel>Your Vouchers</DropdownMenuLabel>
-												<DropdownMenuSeparator />
-												{vouchersLoading ? (
-													<div className='py-2 px-4 text-sm'>Loading vouchers...</div>
-												) : userVouchers?.length > 0 ? (
-													userVouchers.map((voucher) => (
-														<DropdownMenuItem
-															key={voucher.voucherID}
-															onClick={() => handleSelectVoucher(voucher.code)}
-															className='cursor-pointer'
-														>
-															<div className='flex items-center justify-between w-full'>
-																<div className='flex flex-col'>
-																	<span className='font-medium'>{voucher.code}</span>
-																	<span className='text-xs text-gray-500'>
-																		{voucher.discount}% off
-																	</span>
+
+										{userVouchers?.length > 0 && (
+											<DropdownMenu>
+												<DropdownMenuTrigger
+													asChild
+													disabled={
+														homestay.isBooked || vouchersLoading || !userVouchers?.length
+													}
+												>
+													<Button
+														variant='outline'
+														className='h-10 border-gray-200 hover:bg-gray-50'
+													>
+														<ChevronDown className='w-4 h-4' />
+													</Button>
+												</DropdownMenuTrigger>
+												<DropdownMenuContent className='w-64' align='end'>
+													<DropdownMenuLabel className='flex items-center text-blue-600'>
+														<Ticket className='w-4 h-4 mr-2' />
+														Your Vouchers
+													</DropdownMenuLabel>
+													<DropdownMenuSeparator />
+													{vouchersLoading ? (
+														<div className='px-4 py-2 text-sm text-center text-gray-500'>
+															Loading vouchers...
+														</div>
+													) : userVouchers?.length > 0 ? (
+														userVouchers.map((voucher) => (
+															<DropdownMenuItem
+																key={voucher.voucherID}
+																onClick={() => handleSelectVoucher(voucher.code)}
+																className={`relative cursor-pointer hover:bg-blue-50 ${
+																	voucher.isUser
+																		? 'cursor-not-allowed opacity-75'
+																		: ''
+																}`}
+																disabled={voucher.isUser}
+															>
+																<div className='relative flex items-center justify-between w-full'>
+																	<div className='flex flex-col'>
+																		<span className='font-medium'>
+																			{voucher.code}
+																		</span>
+																		<span className='text-xs text-gray-500'>
+																			{voucher.discount}% off
+																		</span>
+																	</div>
+
+																	{voucher.isUser ? (
+																		<div className='flex items-center px-3 py-1 text-xs font-medium text-gray-600 bg-gray-100 border border-gray-200 rounded-full'>
+																			<svg
+																				xmlns='http://www.w3.org/2000/svg'
+																				viewBox='0 0 20 20'
+																				fill='currentColor'
+																				className='w-3 h-3 mr-1 text-gray-500'
+																			>
+																				<path
+																					fillRule='evenodd'
+																					d='M10 18a8 8 0 100-16 8 8 0 000 16zm.75-13a.75.75 0 00-1.5 0v5.5a.75.75 0 001.5 0V5z'
+																					clipRule='evenodd'
+																				/>
+																			</svg>
+																			Used
+																		</div>
+																	) : (
+																		<Badge
+																			variant='outline'
+																			className='ml-2 text-blue-600 border-blue-200 bg-blue-50 hover:bg-blue-100'
+																		>
+																			Apply
+																		</Badge>
+																	)}
 																</div>
-																<Badge variant='outline' className='ml-2'>
-																	Apply
-																</Badge>
-															</div>
-														</DropdownMenuItem>
-													))
-												) : (
-													<div className='py-2 px-4 text-sm'>No vouchers available</div>
-												)}
-											</DropdownMenuContent>
-										</DropdownMenu>
-										{voucherCode && (
-											<div className='flex items-center text-xs text-green-600'>
-												<Check className='h-3 w-3 mr-1' />
-												Voucher {voucherCode} applied
-											</div>
+
+																{voucher.isUser && (
+																	<div className='absolute inset-0 bg-white pointer-events-none bg-opacity-10'>
+																		<div className='absolute top-0 left-0 w-full h-full border-2 border-gray-200 rounded-md opacity-25'></div>
+																	</div>
+																)}
+															</DropdownMenuItem>
+														))
+													) : (
+														<div className='px-4 py-2 text-sm text-center text-gray-500'>
+															No vouchers available
+														</div>
+													)}
+												</DropdownMenuContent>
+											</DropdownMenu>
 										)}
 									</div>
 
-									{/* {showVouchers && userVouchers?.length > 0 && (
-										<div className='relative top-full left-0 right-0 z-10 mt-1 bg-white rounded-md border shadow-lg max-h-48 overflow-y-auto'>
-											<div className='p-2'>
-												<h3 className='text-sm font-medium text-gray-700 mb-2'>
-													Your Vouchers
-												</h3>
-												<div className='space-y-2'>
-													{userVouchers.map((voucher) => (
-														<button
-															key={voucher.voucherID}
-															onClick={() => handleSelectVoucher(voucher.code)}
-															className='flex items-center justify-between w-full p-2 text-left hover:bg-gray-50 rounded-md'
-														>
-															<div className='flex items-center gap-2'>
-																<Ticket className='h-4 w-4 text-blue-500' />
-																<div>
-																	<p className='text-sm font-medium'>
-																		{voucher.code}
-																	</p>
-																	<p className='text-xs text-gray-500'>
-																		{voucher.discount}% off
-																	</p>
-																</div>
-															</div>
-															<Badge variant='outline' className='text-xs'>
-																Use
-															</Badge>
-														</button>
-													))}
-												</div>
-											</div>
+									{voucherCode && (
+										<div className='flex items-center px-3 py-2 text-sm text-green-600 rounded-lg bg-green-50'>
+											<Check className='w-4 h-4 mr-2' />
+											Voucher <span className='font-medium'>{voucherCode}</span> applied
 										</div>
-									)} */}
+									)}
 								</div>
 							</div>
 
 							{/* Payment method selection */}
-							<div className='flex flex-col gap-2'>
-								<h2 className='text-sm md:text-base font-semibold'>Payment Method</h2>
-								<div className='flex gap-4'>
-									<label className='flex items-center space-x-2 cursor-pointer'>
+							<div className='flex flex-col gap-3'>
+								<h3 className='flex items-center text-base font-semibold text-gray-700'>
+									<CreditCard className='w-4 h-4 mr-2 text-blue-500' />
+									Payment Method
+								</h3>
+
+								<div className='flex flex-col gap-2'>
+									<label className='flex items-center p-3 transition-colors border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50'>
 										<input
 											type='radio'
 											checked={isOnline}
 											onChange={() => setIsOnline(true)}
-											className='form-radio h-4 w-4 text-blue-600'
+											className='w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500'
 											disabled={homestay.isBooked}
 										/>
-										<span className='text-sm'>Online Payment</span>
+										<div className='ml-3'>
+											<span className='font-medium text-gray-700'>Online Payment</span>
+											<p className='mt-1 text-xs text-gray-500'>
+												Pay now with credit card, debit card or other methods
+											</p>
+										</div>
 									</label>
-									<label className='flex items-center space-x-2 cursor-pointer'>
+
+									{/* <label className='flex items-center p-3 transition-colors border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50'>
 										<input
 											type='radio'
 											checked={!isOnline}
 											onChange={() => setIsOnline(false)}
-											className='form-radio h-4 w-4 text-blue-600'
+											className='w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500'
+											disabled={homestay.isBooked}
 										/>
-										<span className='text-sm'>Cash on Arrival</span>
-									</label>
+										<div className='ml-3'>
+											<span className='font-medium text-gray-700'>Cash on Arrival</span>
+											<p className='mt-1 text-xs text-gray-500'>
+												Pay in cash when you arrive at the property
+											</p>
+										</div>
+									</label> */}
 								</div>
 							</div>
 
+							{/* Status indicators and booking button */}
 							{homestay.isBooked && (
-								<div className='bg-red-50 border border-red-200 text-red-600 font-medium text-sm text-center p-2 rounded-md'>
-									This homestay is already booked and not available for reservation.
+								<div className='flex items-center justify-center p-4 text-sm font-medium text-center text-red-600 border border-red-200 rounded-lg bg-red-50'>
+									<span className='w-2 h-2 mr-2 bg-red-500 rounded-full animate-pulse'></span>
+									This homestay is currently booked and unavailable
 								</div>
 							)}
 
-							<div className='flex flex-col gap-2'>
-								<h2 className='text-sm md:text-base font-semibold'>Select Booking Dates</h2>
-								<div className='flex flex-wrap gap-2'>
-									{homestay.calendar
-										?.slice()
-										?.filter(
-											(date) =>
-												new Date(date.date).setHours(0, 0, 0, 0) >=
-													new Date().setHours(0, 0, 0, 0) && !date.isDeleted
-										)
-										.sort((a, b) => new Date(a.date) - new Date(b.date))
-										.map((date) => (
-											<button
-												key={date.id}
-												onClick={() => toggleDateSelection(date.id)}
-												className={`px-3 py-2 text-sm rounded-md border max-w-24 ${
-													selectedDates.includes(date.id)
-														? 'bg-blue-600 text-white'
-														: 'bg-gray-100'
-												}`}
-												disabled={homestay.isBooked}
-											>
-												{new Date(date.date).toLocaleDateString('vi')}
-											</button>
-										))}
+							{priceForToday !== null && !homestay.isBooked && selectedDates.length > 0 && (
+								<div className='flex items-center justify-between p-4 border border-blue-100 rounded-lg bg-blue-50'>
+									<div>
+										<p className='text-sm text-gray-500'>Total for {selectedDates.length} nights</p>
+										<p className='text-xl font-bold text-gray-800'>
+											${(priceForToday * selectedDates.length).toLocaleString()}
+										</p>
+									</div>
+									{voucherCode && (
+										<Badge className='py-1 text-green-600 bg-green-100'>Discount applied</Badge>
+									)}
 								</div>
-							</div>
+							)}
 
 							<Button
-								className='w-full bg-blue-600 hover:bg-blue-700 text-white'
+								className='flex items-center justify-center w-full gap-2 py-6 mt-2 text-white transition-all duration-300 bg-blue-600 shadow-md hover:bg-blue-700 rounded-xl hover:shadow-lg'
 								onClick={handleBookNow}
-								disabled={bookingMutation.isPending || !priceData || homestay.isBooked}
+								disabled={
+									bookingMutation.isPending ||
+									!priceData ||
+									homestay.isBooked ||
+									selectedDates.length === 0
+								}
 							>
 								{bookingMutation.isPending ? (
 									<>
-										<Loader2 className='mr-2 h-4 w-4 animate-spin' />
+										<Loader2 className='w-5 h-5 animate-spin' />
 										Processing...
 									</>
 								) : homestay.isBooked ? (
-									'Not Available'
+									<>
+										<span className='w-2 h-2 bg-red-500 rounded-full animate-pulse'></span>
+										Not Available
+									</>
+								) : selectedDates.length === 0 ? (
+									<>
+										<Calendar className='w-5 h-5' />
+										Select dates to book
+									</>
 								) : (
-									'Book Now'
+									<>
+										<DollarSign className='w-5 h-5' />
+										Book Now
+									</>
 								)}
 							</Button>
+
+							<p className='px-4 text-xs text-center text-gray-500'>
+								You won't be charged yet. Review your booking details before confirming.
+							</p>
 						</div>
 					</div>
 				</div>

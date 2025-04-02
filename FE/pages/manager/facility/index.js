@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import ManagerLayout from '../layout';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { getAllFacility } from '@/pages/api/facility/getFacility';
 import { Card, CardContent } from '@/components/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/components/ui/table';
 import { Button } from '@/components/components/ui/button';
@@ -17,13 +18,11 @@ import {
 import { Label } from '@/components/components/ui/label';
 import { Input } from '@/components/components/ui/input';
 import { Pencil, Trash2 } from 'lucide-react';
-import Swal from 'sweetalert2';
 import { createFacility } from '@/pages/api/facility/createFacility';
-import { getAllFacility } from '@/pages/api/facility/getFacility';
+import Swal from 'sweetalert2';
+import { updateFacility } from '@/pages/api/facility/updateFacility';
 import { Textarea } from '@/components/components/ui/textarea';
 import { deleteFacility } from '@/pages/api/facility/deleteFacility';
-import { updateFacility } from '@/pages/api/facility/updateFacility';
-
 
 const Facility = () => {
 	const queryClient = useQueryClient();
@@ -61,6 +60,7 @@ const Facility = () => {
 			});
 		},
 	});
+
 	const updateFacilityMutation = useMutation({
 		mutationFn: updateFacility,
 		onSuccess: () => {
@@ -218,8 +218,8 @@ const Facility = () => {
 				</div>
 				{isLoading ? (
 					<div className='fixed top-0 left-0 flex items-center justify-center w-full h-full bg-white bg-opacity-50 z-50'>
-					<div className='w-16 h-16 border-t-4 border-blue-500 rounded-full animate-spin'></div>
-				</div>
+						<div className='w-16 h-16 border-t-4 border-blue-500 rounded-full animate-spin'></div>
+					</div>
 				) : error ? (
 					<p>Error: {error.message}</p>
 				) : (
