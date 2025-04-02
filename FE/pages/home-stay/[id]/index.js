@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
+import { getHomeStayDetail } from '@/pages/api/homestay/getHomeStayDetail';
 import MainLayout from '@/pages/layout';
 import React, { useState } from 'react';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
@@ -50,7 +51,8 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from '@/components/components/ui/dropdown-menu';
-import { getHomeStayDetail } from '@/pages/api/homestay/getHomeStayDetail';
+import AvailableDatesSelector from '@/components/AvailableDatesSelector';
+import { useTranslation } from 'next-i18next';
 
 // Helper function to format dates consistently for comparison
 const formatDateForComparison = (dateInput) => {
@@ -129,6 +131,7 @@ const HomeStayDetail = () => {
 	const [isOnline, setIsOnline] = useState(true);
 	const [selectedDates, setSelectedDates] = useState([]);
 	const { dataProfile, isAuthenticated } = useAuth();
+	const { t } = useTranslation('common');
 
 	const toggleDateSelection = (calenderID) => {
 		setSelectedDates((prevSelected) =>
@@ -208,7 +211,7 @@ const HomeStayDetail = () => {
 							onClick={() => router.back()}
 						>
 							<ArrowLeft className='w-4 h-4 mr-2' />
-							Back to listings
+							{t('backto')}
 						</Button>
 
 						<Skeleton height={400} className='rounded-xl' />
@@ -271,7 +274,7 @@ const HomeStayDetail = () => {
 						onClick={() => router.back()}
 					>
 						<ArrowLeft className='w-4 h-4 mr-2' />
-						Back to listings
+						{t('backto')}
 					</Button>
 
 					<div className='relative flex flex-col items-center gap-8 lg:items-start lg:flex-row'>
@@ -403,7 +406,7 @@ const HomeStayDetail = () => {
 												<span className='p-1 mr-2 text-blue-600 bg-blue-100 rounded-md'>
 													<Bed className='w-5 h-5' />
 												</span>
-												Amenities
+												{t('amenities')}
 											</h2>
 
 											{homestay.amenities?.length > 0 ? (
@@ -432,7 +435,7 @@ const HomeStayDetail = () => {
 												<span className='p-1 mr-2 text-blue-600 bg-blue-100 rounded-md'>
 													<Coffee className='w-5 h-5' />
 												</span>
-												Facilities
+												{t('facilities')}
 											</h2>
 
 											{homestay.facility?.length > 0 ? (
@@ -461,7 +464,7 @@ const HomeStayDetail = () => {
 										<span className='p-1 mr-2 text-blue-600 bg-blue-100 rounded-md'>
 											<MapPin className='w-5 h-5' />
 										</span>
-										About this place
+										{t('aboutthisplace')}
 									</h2>
 									<div className='p-4 bg-gray-50 rounded-xl'>
 										<p className='leading-relaxed text-gray-600'>{homestay.description}</p>
@@ -472,7 +475,7 @@ const HomeStayDetail = () => {
 										<span className='p-1 mr-2 text-blue-600 bg-blue-100 rounded-md'>
 											<Star className='w-5 h-5' />
 										</span>
-										Guest Reviews
+										{t('guestreviews')}
 									</h2>
 
 									{homestay.feeback?.length > 0 ? (
@@ -545,66 +548,20 @@ const HomeStayDetail = () => {
 
 						<div className='sticky flex flex-col w-full gap-6 p-6 bg-white border shadow-lg rounded-xl md:w-1/2 lg:w-1/3 h-fit top-24'>
 							<div className='pb-6 border-b'>
-								<h2 className='mb-1 text-xl font-bold text-gray-800'>Book your stay</h2>
-								<p className='text-sm text-gray-500'>Select dates and payment method</p>
+								<h2 className='mb-1 text-xl font-bold text-gray-800'>{t('bookyourstay')}</h2>
+								<p className='text-sm text-gray-500'>{t('selectdatespayment')}</p>
 							</div>
 
 							{/* Calendar selection */}
 							<div className='flex flex-col gap-3'>
-								<h3 className='flex items-center text-base font-semibold text-gray-700'>
-									<Calendar className='w-4 h-4 mr-2 text-blue-500' />
-									Available Dates
-								</h3>
+								<AvailableDatesSelector
+									availableDates={homestay.calendar || []}
+									selectedDates={selectedDates}
+									setSelectedDates={setSelectedDates}
+									isDisabled={homestay.isBooked}
+								/>
 
-								<div className='p-4 rounded-lg bg-gray-50'>
-									{availableDates?.length > 0 ? (
-										<div className='flex flex-wrap gap-2'>
-											{homestay.calendar
-												?.slice()
-												?.filter(
-													(date) =>
-														new Date(date.date).setHours(0, 0, 0, 0) >=
-															new Date().setHours(0, 0, 0, 0) && !date.isDeleted
-												)
-												.sort((a, b) => new Date(a.date) - new Date(b.date))
-												.map((date) => {
-													const dateObj = new Date(date.date);
-													const formattedDate = dateObj.toLocaleDateString('en-US', {
-														day: 'numeric',
-														month: 'short',
-													});
-
-													return (
-														<button
-															key={date.id}
-															onClick={() =>
-																!date.isBooked && toggleDateSelection(date.id)
-															}
-															className={`relative py-2 px-3 rounded-lg transition-all ${
-																date.isBooked
-																	? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-																	: selectedDates.includes(date.id)
-																	? 'bg-blue-500 text-white font-medium shadow-md hover:bg-blue-600'
-																	: 'bg-white border border-gray-200 hover:border-blue-300 hover:bg-blue-50'
-															}`}
-															disabled={homestay.isBooked || date.isBooked}
-														>
-															<span className='text-sm'>{formattedDate}</span>
-															{date.isBooked && (
-																<span className='absolute flex items-center justify-center w-5 h-5 text-xs text-white bg-red-500 rounded-full -top-2 -right-2 ring-2 ring-white'>
-																	!
-																</span>
-															)}
-														</button>
-													);
-												})}
-										</div>
-									) : (
-										<p className='py-2 text-center text-gray-500'>No available dates for booking</p>
-									)}
-								</div>
-
-								{selectedDates.length > 0 && (
+								{/* {selectedDates.length > 0 && (
 									<div className='flex items-center justify-between px-2 py-1 rounded-lg bg-blue-50'>
 										<span className='text-sm text-blue-700'>
 											<strong>{selectedDates.length}</strong>{' '}
@@ -618,14 +575,14 @@ const HomeStayDetail = () => {
 											Clear
 										</Button>
 									</div>
-								)}
+								)} */}
 							</div>
 
 							{/* Voucher input */}
 							<div className='flex flex-col gap-3'>
 								<h3 className='flex items-center text-base font-semibold text-gray-700'>
 									<Ticket className='w-4 h-4 mr-2 text-blue-500' />
-									Apply Voucher
+									{t('applyvoucher')}
 								</h3>
 
 								<div className='flex flex-col gap-2'>
@@ -634,7 +591,7 @@ const HomeStayDetail = () => {
 											type='text'
 											value={voucherCode}
 											onChange={(e) => setVoucherCode(e.target.value)}
-											placeholder='Enter voucher code...'
+											placeholder={t('applyvoucher')}
 											className='flex w-full h-10 px-3 py-2 text-sm bg-white border border-gray-200 rounded-lg focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50'
 											disabled={homestay.isBooked}
 										/>
@@ -657,7 +614,7 @@ const HomeStayDetail = () => {
 												<DropdownMenuContent className='w-64' align='end'>
 													<DropdownMenuLabel className='flex items-center text-blue-600'>
 														<Ticket className='w-4 h-4 mr-2' />
-														Your Vouchers
+														{t('applyvoucher')}
 													</DropdownMenuLabel>
 													<DropdownMenuSeparator />
 													{vouchersLoading ? (
@@ -732,7 +689,7 @@ const HomeStayDetail = () => {
 									{voucherCode && (
 										<div className='flex items-center px-3 py-2 text-sm text-green-600 rounded-lg bg-green-50'>
 											<Check className='w-4 h-4 mr-2' />
-											Voucher <span className='font-medium'>{voucherCode}</span> applied
+											{t('applyvoucher')}: <span className='font-medium'>{voucherCode}</span>
 										</div>
 									)}
 								</div>
@@ -742,7 +699,7 @@ const HomeStayDetail = () => {
 							<div className='flex flex-col gap-3'>
 								<h3 className='flex items-center text-base font-semibold text-gray-700'>
 									<CreditCard className='w-4 h-4 mr-2 text-blue-500' />
-									Payment Method
+									{t('paymentmethod')}
 								</h3>
 
 								<div className='flex flex-col gap-2'>
@@ -830,14 +787,14 @@ const HomeStayDetail = () => {
 								) : (
 									<>
 										<DollarSign className='w-5 h-5' />
-										Book Now
+										{t('booknow')}
 									</>
 								)}
 							</Button>
 
-							<p className='px-4 text-xs text-center text-gray-500'>
+							{/* <p className='px-4 text-xs text-center text-gray-500'>
 								You won't be charged yet. Review your booking details before confirming.
-							</p>
+							</p> */}
 						</div>
 					</div>
 				</div>

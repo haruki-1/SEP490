@@ -7,7 +7,7 @@ import MainLayout from '@/pages/layout';
 import React, { useState, useRef } from 'react';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
 import 'react-photo-view/dist/react-photo-view.css';
-import { useAuth } from 'context/AuthProvider';
+import { useAuth } from '@/context/AuthProvider';
 import { MapPin, Calendar, ArrowLeft, MessageCircle, Send, Loader2 } from 'lucide-react';
 import { Button } from '@/components/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/components/ui/avatar';
@@ -20,8 +20,7 @@ const PostDetail = () => {
 	const [commentText, setCommentText] = useState('');
 	const [replyText, setReplyText] = useState('');
 	const [replyingTo, setReplyingTo] = useState(null);
-	const [localComments, setLocalComments] = useState([]);
-	const [localReplies, setLocalReplies] = useState({});
+	// We'll remove the localComments state and use React Query's cache instead
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const replyInputRef = useRef(null);
 	const queryClient = useQueryClient();
@@ -49,48 +48,80 @@ const PostDetail = () => {
 		mutationFn: (commentData) => {
 			return createComment(dataProfile.id, commentData);
 		},
-		onSuccess: (data, variables) => {
-			if (variables.parentID) {
-				const newReply = {
-					id: data?.id || Date.now(),
-					comment: replyText,
-					commentDate: new Date(),
-					userID: dataProfile?.id,
-					fullName: dataProfile?.fullName || 'Guest User',
-					postID: id,
-					parentID: variables.parentID,
-				};
+		onMutate: async (newComment) => {
+			// Cancel any outgoing refetches to avoid overwriting our optimistic update
+			await queryClient.cancelQueries(['postDetail', id]);
 
-				setLocalReplies((prev) => ({
-					...prev,
-					[variables.parentID]: [...(prev[variables.parentID] || []), newReply],
-				}));
+			// Snapshot the previous value
+			const previousPostDetail = queryClient.getQueryData(['postDetail', id]);
 
+			// Optimistically update the UI
+			if (newComment.parentID) {
+				// Handle replies
+				queryClient.setQueryData(['postDetail', id], (old) => {
+					// Create a deep copy of the old data
+					const newData = JSON.parse(JSON.stringify(old));
+
+					// Find the parent comment
+					const parentComment = newData.comments.find((c) => c.id === newComment.parentID);
+					if (parentComment) {
+						// Add the reply to the parent comment's replies array
+						parentComment.replies = parentComment.replies || [];
+						parentComment.replies.push({
+							id: `temp-${Date.now()}`,
+							comment: newComment.comment,
+							commentDate: new Date().toISOString(),
+							userID: dataProfile?.id,
+							fullName: dataProfile?.fullName || 'Guest User',
+							postID: id,
+							parentID: newComment.parentID,
+						});
+					}
+					return newData;
+				});
+			} else {
+				// Handle top-level comments
+				queryClient.setQueryData(['postDetail', id], (old) => {
+					// Create a deep copy of the old data
+					const newData = JSON.parse(JSON.stringify(old));
+
+					// Add the new comment to the comments array
+					newData.comments = newData.comments || [];
+					newData.comments.unshift({
+						id: `temp-${Date.now()}`,
+						comment: newComment.comment,
+						commentDate: new Date().toISOString(),
+						userID: dataProfile?.id,
+						fullName: dataProfile?.fullName || 'Guest User',
+						postID: id,
+						replies: [],
+					});
+					return newData;
+				});
+			}
+
+			// Return the previous data so we can revert if something goes wrong
+			return { previousPostDetail };
+		},
+		onError: (err, newComment, context) => {
+			// If there was an error, roll back to the previous state
+			queryClient.setQueryData(['postDetail', id], context.previousPostDetail);
+			console.error('Failed to post comment:', err);
+			alert('Failed to post comment. Please try again.');
+		},
+		onSettled: () => {
+			// Always refetch after a mutation to ensure we have the latest data
+			queryClient.invalidateQueries(['postDetail', id]);
+			setIsSubmitting(false);
+		},
+		onSuccess: () => {
+			// Clear form inputs on success
+			if (replyingTo) {
 				setReplyText('');
 				setReplyingTo(null);
 			} else {
-				// This is a main comment
-				const newComment = {
-					id: data?.id || Date.now(),
-					comment: commentText,
-					commentDate: new Date(),
-					userID: dataProfile?.id,
-					fullName: dataProfile?.fullName || 'Guest User',
-					postID: id,
-					replies: [],
-				};
-
-				setLocalComments([newComment, ...localComments]);
 				setCommentText('');
 			}
-
-			setIsSubmitting(false);
-			queryClient.invalidateQueries(['postDetail', id]);
-		},
-		onError: (error) => {
-			console.error('Failed to post comment:', error);
-			setIsSubmitting(false);
-			alert('Failed to post comment. Please try again.');
 		},
 	});
 
@@ -248,9 +279,9 @@ const PostDetail = () => {
 		);
 	}
 
-	// Combine API comments with local comments
-	const allComments = [...localComments, ...(data?.comments || [])];
-	const commentCount = allComments.length;
+	// Get comments directly from the API data
+	const comments = data?.comments || [];
+	const commentCount = comments.length;
 
 	return (
 		<MainLayout>
@@ -435,14 +466,12 @@ const PostDetail = () => {
 							</form>
 
 							{/* Display comments */}
-							{allComments.length > 0 ? (
+							{comments.length > 0 ? (
 								<div className='space-y-6'>
-									{allComments.map((comment) => {
+									{comments.map((comment) => {
 										// Get replies for this comment
 										const apiReplies = comment.replies || [];
-										const localCommentReplies = localReplies[comment.userID] || [];
-										const allReplies = [...localCommentReplies, ...apiReplies];
-										const hasReplies = allReplies.length > 0;
+										const hasReplies = apiReplies.length > 0;
 
 										return (
 											<div
@@ -563,13 +592,13 @@ const PostDetail = () => {
 												{/* Display replies */}
 												{hasReplies && (
 													<div className='mt-4 ml-10 space-y-4'>
-														{allReplies.map((reply) => (
+														{apiReplies.map((reply) => (
 															<div key={reply.id} className='flex gap-3'>
 																<Avatar className='flex-shrink-0 w-8 h-8'>
-																	{/* <AvatarImage
-																		src={getAvatarUrl(reply.userID)}
+																	<AvatarImage
+																		src={reply.avatar}
 																		alt={reply.fullName}
-																	/> */}
+																	/>
 																	<AvatarFallback className='text-xs font-medium text-blue-600 bg-blue-100'>
 																		{getInitials(reply.fullName)}
 																	</AvatarFallback>

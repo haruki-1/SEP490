@@ -289,9 +289,9 @@ const HomeStayCalendar = () => {
 						</Button>
 						<h1 className='text-2xl font-bold'>Calendar Management</h1>
 					</div>
-					<Button onClick={openCalendarDialog} className='flex items-center gap-2'>
+					{/* <Button onClick={openCalendarDialog} className='flex items-center gap-2'>
 						<Plus className='w-4 h-4' /> Add Calendar Entries
-					</Button>
+					</Button> */}
 				</div>
 
 				{isLoading ? (
