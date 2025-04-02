@@ -15,13 +15,13 @@ import { Eye, EyeOff, User, ShieldCheck, Calendar, Home, MapPin, Ticket, CreditC
 import { changePassword } from '@/pages/api/auth/changePassword';
 import Image from 'next/image';
 import { uploadImage } from '@/pages/api/image/uploadImage';
-import MainLayout from '../layout';
 import { Badge } from '@/components/components/ui/badge';
 import Link from 'next/link';
 import { getUserVouchers } from '@/pages/api/voucher/getUserVouchers';
 import { getBookingHistory } from '@/pages/api/homestay/getHomeStayByUser';
 import { cancelBooking } from '@/pages/api/booking/cancelBooking';
 import FeedbackModal from '@/components/FeedbackModal';
+import AdminLayout from '../layout';
 
 export default function ProfilePage() {
 	const { dataProfile, refetch } = useAuth();
@@ -279,7 +279,7 @@ export default function ProfilePage() {
 	};
 
 	return (
-		<MainLayout>
+		<AdminLayout>
 			<div className='sec-com'>
 				<div className='container-lg'>
 					<div className='mb-6'>
@@ -854,6 +854,6 @@ export default function ProfilePage() {
 					</div>
 				</div>
 			</div>
-		</MainLayout>
+		</AdminLayout>
 	);
 }

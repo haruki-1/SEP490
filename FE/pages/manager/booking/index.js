@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import AdminLayout from '../layout';
 import { getBookingByHomeStay } from '@/pages/api/booking/bookingHomeStay';
 import { confirmBookingStatus } from '@/pages/api/booking/confirmBookingStatus';
 import { cancelBooking } from '@/pages/api/booking/cancelBooking';
@@ -7,12 +6,12 @@ import { exportBookings } from '@/pages/api/booking/exportBookings'; // Import t
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/context/AuthProvider';
 import { getHomeStayByUser } from '@/pages/api/booking/bookingByUser';
-import Image from 'next/image';
 import { toast } from 'sonner';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/components/ui/dialog';
 import { Button } from '@/components/components/ui/button';
 import { Textarea } from '@/components/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/components/ui/avatar';
+import ManagerLayout from '../layout';
 
 const BookingHomestay = () => {
 	const [selectedHomeStayId, setSelectedHomeStayId] = useState('');
@@ -127,12 +126,8 @@ const BookingHomestay = () => {
 	// Helper function to get button text based on current status
 	const getButtonText = (status) => {
 		switch (status) {
-			case 'Confirmed':
-				return 'Mark as Paid';
 			case 'Paid':
 				return 'Complete';
-			default:
-				return 'Update Status';
 		}
 	};
 
@@ -148,7 +143,7 @@ const BookingHomestay = () => {
 	};
 
 	return (
-		<AdminLayout>
+		<ManagerLayout>
 			<div className='p-6'>
 				<h1 className='mb-6 text-2xl font-bold'>Booking Homestay</h1>
 
@@ -389,7 +384,7 @@ const BookingHomestay = () => {
 					</DialogFooter>
 				</DialogContent>
 			</Dialog>
-		</AdminLayout>
+		</ManagerLayout>
 	);
 };
 

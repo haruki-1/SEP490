@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Menu, User, Search, ChevronDown, Bell, LogOut, Settings, Calendar, CalendarIcon } from 'lucide-react';
+import { Menu, User, Search, ChevronDown, Bell, LogOut, Settings, Calendar, CalendarIcon, MapPin } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
+import { useAuth } from '@/context/AuthProvider';
 import LanguageSwitcher from './LanguageSwitcher';
 import { Sheet, SheetContent, SheetTrigger } from './components/ui/sheet';
 import {
@@ -16,7 +17,6 @@ import {
 	DropdownMenuTrigger,
 } from './components/ui/dropdown-menu';
 import { Button } from './components/ui/button';
-import { Input } from './components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from './components/ui/avatar';
 import { Badge } from './components/ui/badge';
 import { searchHomeStay } from '@/pages/api/homestay/searchHomeStay';
@@ -25,9 +25,12 @@ import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
-import { useAuth } from '@/context/AuthProvider';
-import AmenityList from './AmenityList';
 import { useTranslation } from 'next-i18next';
+import { getCityList } from '@/pages/api/city/getCityList';
+import { useQuery } from '@tanstack/react-query';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from './components/ui/command';
+import { Check } from 'react-feather';
+import { cn } from './lib/utils';
 
 const Header = () => {
 	const router = useRouter();
@@ -36,6 +39,9 @@ const Header = () => {
 	const [scrolled, setScrolled] = useState(false);
 	const [isMounted, setIsMounted] = useState(false);
 	const [isSearching, setIsSearching] = useState(false);
+	const [cityPickerOpen, setCityPickerOpen] = useState(false);
+	const [openCity, setOpenCity] = useState(false);
+	const [selectedCity, setSelectedCity] = useState('');
 	const { t } = useTranslation('common');
 
 	// Date selection states
@@ -43,6 +49,15 @@ const Header = () => {
 	const [checkOutDate, setCheckOutDate] = useState(null);
 	const [datePickerOpen, setDatePickerOpen] = useState(false);
 	const [selectedRange, setSelectedRange] = useState({ from: null, to: null });
+
+	const {
+		data: cities,
+		isLoading,
+		error: citiesError,
+	} = useQuery({
+		queryKey: ['cities'],
+		queryFn: getCityList,
+	});
 
 	// Handle scroll effect for transparent to solid header
 	useEffect(() => {
@@ -69,6 +84,12 @@ const Header = () => {
 		setCheckOutDate(range?.to || null);
 	};
 
+	const handleCitySelect = (city) => {
+		setSelectedCity(city);
+		setLocation(city);
+		setCityPickerOpen(false);
+	};
+
 	const handleSearch = async (e) => {
 		e.preventDefault();
 
@@ -85,7 +106,11 @@ const Header = () => {
 			setIsSearching(true);
 
 			// Call the search API
-			const results = await searchHomeStay(formattedCheckIn, formattedCheckOut);
+			const results = await searchHomeStay(
+				location.trim(), // Pass city parameter first
+				formattedCheckIn,
+				formattedCheckOut
+			);
 
 			// Navigate to search results page with query params
 			router.push({
@@ -157,57 +182,114 @@ const Header = () => {
 					<div className='flex items-center gap-3'>
 						<Link
 							href='/'
-							className='flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-md'
+							className='flex items-center gap-2 rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500'
 						>
-							<div className='relative h-10 w-10 overflow-hidden rounded-full border-2 border-blue-100 shadow-sm'>
+							<div className='relative w-10 h-10 overflow-hidden border-2 border-blue-100 rounded-full shadow-sm'>
 								<Image src='/images/logo.jpg' alt='logo' fill className='object-cover' priority />
 							</div>
 						</Link>
 
 						{/* Desktop Navigation */}
-						<nav className='hidden md:flex items-center ml-6 space-x-1'>
+
+						<nav className='items-center hidden ml-6 space-x-1 md:flex'>
 							<Link
 								key='/home-stay'
 								href='/home-stay'
 								className={`
-                    			px-3 py-2 rounded-md text-sm font-medium transition-colors
-                   				${
-								isActivePath('/home-stay')
+                    px-3 py-2 rounded-md text-sm font-medium transition-colors
+                    ${
+						isActivePath('/home-stay')
 							? 'text-blue-600 bg-blue-50'
 							: 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
-						}
-                  	`}
-				 	 >
-				 	{t('homestays')}
+					}
+                  `}
+							>
+								{t('homestays')}
 							</Link>
-									<Link
-										key='/posts'
-										href='/posts'
-										className={`
-									px-3 py-2 rounded-md text-sm font-medium transition-colors
-									${
-										isActivePath('/posts')
-										? 'text-blue-600 bg-blue-50'
-										: 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
-									}
-									`}
-									>
-							{t('posts')}
+							<Link
+								key='/posts'
+								href='/posts'
+								className={`
+                    px-3 py-2 rounded-md text-sm font-medium transition-colors
+                    ${
+						isActivePath('/posts')
+							? 'text-blue-600 bg-blue-50'
+							: 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
+					}
+                  `}
+							>
+								{t('posts')}
 							</Link>
 						</nav>
 					</div>
 
 					{/* Search bar - Desktop */}
-					<div className='hidden md:flex items-center max-w-md w-full mx-6'>
-						<form onSubmit={handleSearch} className='relative flex w-full items-center gap-2'>
-							<Input
-								type='text'
-								placeholder={t('where')}
-								value={location}
-								onChange={(e) => setLocation(e.target.value)}
-								className='border-gray-200 rounded-l-full focus:ring-blue-500 focus:border-blue-500 rounded-r-none'
-							/>
+					<div className='items-center hidden w-full max-w-md mx-6 md:flex'>
+						<form onSubmit={handleSearch} className='relative flex items-center w-full gap-2'>
+							{/* City selector with dropdown */}
+							<Popover open={cityPickerOpen} onOpenChange={setCityPickerOpen}>
+								<PopoverTrigger asChild>
+									<Button
+										variant='outline'
+										role='combobox'
+										aria-expanded={cityPickerOpen}
+										className='justify-between w-full border-gray-200 rounded-l-full rounded-r-none'
+									>
+										{location ? (
+											<div className='flex items-center'>
+												<MapPin className='w-4 h-4 mr-2 text-gray-500' />
+												{location}
+											</div>
+										) : (
+											<div className='flex items-center text-gray-500'>
+												<MapPin className='w-4 h-4 mr-2' />
+												{t('where')}
+											</div>
+										)}
+										<ChevronDown className='w-4 h-4 ml-2 opacity-50 shrink-0' />
+									</Button>
+								</PopoverTrigger>
+								<PopoverContent className='w-[300px] p-0'>
+									<Command>
+										<CommandInput placeholder={t('search-city')} />
+										<CommandGroup heading='Popular Destinations'>
+											<CommandList>
+												{isLoading ? (
+													<div className='flex items-center justify-center py-6'>
+														<div className='w-6 h-6 border-t-2 border-blue-500 rounded-full animate-spin'></div>
+													</div>
+												) : (
+													cities?.map((city) => (
+														<CommandItem
+															key={city}
+															value={city}
+															onSelect={() => {
+																handleCitySelect(city);
+																setCityPickerOpen(false);
+															}}
+															className='flex items-center'
+														>
+															<MapPin className='w-4 h-4 mr-2 text-gray-400' />
+															{city}
+															<Check
+																className={cn(
+																	'ml-auto',
+																	location === city
+																		? 'opacity-100 text-blue-500'
+																		: 'opacity-0'
+																)}
+															/>
+														</CommandItem>
+													))
+												)}
+											</CommandList>
+										</CommandGroup>
+										<CommandEmpty>{t('no-city-found')}</CommandEmpty>
+									</Command>
+								</PopoverContent>
+							</Popover>
 
+							{/* Date Picker */}
 							<Popover open={datePickerOpen} onOpenChange={setDatePickerOpen}>
 								<PopoverTrigger asChild>
 									<Button
@@ -216,7 +298,7 @@ const Header = () => {
 											checkInDate && checkOutDate ? 'text-blue-600' : 'text-gray-500'
 										}`}
 									>
-										<CalendarIcon className='mr-2 h-4 w-4' />
+										<CalendarIcon className='w-4 h-4 mr-2' />
 										{checkInDate && checkOutDate ? (
 											<span className='text-xs'>
 												{format(checkInDate, 'MMM d')} - {format(checkOutDate, 'MMM d')}
@@ -228,7 +310,7 @@ const Header = () => {
 								</PopoverTrigger>
 								<PopoverContent className='w-auto p-0' align='center'>
 									<div className='p-3'>
-										<div className='space-y-1 mb-2'>
+										<div className='mb-2 space-y-1'>
 											<h4 className='text-sm font-medium'>{t('check-dates')}</h4>
 											<p className='text-xs text-gray-500'>{t('select-stay')}</p>
 										</div>
@@ -250,9 +332,9 @@ const Header = () => {
 								</PopoverContent>
 							</Popover>
 
-							<Button type='submit' className='rounded-r-full rounded-l-none' disabled={isSearching}>
+							<Button type='submit' className='rounded-l-none rounded-r-full' disabled={isSearching}>
 								{isSearching ? (
-									<div className='h-4 w-4 border-t-2 border-white rounded-full animate-spin mr-1' />
+									<div className='w-4 h-4 mr-1 border-t-2 border-white rounded-full animate-spin' />
 								) : (
 									<Search className='w-4 h-4 mr-1' />
 								)}
@@ -264,7 +346,7 @@ const Header = () => {
 					{/* Right side elements */}
 					<div className='flex items-center gap-1 md:gap-3'>
 						{/* Theme toggle and language on desktop */}
-						<div className='hidden md:flex items-center gap-2'>
+						<div className='items-center hidden gap-2 md:flex'>
 							<ThemeToggle />
 							<LanguageSwitcher />
 						</div>
@@ -277,21 +359,21 @@ const Header = () => {
 										variant='ghost'
 										className='relative h-10 rounded-full focus:ring-0 focus:ring-offset-0'
 									>
-										<Avatar className='h-9 w-9 border border-gray-200'>
+										<Avatar className='border border-gray-200 h-9 w-9'>
 											{dataProfile.avatar ? (
 												<AvatarImage
 													src={dataProfile.avatar}
 													alt={dataProfile.fullName || 'User'}
 												/>
 											) : null}
-											<AvatarFallback className='bg-blue-100 text-blue-600 font-medium'>
+											<AvatarFallback className='font-medium text-blue-600 bg-blue-100'>
 												{getInitials(dataProfile.fullName)}
 											</AvatarFallback>
 										</Avatar>
 										<span className='sr-only'>User menu</span>
 										<Badge
 											variant='outline'
-											className='absolute -bottom-1 right-2 size-4 px-1 rounded-full bg-green-500 border-2 border-white'
+											className='absolute px-1 bg-green-500 border-2 border-white rounded-full -bottom-1 right-2 size-4'
 										>
 											<span className='sr-only'>Online</span>
 										</Badge>
@@ -314,7 +396,7 @@ const Header = () => {
 											onClick={() => router.push('/profile')}
 											className='cursor-pointer'
 										>
-											<User className='mr-2 h-4 w-4' />
+											<User className='w-4 h-4 mr-2' />
 											<span>{t('profile')}</span>
 										</DropdownMenuItem>
 										<DropdownMenuItem
@@ -332,12 +414,12 @@ const Header = () => {
 											<span>{t('Help-center')}</span>
 										</DropdownMenuItem>
 									</DropdownMenuGroup>
-								<DropdownMenuSeparator />
-							<DropdownMenuItem
+									<DropdownMenuSeparator />
+									<DropdownMenuItem
 										onClick={logout}
-										className='cursor-pointer text-red-600 focus:text-red-600'
+										className='text-red-600 cursor-pointer focus:text-red-600'
 									>
-										<LogOut className='mr-2 h-4 w-4' />
+										<LogOut className='w-4 h-4 mr-2' />
 										<span>{t('logout')}</span>
 									</DropdownMenuItem>
 								</DropdownMenuContent>
@@ -351,38 +433,84 @@ const Header = () => {
 								</Link>
 								<Link href='/auth/register'>
 									<Button size='sm' className='bg-blue-600 hover:bg-blue-700'>
-									{t('sign-up')}
+										{t('register')}
 									</Button>
 								</Link>
 							</div>
 						)}
+
 						{/* Mobile menu */}
 						<Sheet>
 							<SheetTrigger asChild>
-								<Button variant='ghost' size='icon' className='md:hidden ml-1'>
-									<Menu className='h-5 w-5' />
+								<Button variant='ghost' size='icon' className='ml-1 md:hidden'>
+									<Menu className='w-5 h-5' />
 									<span className='sr-only'>Open menu</span>
 								</Button>
 							</SheetTrigger>
 							<SheetContent side='left' className='flex flex-col h-full'>
-								<div className='flex items-center gap-2 mb-6 mt-2'>
-									<div className='relative h-10 w-10 overflow-hidden rounded-full'>
+								<div className='flex items-center gap-2 mt-2 mb-6'>
+									<div className='relative w-10 h-10 overflow-hidden rounded-full'>
 										<Image src='/images/logo.jpg' alt='logo' fill className='object-cover' />
 									</div>
 									<span className='text-lg font-semibold'>{t('homestay')}</span>
 								</div>
 
 								{/* Mobile search form */}
-								<form onSubmit={handleSearch} className='space-y-4 mb-6'>
+								<form onSubmit={handleSearch} className='mb-6 space-y-4'>
 									<div className='space-y-2'>
 										<label className='text-sm font-medium'>Location</label>
-										<Input
-											type='text'
-											placeholder='Where are you going?'
-											value={location}
-											onChange={(e) => setLocation(e.target.value)}
-											className='w-full'
-										/>
+										<Popover>
+											<PopoverTrigger asChild>
+												<Button
+													variant='outline'
+													role='combobox'
+													className='justify-between w-full'
+												>
+													{location ? (
+														<div className='flex items-center'>
+															<MapPin className='w-4 h-4 mr-2 text-gray-500' />
+															{location}
+														</div>
+													) : (
+														<div className='flex items-center text-gray-500'>
+															<MapPin className='w-4 h-4 mr-2' />
+															Select a city
+														</div>
+													)}
+													<ChevronDown className='w-4 h-4 ml-2 opacity-50 shrink-0' />
+												</Button>
+											</PopoverTrigger>
+											<PopoverContent className='w-[250px] p-0'>
+												<Command>
+													<CommandInput placeholder='Search city...' />
+													<CommandEmpty>
+														{isLoading ? 'Loading...' : 'No city found.'}
+													</CommandEmpty>
+													<CommandGroup>
+														<CommandList className='max-h-[200px] overflow-y-auto'>
+															{isLoading ? (
+																<div className='flex items-center justify-center py-6'>
+																	<div className='w-6 h-6 border-t-2 border-blue-500 rounded-full animate-spin'></div>
+																</div>
+															) : cities && cities.length > 0 ? (
+																cities.map((city) => (
+																	<CommandItem
+																		key={city.id}
+																		value={city.name}
+																		onSelect={() => handleCitySelect(city.name)}
+																	>
+																		<MapPin className='w-4 h-4 mr-2 text-gray-400' />
+																		{city.name}
+																	</CommandItem>
+																))
+															) : (
+																<CommandItem disabled>No cities available</CommandItem>
+															)}
+														</CommandList>
+													</CommandGroup>
+												</Command>
+											</PopoverContent>
+										</Popover>
 									</div>
 
 									<div className='space-y-2'>
@@ -391,9 +519,9 @@ const Header = () => {
 											<PopoverTrigger asChild>
 												<Button
 													variant='outline'
-													className='w-full justify-start text-left font-normal'
+													className='justify-start w-full font-normal text-left'
 												>
-													<CalendarIcon className='mr-2 h-4 w-4' />
+													<CalendarIcon className='w-4 h-4 mr-2' />
 													{checkInDate && checkOutDate ? (
 														<span>
 															{format(checkInDate, 'MMM d')} -{' '}
@@ -421,16 +549,17 @@ const Header = () => {
 
 									<Button type='submit' className='w-full' disabled={isSearching}>
 										{isSearching ? (
-											<div className='h-4 w-4 border-t-2 border-white rounded-full animate-spin mr-2' />
+											<div className='w-4 h-4 mr-2 border-t-2 border-white rounded-full animate-spin' />
 										) : (
 											<Search className='w-4 h-4 mr-2' />
 										)}
 										{t('search')}
 									</Button>
 								</form>
+
 								{/* Mobile navigation */}
-								<nav className='space-y-1 mb-6'>
-								<Link
+								<nav className='mb-6 space-y-1'>
+									<Link
 										key='/home-stay'
 										href='/home-stay'
 										className={`
@@ -474,9 +603,6 @@ const Header = () => {
 						</Sheet>
 					</div>
 				</div>
-						{/* <div className="w-full mt-4">
-        					<AmenityList />
-    					</div> */}
 			</div>
 		</header>
 	);

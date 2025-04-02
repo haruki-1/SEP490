@@ -182,6 +182,23 @@ const Post = () => {
 												{post?.description || 'No description available.'}
 											</p>
 
+											{/* Hiển thị reason reject khi bài viết bị từ chối */}
+											{post.status === 'Rejected' && post.reasonReject && (
+												<div className='p-2 mb-4 rounded-md bg-red-50'>
+													<div className='flex items-start'>
+														<AlertTriangle size={16} className='mt-0.5 mr-2 text-red-500' />
+														<div>
+															<h4 className='text-xs font-semibold text-red-800'>
+																Rejection Reason:
+															</h4>
+															<p className='text-xs text-red-700 line-clamp-3'>
+																{post.reasonReject}
+															</p>
+														</div>
+													</div>
+												</div>
+											)}
+
 											<div className='flex items-center gap-2 pt-2 border-t border-gray-100'>
 												<Link href={`/manager/posts/edit/${post.id}`} className='flex-1'>
 													<Button
