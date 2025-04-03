@@ -1,28 +1,3 @@
-'use client';
-
-import { useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/components/ui/card';
-import { Label } from '@/components/components/ui/label';
-import { Input } from '@/components/components/ui/input';
-import { Button } from '@/components/components/ui/button';
-import { useAuth } from '@/context/AuthProvider';
-import { Textarea } from '@/components/components/ui/textarea';
-import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
-import Swal from 'sweetalert2';
-import { updateProfile } from '@/pages/api/auth/updateProfile';
-import { Eye, EyeOff, User, ShieldCheck, Calendar, Home, MapPin, Ticket, CreditCard, Clock, Info } from 'lucide-react';
-import { changePassword } from '@/pages/api/auth/changePassword';
-import Image from 'next/image';
-import { uploadImage } from '@/pages/api/image/uploadImage';
-import MainLayout from '../layout';
-import { Badge } from '@/components/components/ui/badge';
-import Link from 'next/link';
-import { getUserVouchers } from '@/pages/api/voucher/getUserVouchers';
-import { getBookingHistory } from '@/pages/api/homestay/getHomeStayByUser';
-import { cancelBooking } from '@/pages/api/booking/cancelBooking';
-import FeedbackModal from '@/components/FeedbackModal';
-
 export default function ProfilePage() {
 	const { dataProfile, refetch } = useAuth();
 	const queryClient = useQueryClient();
@@ -665,8 +640,7 @@ export default function ProfilePage() {
 																			</p>
 																		</div>
 																		<div className='flex mt-3 space-x-2'>
-																			{(booking.status === 'Pending' ||
-																				booking.status === 'Confirmed') && (
+																			{booking.status === 'Paid' && (
 																				<Button
 																					size='sm'
 																					variant='destructive'

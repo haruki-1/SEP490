@@ -21,7 +21,7 @@ import { getUserVouchers } from '@/pages/api/voucher/getUserVouchers';
 import { getBookingHistory } from '@/pages/api/homestay/getHomeStayByUser';
 import { cancelBooking } from '@/pages/api/booking/cancelBooking';
 import FeedbackModal from '@/components/FeedbackModal';
-import AdminLayout from '../layout';
+import MainLayout from '@/pages/layout';
 
 export default function ProfilePage() {
 	const { dataProfile, refetch } = useAuth();
@@ -279,7 +279,7 @@ export default function ProfilePage() {
 	};
 
 	return (
-		<AdminLayout>
+		<MainLayout>
 			<div className='sec-com'>
 				<div className='container-lg'>
 					<div className='mb-6'>
@@ -854,6 +854,6 @@ export default function ProfilePage() {
 					</div>
 				</div>
 			</div>
-		</AdminLayout>
+		</MainLayout>
 	);
 }
