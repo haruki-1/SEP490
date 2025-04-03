@@ -11,6 +11,7 @@ using Moq;
 using MockQueryable.Moq;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using APITesting.DTO;
 #pragma warning disable
 
 namespace APITesting;
@@ -137,7 +138,7 @@ public class HomeStayControllerTesting
         var result = await _controller.DeleteHomeStayFacility(homeStayId, facilityId);
 
         // Assert
-        Assert.IsInstanceOf<NotFoundResult>(result); 
+        Assert.IsInstanceOf<NotFoundResult>(result);
     }
 
     [Test]
@@ -472,10 +473,10 @@ public class HomeStayControllerTesting
         var request = new EditHomeStayInforRequest
         {
             HomeStayID = homeStayId,
-            Name = null,                 
-            MainImage = null,           
-            Standar = 0,                
-            OpenIn = 0                  
+            Name = null,
+            MainImage = null,
+            Standar = 0,
+            OpenIn = 0
         };
 
         _mockHomeStayRepo.Setup(x => x.GetByIdAsync(homeStayId)).ReturnsAsync(existing);
@@ -626,33 +627,30 @@ public class HomeStayControllerTesting
         Assert.AreEqual(200, objectResult.StatusCode);
     }
 
-
-
-
     [Test]
-        public async Task DeleteHomeStayAmenity_ThrowsException_WhenDeleteFails()
+    public async Task DeleteHomeStayAmenity_ThrowsException_WhenDeleteFails()
+    {
+        var mockAmenity = new HomestayAmenity
         {
-            var mockAmenity = new HomestayAmenity
-            {
-                HomeStayID = Guid.NewGuid(),
-                AmenityId = Guid.NewGuid(),
-                isDeleted = false
-            };
+            HomeStayID = Guid.NewGuid(),
+            AmenityId = Guid.NewGuid(),
+            isDeleted = false
+        };
 
-            _mockHomeStayAmenityRepo
-                .Setup(x => x.Find(It.IsAny<Expression<Func<HomestayAmenity, bool>>>()))
-                .Returns(new List<HomestayAmenity> { mockAmenity }.AsQueryable());
+        _mockHomeStayAmenityRepo
+            .Setup(x => x.Find(It.IsAny<Expression<Func<HomestayAmenity, bool>>>()))
+            .Returns(new List<HomestayAmenity> { mockAmenity }.AsQueryable());
 
-            _mockHomeStayAmenityRepo
-                .Setup(x => x.DeleteAsync(It.IsAny<HomestayAmenity>()))
-                .ThrowsAsync(new Exception("Delete failed"));
+        _mockHomeStayAmenityRepo
+            .Setup(x => x.DeleteAsync(It.IsAny<HomestayAmenity>()))
+            .ThrowsAsync(new Exception("Delete failed"));
 
-            var result = await _controller.DeleteHomeStayAmenity(mockAmenity.HomeStayID, mockAmenity.AmenityId);
+        var result = await _controller.DeleteHomeStayAmenity(mockAmenity.HomeStayID, mockAmenity.AmenityId);
 
-            var objectResult = result as ObjectResult;
-            Assert.That(objectResult, Is.Not.Null);
-            Assert.That(objectResult.StatusCode, Is.EqualTo(500));
-        }
+        var objectResult = result as ObjectResult;
+        Assert.That(objectResult, Is.Not.Null);
+        Assert.That(objectResult.StatusCode, Is.EqualTo(500));
+    }
 
     [Test]
     public async Task DeleteHomeStayAmenity_Returns500_WhenExceptionOccurs()
@@ -677,63 +675,63 @@ public class HomeStayControllerTesting
         Assert.That(objectResult.Value.ToString(), Does.Contain("Database connection failed"));
     }
 
-        [Test]
-        public async Task GetAllHomeStay_ReturnsOk_WhenDataExists()
-        {
-            // Arrange
-            var homeStayId = Guid.NewGuid();
-            var calendar = new Calendar { Id = Guid.NewGuid(), Price = 100, isBooked = false, Date = DateTime.Now };
-            var amenity = new Amenity { Id = Guid.NewGuid(), Name = "Wifi" };
-            var facility = new Facility { Id = Guid.NewGuid(), Name = "Pool", Description = "Nice" };
+    [Test]
+    public async Task GetAllHomeStay_ReturnsOk_WhenDataExists()
+    {
+        // Arrange
+        var homeStayId = Guid.NewGuid();
+        var calendar = new Calendar { Id = Guid.NewGuid(), Price = 100, isBooked = false, Date = DateTime.Now };
+        var amenity = new Amenity { Id = Guid.NewGuid(), Name = "Wifi" };
+        var facility = new Facility { Id = Guid.NewGuid(), Name = "Pool", Description = "Nice" };
 
-            var homeStay = new HomeStay
-            {
-                Id = homeStayId,
-                Name = "Test Stay",
-                MainImage = "img.jpg",
-                Address = "123 Test",
-                City = "Test City",
-                CheckInTime = TimeSpan.FromHours(14).ToString(),
-                CheckOutTime = TimeSpan.FromHours(12).ToString(),
-                OpenIn = 2025,
-                Description = "A nice stay",
-                Standar = 5,
-                isDeleted = false,
-                Calendars = new List<Calendar> { calendar },
-                HomestayAmenities = new List<HomestayAmenity>
+        var homeStay = new HomeStay
+        {
+            Id = homeStayId,
+            Name = "Test Stay",
+            MainImage = "img.jpg",
+            Address = "123 Test",
+            City = "Test City",
+            CheckInTime = TimeSpan.FromHours(14).ToString(),
+            CheckOutTime = TimeSpan.FromHours(12).ToString(),
+            OpenIn = 2025,
+            Description = "A nice stay",
+            Standar = 5,
+            isDeleted = false,
+            Calendars = new List<Calendar> { calendar },
+            HomestayAmenities = new List<HomestayAmenity>
                 {
                     new HomestayAmenity { Amenity = amenity }
                 },
-                HomestayFacilities = new List<HomeStayFacility>
+            HomestayFacilities = new List<HomeStayFacility>
                 {
                     new HomeStayFacility { Facility = facility }
                 }
-            };
+        };
 
-            var mockData = new List<HomeStay> { homeStay }
-                .AsQueryable()
-                .BuildMock(); 
+        var mockData = new List<HomeStay> { homeStay }
+            .AsQueryable()
+            .BuildMock();
 
         _mockHomeStayRepo
             .Setup(r => r.FindWithInclude(It.IsAny<Expression<Func<HomeStay, object>>[]>()))
             .Returns(mockData);
 
         var request = new FilterDTO
-            {
-                Standard = new List<int> { 5 },
-                AmenityNames = new List<string> { "Wifi" },
-                MinPrice = 50,
-                MaxPrice = 150
-            };
+        {
+            Standard = new List<int> { 5 },
+            AmenityNames = new List<string> { "Wifi" },
+            MinPrice = 50,
+            MaxPrice = 150
+        };
 
-            // Act
-            var result = await _controller.GetAllHomeStay(request);
+        // Act
+        var result = await _controller.GetAllHomeStay(request);
 
-            // Assert
-            var okResult = result as OkObjectResult;
-            Assert.IsNotNull(okResult);
-            Assert.AreEqual(200, okResult.StatusCode);
-        }
+        // Assert
+        var okResult = result as OkObjectResult;
+        Assert.IsNotNull(okResult);
+        Assert.AreEqual(200, okResult.StatusCode);
+    }
 
     [Test]
     public async Task GetAllHomeStay_ReturnsNotFound_WhenNoData()
@@ -744,7 +742,7 @@ public class HomeStayControllerTesting
             .BuildMock();
 
         _mockHomeStayRepo.Setup(r => r.FindWithInclude(It.IsAny<Expression<Func<HomeStay, object>>[]>()))
-                         .Returns(mockData); 
+                         .Returns(mockData);
 
         var request = new FilterDTO();
 
@@ -822,7 +820,7 @@ public class HomeStayControllerTesting
                     User = new User { FullName = "John Doe", Avatar = "avatar.jpg", Email = "john@example.com" },
                     Rating = 5,
                     Description = "Great!",
-                    isDeleted = false
+                    IsReply = false
                 }
             }
         }
@@ -1011,7 +1009,7 @@ public class HomeStayControllerTesting
         var mockEmptyList = new List<HomeStayImage>().AsQueryable().BuildMock();
 
         _mockHomeStayImageRepo
-            .Setup(r => r.FindWithInclude(It.IsAny<Expression<Func<HomeStayImage, object>>[]> ()))
+            .Setup(r => r.FindWithInclude(It.IsAny<Expression<Func<HomeStayImage, object>>[]>()))
             .Returns(mockEmptyList);
 
         // Act
@@ -1028,7 +1026,7 @@ public class HomeStayControllerTesting
         var homeStayId = Guid.NewGuid();
 
         _mockHomeStayImageRepo
-            .Setup(r => r.FindWithInclude(It.IsAny<Expression<Func<HomeStayImage, object>>[]> ()))
+            .Setup(r => r.FindWithInclude(It.IsAny<Expression<Func<HomeStayImage, object>>[]>()))
             .Throws(new Exception("DB error"));
 
         // Act
@@ -1291,9 +1289,16 @@ public class HomeStayControllerTesting
         _mockHomeStayRepo
             .Setup(repo => repo.FindWithInclude(It.IsAny<Expression<Func<HomeStay, object>>[]>()))
             .Returns(mockHomeStays);
-
+        FilterDTO filter = new FilterDTO
+        {
+            AmenityNames = null,
+            MaxPrice = null,
+            MinPrice = null,
+            SearchText = null,
+            Standard = null
+        };
         // Act
-        var result = await _controller.GetHomeStayByUser(userId);
+        var result = await _controller.GetHomeStayByUser(userId, filter);
 
         // Assert
         var okResult = result as OkObjectResult;
@@ -1322,9 +1327,16 @@ public class HomeStayControllerTesting
 
         _mockHomeStayRepo.Setup(repo => repo.FindWithInclude(It.IsAny<Expression<Func<HomeStay, object>>[]>()))
                          .Returns(emptyList);
-
+        FilterDTO filter = new FilterDTO
+        {
+            AmenityNames = null,
+            MaxPrice = null,
+            MinPrice = null,
+            SearchText = null,
+            Standard = null
+        };
         // Act
-        var result = await _controller.GetHomeStayByUser(userId);
+        var result = await _controller.GetHomeStayByUser(userId, filter);
 
         // Assert
         Assert.IsInstanceOf<NotFoundResult>(result);
