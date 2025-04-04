@@ -9,7 +9,7 @@ import { getPaymentReturn } from './api/payment/getPaymentReturn';
 import { useEffect } from 'react';
 import Main from '@/components/Main';
 import ListHomeStay from '@/components/ListHomeStay';
-import { useAuth } from '@/context/AuthProvider';
+import { useAuth } from 'context/AuthProvider';
 import { toast } from 'sonner';
 
 export default function Home() {

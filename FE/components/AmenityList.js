@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
-import { getAllAmenity } from '@/pages/api/amenity/getAmenity';
 import React from 'react';
 import { Wifi, Waves, Wind, Coffee, Check } from 'lucide-react';
 import { Skeleton } from './components/ui/skeleton';
-import { Button } from './components/ui/button';
+import { getAllAmenity } from 'pages/api/amenity/getAmenity';
+
 
 // Helper function to get appropriate icon for amenity
 const getAmenityIcon = (name) => {

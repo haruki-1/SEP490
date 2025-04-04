@@ -1,4 +1,4 @@
-import api from "@/utils/api";
+import api from "utils/api";
 
 export const getPaymentReturn = async (code, id, cancel, status, orderCode) => {
 	try {

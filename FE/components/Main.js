@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { Button } from './components/ui/button';
-import SearchForm from './SearchForm';
-import { useAuth } from '@/context/AuthProvider';
+import { useAuth } from 'context/AuthProvider';
 import { useTranslation } from 'next-i18next';
 import { ChevronRight } from 'lucide-react';
 import React from 'react';

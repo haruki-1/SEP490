@@ -11,7 +11,7 @@ import Provider from '../utils/Provider';
 import { SessionProvider } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import { appWithTranslation } from 'next-i18next';
-import nextI18nextConfig from '@/next-i18next.config';
+import nextI18nextConfig from 'next-i18next.config';
 
 
 // Cấu hình NProgress
