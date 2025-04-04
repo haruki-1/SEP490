@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { getAllAmenity } from '@/pages/api/amenity/getAmenity';
-import { addSystemAmenity } from '@/pages/api/amenity/addSystemAmenity';
-import { editAmenity } from '@/pages/api/amenity/editAmenity';
-import { deleteAmenity } from '@/pages/api/amenity/deleteAmenity';
+import { getAllAmenity } from 'pages/api/amenity/getAmenity';
+import { addSystemAmenity } from 'pages/api/amenity/addSystemAmenity';
+import { editAmenity } from 'pages/api/amenity/editAmenity';
+import { deleteAmenity } from 'pages/api/amenity/deleteAmenity';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/components/ui/button';
 import {

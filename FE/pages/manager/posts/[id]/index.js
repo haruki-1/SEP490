@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useParams, useRouter } from 'next/navigation';
-import { getPostDetail } from '@/pages/api/posts/getPostDetail';
-import { getUserById } from '@/pages/api/user/getUserById';
+import { getPostDetail } from 'pages/api/posts/getPostDetail';
+import { getUserById } from 'pages/api/user/getUserById';
 import React from 'react';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
 import 'react-photo-view/dist/react-photo-view.css';

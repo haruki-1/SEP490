@@ -12,8 +12,8 @@ import { Button } from '@/components/components/ui/button';
 import { Battery, Lock, Unlock, Keyboard } from 'lucide-react';
 import { Badge } from '@/components/components/ui/badge';
 import { toast } from 'sonner';
-import { unlockRemoteTTLock } from '@/pages/api/ttlock/unlockRemoteTTLock';
-import { createTTLockKeyboardPassword } from '@/pages/api/ttlock/createTTLockKeyboardPassword';
+import { unlockRemoteTTLock } from 'pages/api/ttlock/unlockRemoteTTLock';
+import { createTTLockKeyboardPassword } from 'pages/api/ttlock/createTTLockKeyboardPassword';
 import CreateKeyboardPasswordDetailsDialog from './CreateKeyboardPasswordDetailsDialog';
 
 const TTLockUserLocksDialog = ({ isOpen, onOpenChange, locks, homeStayID }) => {

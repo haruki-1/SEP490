@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ManagerLayout from '../layout';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getAllFacility } from '@/pages/api/facility/getFacility';
+import { getAllFacility } from 'pages/api/facility/getFacility';
 import { Card, CardContent } from '@/components/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/components/ui/table';
 import { Button } from '@/components/components/ui/button';
@@ -18,11 +18,11 @@ import {
 import { Label } from '@/components/components/ui/label';
 import { Input } from '@/components/components/ui/input';
 import { Pencil, Trash2 } from 'lucide-react';
-import { createFacility } from '@/pages/api/facility/createFacility';
+import { createFacility } from 'pages/api/facility/createFacility';
 import Swal from 'sweetalert2';
-import { updateFacility } from '@/pages/api/facility/updateFacility';
+import { updateFacility } from 'pages/api/facility/updateFacility';
 import { Textarea } from '@/components/components/ui/textarea';
-import { deleteFacility } from '@/pages/api/facility/deleteFacility';
+import { deleteFacility } from 'pages/api/facility/deleteFacility';
 
 const Facility = () => {
 	const queryClient = useQueryClient();

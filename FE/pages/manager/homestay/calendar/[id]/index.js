@@ -17,11 +17,11 @@ import {
 	DialogDescription,
 	DialogFooter,
 } from '@/components/components/ui/dialog';
-import { createCalendar } from '@/pages/api/calendar/createCalendar';
-import { getHomeStayDetail } from '@/pages/api/homestay/getHomeStayDetail';
-import { deleteCalendarEntry } from '@/pages/api/calendar/deleteCalendar';
-import { updateCalendarEntry } from '@/pages/api/calendar/updateCalendar';
-import ManagerLayout from '@/pages/manager/layout';
+import { createCalendar } from 'pages/api/calendar/createCalendar';
+import { getHomeStayDetail } from 'pages/api/homestay/getHomeStayDetail';
+import { deleteCalendarEntry } from 'pages/api/calendar/deleteCalendar';
+import { updateCalendarEntry } from 'pages/api/calendar/updateCalendar';
+import ManagerLayout from 'pages/manager/layout';
 
 const HomeStayCalendar = () => {
 	const { id } = useParams() ?? {};

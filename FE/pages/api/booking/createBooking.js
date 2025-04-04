@@ -1,5 +1,5 @@
 export const createBooking = async (userId, bookingData) => {
-	const url = 'https://localhost:7194/api/Booking/create';
+	const url = 'https://duongcongson-001-site1.jtempurl.com/api/Booking/create';
 
 	try {
 		// Ensure proper format of payload based on Postman example

@@ -49,7 +49,7 @@ const ResetPassword = () => {
 
 		setLoading(true);
 		try {
-			const response = await fetch('https://localhost:7194/api/Auth/reset-password', {
+			const response = await fetch('https://duongcongson-001-site1.jtempurl.com/api/Auth/reset-password', {
 				method: 'PUT',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({

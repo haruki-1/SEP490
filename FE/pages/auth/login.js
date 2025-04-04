@@ -11,7 +11,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/components/ui/dialog';
-import { useAuth } from '@/context/AuthProvider';
+import { useAuth } from 'context/AuthProvider';
 import { toast } from 'sonner';
 import AuthLayout from './auth-layout';
 
@@ -40,7 +40,7 @@ export default function LoginForm() {
 	const onSubmit = async (data) => {
 		setLoading(true);
 		try {
-			const response = await fetch('https://localhost:7194/api/Auth/login', {
+			const response = await fetch('https://duongcongson-001-site1.jtempurl.com/api/Auth/login', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify(data),
@@ -78,7 +78,7 @@ export default function LoginForm() {
 	const onForgotSubmit = async (data) => {
 		setForgotLoading(true);
 		try {
-			const response = await fetch('https://localhost:7194/api/Auth/forgot-password', {
+			const response = await fetch('https://duongcongson-001-site1.jtempurl.com/api/Auth/forgot-password', {
 				method: 'PUT',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify(data),

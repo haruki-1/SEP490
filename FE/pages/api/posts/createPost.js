@@ -1,5 +1,5 @@
 export const createPost = async (userId, postData) => {
-	const url = 'https://localhost:7194/api/Post/create';
+	const url = 'https://duongcongson-001-site1.jtempurl.com/api/Post/create';
 
 	try {
 		const response = await fetch(url, {

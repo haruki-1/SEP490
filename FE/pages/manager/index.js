@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ManagerLayout from './layout';
-import { useAuth } from '@/context/AuthProvider';
+import { useAuth } from 'context/AuthProvider';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/components/ui/select';
@@ -11,9 +11,9 @@ import { Checkbox } from '@/components/components/ui/checkbox';
 import { Button } from '@/components/components/ui/button';
 import { Label } from '@/components/components/ui/label';
 import { Badge } from '@/components/components/ui/badge';
-import { getAllAmenity } from '@/pages/api/amenity/getAmenity';
-import { getHomeStayRevenueStatistics } from '@/pages/api/booking/getHomeStayRevenueStatistics ';
-import { getHomeStayByUser } from '@/pages/api/booking/bookingByUser';
+import { getAllAmenity } from 'pages/api/amenity/getAmenity';
+import { getHomeStayRevenueStatistics } from 'pages/api/booking/getHomeStayRevenueStatistics ';
+import { getHomeStayByUser } from 'pages/api/booking/bookingByUser';
 
 const DynamicChart = dynamic(() => import('react-chartjs-2').then((mod) => mod.Bar), { ssr: false });
 

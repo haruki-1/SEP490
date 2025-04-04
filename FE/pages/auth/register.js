@@ -30,7 +30,7 @@ export default function RegisterForm() {
 	const onSubmit = async (data) => {
 		setLoading(true);
 		try {
-			const response = await fetch('https://localhost:7194/api/Auth/register', {
+			const response = await fetch('https://duongcongson-001-site1.jtempurl.com/api/Auth/register', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',

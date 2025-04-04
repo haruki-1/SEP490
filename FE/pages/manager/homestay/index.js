@@ -28,7 +28,7 @@ import {
 } from 'lucide-react';
 import { Label } from '@/components/components/ui/label';
 import Link from 'next/link';
-import { deleteHomeStay } from '@/pages/api/homestay/deleteHomeStay';
+import { deleteHomeStay } from 'pages/api/homestay/deleteHomeStay';
 import Swal from 'sweetalert2';
 import {
 	Dialog,
@@ -40,20 +40,20 @@ import {
 } from '@/components/components/ui/dialog';
 import { Input } from '@/components/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/components/ui/select';
-import { getAllFacility } from '@/pages/api/facility/getFacility';
-import { addHomeStayFacility } from '@/pages/api/homestay/createHomeStayFacility';
-import { deleteHomeStayFacility } from '@/pages/api/homestay/deleteHomeStayFacility';
-import { getAllAmenity } from '@/pages/api/amenity/getAmenity';
-import { addHomeStayAmenity } from '@/pages/api/homestay/createHomeStayAmenity';
-import { deleteHomeStayAmenity } from '@/pages/api/homestay/deleteHomeStayAmenity';
-import { getHomeStayDetail } from '@/pages/api/homestay/getHomeStayDetail';
+import { getAllFacility } from 'pages/api/facility/getFacility';
+import { addHomeStayFacility } from 'pages/api/homestay/createHomeStayFacility';
+import { deleteHomeStayFacility } from 'pages/api/homestay/deleteHomeStayFacility';
+import { getAllAmenity } from 'pages/api/amenity/getAmenity';
+import { addHomeStayAmenity } from 'pages/api/homestay/createHomeStayAmenity';
+import { deleteHomeStayAmenity } from 'pages/api/homestay/deleteHomeStayAmenity';
+import { getHomeStayDetail } from 'pages/api/homestay/getHomeStayDetail';
 import { Badge } from '@/components/components/ui/badge';
-import { getHomeStayByUser } from '@/pages/api/booking/bookingByUser';
-import { useAuth } from '@/context/AuthProvider';
-import { addTTLockAccount } from '@/pages/api/ttlock/addTTLockAccount';
-import { getTTLockUserLocks } from '@/pages/api/ttlock/getTTLockUserLocks';
+import { getHomeStayByUser } from 'pages/api/booking/bookingByUser';
+import { useAuth } from 'context/AuthProvider';
+import { addTTLockAccount } from 'pages/api/ttlock/addTTLockAccount';
+import { getTTLockUserLocks } from 'pages/api/ttlock/getTTLockUserLocks';
 import TTLockUserLocksDialog from '@/components/TTLockUserLocksDialog';
-import { editTTLockAccount } from '@/pages/api/ttlock/editTTLockAccount';
+import { editTTLockAccount } from 'pages/api/ttlock/editTTLockAccount';
 import ManagerLayout from '../layout';
 
 const Homestay = () => {

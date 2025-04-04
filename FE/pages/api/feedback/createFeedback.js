@@ -1,4 +1,4 @@
-import api from "@/utils/api";
+import api from "utils/api";
 
 export const createFeedback = async (homestayID, rating, description) => {
 	try {

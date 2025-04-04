@@ -7,11 +7,11 @@ import React, { useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { useAuth } from '@/context/AuthProvider';
+import { useAuth } from 'context/AuthProvider';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { createHomeStay } from '@/pages/api/homestay/createHomeStay';
-import { uploadImage } from '@/pages/api/image/uploadImage';
-import { uploadImages } from '@/pages/api/homestay/uploadImageHomeStay';
+import { createHomeStay } from 'pages/api/homestay/createHomeStay';
+import { uploadImage } from 'pages/api/image/uploadImage';
+import { uploadImages } from 'pages/api/homestay/uploadImageHomeStay';
 import ManagerLayout from '../../layout';
 
 const MAX_IMAGES = 8;

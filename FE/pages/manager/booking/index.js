@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { getBookingByHomeStay } from '@/pages/api/booking/bookingHomeStay';
-import { confirmBookingStatus } from '@/pages/api/booking/confirmBookingStatus';
-import { cancelBooking } from '@/pages/api/booking/cancelBooking';
-import { exportBookings } from '@/pages/api/booking/exportBookings'; // Import the export API
+import { getBookingByHomeStay } from 'pages/api/booking/bookingHomeStay';
+import { confirmBookingStatus } from 'pages/api/booking/confirmBookingStatus';
+import { cancelBooking } from 'pages/api/booking/cancelBooking';
+import { exportBookings } from 'pages/api/booking/exportBookings'; // Import the export API
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useAuth } from '@/context/AuthProvider';
-import { getHomeStayByUser } from '@/pages/api/booking/bookingByUser';
+import { useAuth } from 'context/AuthProvider';
+import { getHomeStayByUser } from 'pages/api/booking/bookingByUser';
 import { toast } from 'sonner';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/components/ui/dialog';
 import { Button } from '@/components/components/ui/button';

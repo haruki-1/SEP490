@@ -4,9 +4,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/components/ui/table';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/components/ui/card';
 import { Loader2, MessageSquare, Star, Calendar, Send } from 'lucide-react';
-import { getHomeStayByUser } from '@/pages/api/booking/bookingByUser';
-import { replyFeedbackByUserEmail } from '@/pages/api/feedback/replyFeedbackByUserEmail';
-import { useAuth } from '@/context/AuthProvider';
+import { getHomeStayByUser } from 'pages/api/booking/bookingByUser';
+import { replyFeedbackByUserEmail } from 'pages/api/feedback/replyFeedbackByUserEmail';
+import { useAuth } from 'context/AuthProvider';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/components/ui/avatar';
 import { Button } from '@/components/components/ui/button';
 import { Textarea } from '@/components/components/ui/textarea';
@@ -17,7 +17,7 @@ import { format } from 'date-fns';
 import { toast } from 'sonner';
 import ManagerLayout from '../layout';
 import { Alert, AlertDescription, AlertTitle } from '@/components/components/ui/aletr';
-import { getFeedbackByHomeStay } from '@/pages/api/feedback/getFeebackByHomstay';
+import { getFeedbackByHomeStay } from 'pages/api/feedback/getFeebackByHomstay';
 
 const Feedbacks = () => {
 	const [selectedHomeStay, setSelectedHomeStay] = useState(null);

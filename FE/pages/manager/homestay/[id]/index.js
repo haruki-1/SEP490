@@ -2,7 +2,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 import AdminLayout from '@/pages/manager/layout';
-import { getHomeStayDetail } from '@/pages/api/homestay/getHomeStayDetail';
+import { getHomeStayDetail } from 'pages/api/homestay/getHomeStayDetail';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
 import 'react-photo-view/dist/react-photo-view.css';
 import { Wifi, Car, PocketIcon as Pool, Star, Check, Coffee } from 'lucide-react';

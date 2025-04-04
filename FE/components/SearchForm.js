@@ -8,11 +8,11 @@ import { Popover, PopoverContent, PopoverTrigger } from './components/ui/popover
 import { Button } from './components/ui/button';
 import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
-import { getCityList } from '@/pages/api/city/getCityList';
+import { getCityList } from 'pages/api/city/getCityList';
 import { useQuery } from '@tanstack/react-query';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from './components/ui/command';
-import { cn } from './lib/utils';
 import { useTranslation } from 'next-i18next';
+import { cn } from './lib/utils';
 
 export default function SearchForm() {
 	const router = useRouter();

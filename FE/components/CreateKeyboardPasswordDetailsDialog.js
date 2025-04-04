@@ -16,7 +16,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/components
 import { CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
-import { changeKeyboardPassword } from '@/pages/api/ttlock/changeKeyboardPassword';
+import { changeKeyboardPassword } from 'pages/api/ttlock/changeKeyboardPassword';
 import { cn } from './lib/utils';
 
 const formatDateToString = (date) => {

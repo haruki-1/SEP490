@@ -1,6 +1,6 @@
 // Updated createHomeStay function
 export const createHomeStay = async (userId, homeStayData) => {
-	const url = 'https://localhost:7194/api/HomeStay/add-home-stay';
+	const url = 'https://duongcongson-001-site1.jtempurl.com/api/HomeStay/add-home-stay';
 
 	try {
 		const response = await fetch(url, {
