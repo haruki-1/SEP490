@@ -1,6 +1,5 @@
 import api from "@/utils/api";
 
-
 export const uploadImage = async (file) => {
 	const formData = new FormData();
 	formData.append('file', file);

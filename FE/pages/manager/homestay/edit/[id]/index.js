@@ -14,8 +14,8 @@ import 'react-photo-view/dist/react-photo-view.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import { editHomeStayInformation } from '@/pages/api/homestay/updateHomeStay';
 import { uploadImage } from '@/pages/api/image/uploadImage';
-import { uploadImages } from '@/pages/api/homestay/uploadImageHomeStay';
 import ManagerLayout from '@/pages/manager/layout';
+import { uploadImages } from 'pages/api/homestay/uploadImageHomeStay';
 
 const UpdateHomeStay = () => {
 	const { id } = useParams() ?? {};

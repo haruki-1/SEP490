@@ -1,6 +1,5 @@
 
 import MainLayout from './layout';
-import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import AmenityList from '@/components/AmenityList';
 import VoucherCard from '@/components/VoucherCard';
