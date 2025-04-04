@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-	baseURL: 'https://localhost:7194/api',
+	baseURL: 'https://duongcongson-001-site1.jtempurl.com/api',
 	headers: {
 		'Content-Type': 'application/json',
 	},
@@ -31,7 +31,7 @@ api.interceptors.response.use(
 				try {
 					// Call the refresh token endpoint with PUT method
 					const response = await axios.put(
-						'https://localhost:7194/api/Auth/access-token',
+						'https://duongcongson-001-site1.jtempurl.com/api/Auth/access-token',
 						{ refreshToken },
 						{
 							headers: {
