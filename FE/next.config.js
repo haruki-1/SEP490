@@ -4,16 +4,15 @@ module.exports = {
 	i18n,
 	reactStrictMode: true,
 	images: {
-		domains: ['*'], // Cho phép tất cả các domain
-		// hoặc sử dụng remotePatterns với pattern rộng hơn
+		domains: [], // Remove wildcard domains as they're not secure
 		remotePatterns: [
 			{
 				protocol: 'https',
-				hostname: '**', // Cho phép tất cả các hostname với https
+				hostname: '**', // Allow all hostnames with https
 			},
 			{
 				protocol: 'http',
-				hostname: '**', // Cho phép tất cả các hostname với http
+				hostname: '**', // Allow all hostnames with http
 			},
 		],
 	},

@@ -1,14 +1,11 @@
-import api from '@/utils/api';
+import api from "@/utils/api";
 
-export const editAmenity = async (amentityID, amentityName) => {
+export const deleteAmenity = async (amentityID) => {
 	try {
-		const response = await api.put('/Amenity/edit-amenity', {
-			amentityID: amentityID,
-			amentityName: amentityName,
-		});
+		const response = await api.delete(`/Amenity/delete-amentity?AmentityID=${amentityID}`);
 		return response.data;
 	} catch (error) {
-		console.error('Error editing amenity:', error);
+		console.error('Error deleting amenity:', error);
 		throw error;
 	}
 };

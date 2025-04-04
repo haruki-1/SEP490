@@ -1,5 +1,5 @@
 // In pages/api/ttlock/editTTLockAccount.js
-import api from '@/utils/api';
+import api from "@/utils/api";
 
 export const editTTLockAccount = async (data) => {
 	try {
