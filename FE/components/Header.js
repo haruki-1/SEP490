@@ -4,7 +4,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Menu, User, Search, ChevronDown, Bell, LogOut, Settings, Calendar, CalendarIcon, MapPin } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
-import { useAuth } from '@/context/AuthProvider';
 import LanguageSwitcher from './LanguageSwitcher';
 import { Sheet, SheetContent, SheetTrigger } from './components/ui/sheet';
 import {
@@ -19,18 +18,19 @@ import {
 import { Button } from './components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from './components/ui/avatar';
 import { Badge } from './components/ui/badge';
-import { searchHomeStay } from '@/pages/api/homestay/searchHomeStay';
+import { searchHomeStay } from 'pages/api/homestay/searchHomeStay';
 import { Popover, PopoverContent, PopoverTrigger } from './components/ui/popover';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
 import { useTranslation } from 'next-i18next';
-import { getCityList } from '@/pages/api/city/getCityList';
+import { getCityList } from 'pages/api/city/getCityList';
 import { useQuery } from '@tanstack/react-query';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from './components/ui/command';
 import { Check } from 'react-feather';
 import { cn } from './lib/utils';
+import { useAuth } from 'context/AuthProvider';
 
 const Header = () => {
 	const router = useRouter();

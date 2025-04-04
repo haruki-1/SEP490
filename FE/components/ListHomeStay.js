@@ -1,4 +1,4 @@
-import { getAllHomeStay } from '@/pages/api/homestay/getAllHomeStay';
+import { getAllHomeStay } from 'pages/api/homestay/getAllHomeStay';
 import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
 import Link from 'next/link';

@@ -1,12 +1,12 @@
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { getAllVouchers } from '@/pages/api/voucher/getVouchers';
-import { receiveVoucher } from '@/pages/api/voucher/receiveVoucher';
+import { getAllVouchers } from 'pages/api/voucher/getVouchers';
+import { receiveVoucher } from 'pages/api/voucher/receiveVoucher';
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
 import { Copy, Check, Calendar, Tag, ArrowRight, Gift, Loader2 } from 'lucide-react';
-import { useAuth } from '@/context/AuthProvider';
+import { useAuth } from 'context/AuthProvider';
 import { useTranslation } from 'next-i18next';
 
 const VoucherCard = () => {
