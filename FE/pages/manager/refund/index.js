@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Image from 'next/image';
 import { FaSync, FaCheckCircle, FaTimesCircle, FaCalendarAlt, FaMoneyBillWave, FaFilter } from 'react-icons/fa';
-import { getRefunds } from '@/pages/api/refunds/getRefunds';
-import { changeRefundStatus } from '@/pages/api/refunds/changeRefundStatus';
+import { getRefunds } from 'pages/api/refunds/getRefunds';
+import { changeRefundStatus } from 'pages/api/refunds/changeRefundStatus';
 import { toast } from 'sonner'; // Or your preferred toast library
-import { getHomeStayByUser } from '@/pages/api/booking/bookingByUser';
-import { useAuth } from '@/context/AuthProvider';
+import { getHomeStayByUser } from 'pages/api/booking/bookingByUser';
+import { useAuth } from 'context/AuthProvider';
 import ManagerLayout from '../layout';
 
 const Refund = () => {

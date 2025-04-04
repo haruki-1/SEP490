@@ -1,13 +1,13 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
-import { getPostDetail } from '@/pages/api/posts/getPostDetail';
-import { getUserById } from '@/pages/api/user/getUserById';
-import { createComment } from '@/pages/api/posts/createComment';
-import MainLayout from '@/pages/layout';
+import { getPostDetail } from 'pages/api/posts/getPostDetail';
+import { getUserById } from 'pages/api/user/getUserById';
+import { createComment } from 'pages/api/posts/createComment';
+import MainLayout from 'pages/layout';
 import React, { useState, useRef } from 'react';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
 import 'react-photo-view/dist/react-photo-view.css';
-import { useAuth } from '@/context/AuthProvider';
+import { useAuth } from 'context/AuthProvider';
 import { MapPin, Calendar, ArrowLeft, MessageCircle, Send, Loader2 } from 'lucide-react';
 import { Button } from '@/components/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/components/ui/avatar';

@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
 import Link from 'next/link';
-import { getAllAmenity } from '@/pages/api/amenity/getAmenity';
-import { getAllHomeStay } from '@/pages/api/homestay/getAllHomeStay';
+import { getAllAmenity } from 'pages/api/amenity/getAmenity';
+import { getAllHomeStay } from 'pages/api/homestay/getAllHomeStay';
 import React, { useState, useEffect } from 'react';
 import MainLayout from '../layout';
 

@@ -2,10 +2,10 @@ import React from 'react';
 import { Button } from '@/components/components/ui/button';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
-import { deletePost } from '@/pages/api/posts/deletePost';
+import { deletePost } from 'pages/api/posts/deletePost';
 import Swal from 'sweetalert2';
 import { Pencil, Trash2, PlusCircle, Calendar, MapPin, FileText } from 'lucide-react';
-import { getPostsByUser } from '@/pages/api/posts/getPostsByUser';
+import { getPostsByUser } from 'pages/api/posts/getPostsByUser';
 import ManagerLayout from '../layout';
 
 const Post = () => {

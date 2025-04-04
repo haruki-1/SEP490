@@ -10,7 +10,7 @@ import {
 import { Button } from '@/components/components/ui/button';
 import { Textarea } from '@/components/components/ui/textarea';
 import { Star } from 'lucide-react';
-import { createFeedback } from '@/pages/api/feedback/createFeedback';
+import { createFeedback } from 'pages/api/feedback/createFeedback';
 import { toast } from 'sonner';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 

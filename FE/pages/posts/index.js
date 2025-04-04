@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { getAllPost } from '@/pages/api/posts/getPosts';
-import MainLayout from '@/pages/layout';
+import { getAllPost } from 'pages/api/posts/getPosts';
+import MainLayout from 'pages/layout';
 import React, { useState } from 'react';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';

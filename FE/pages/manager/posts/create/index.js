@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { useAuth } from '@/context/AuthProvider';
+import { useAuth } from 'context/AuthProvider';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createPost } from '@/pages/api/posts/createPost';
+import { createPost } from 'pages/api/posts/createPost';
 import { Input } from '@/components/components/ui/input';
 import { Button } from '@/components/components/ui/button';
-import { uploadImages } from '@/pages/api/homestay/uploadImageHomeStay';
+import { uploadImages } from 'pages/api/homestay/uploadImageHomeStay';
 import { Label } from '@/components/components/ui/label';
 import { ImagePlus, X } from 'lucide-react';
 import { toast } from 'sonner';

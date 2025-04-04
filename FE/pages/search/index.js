@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import Link from 'next/link';
-import { searchHomeStay } from '@/pages/api/homestay/searchHomeStay';
+import { searchHomeStay } from 'pages/api/homestay/searchHomeStay';
 import { MapPin, Star, Calendar, Clock, Wifi, ArrowRight, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/components/ui/card';
