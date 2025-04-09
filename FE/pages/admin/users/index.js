@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { FaUser, FaEnvelope, FaIdCard, FaUserTag, FaBan, FaUnlock } from 'react-icons/fa';
-import { getUsers } from '@/pages/api/user/getUsers';
-import { blockUser } from '@/pages/api/user/blockUser';
-import { unblockUser } from '@/pages/api/user/unblockUser';
+import { getUsers } from 'pages/api/user/getUsers';
+import { blockUser } from 'pages/api/user/blockUser';
+import { unblockUser } from 'pages/api/user/unblockUser';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/components/ui/dialog';
 import { Button } from '@/components/components/ui/button';
 import { toast } from 'sonner';

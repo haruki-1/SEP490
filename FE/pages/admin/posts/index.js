@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/components/ui/button';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getAllPost } from '@/pages/api/posts/getPosts';
+import { getAllPost } from 'pages/api/posts/getPosts';
 import Link from 'next/link';
-import { approvePost } from '@/pages/api/posts/approvePost';
-import { rejectPost } from '@/pages/api/posts/rejectPost';
+import { approvePost } from 'pages/api/posts/approvePost';
+import { rejectPost } from 'pages/api/posts/rejectPost';
 import Swal from 'sweetalert2';
 import { CheckCircle, XCircle, PlusCircle, Calendar, MapPin, FileText } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/components/ui/dialog';

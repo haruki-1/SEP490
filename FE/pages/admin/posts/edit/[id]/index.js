@@ -2,15 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Input } from '@/components/components/ui/input';
 import { Button } from '@/components/components/ui/button';
-import { uploadImages } from '@/pages/api/homestay/uploadImageHomeStay';
+import { uploadImages } from 'pages/api/homestay/uploadImageHomeStay';
 import { Label } from '@/components/components/ui/label';
 import { ImagePlus, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { Textarea } from '@/components/components/ui/textarea';
 import { useParams } from 'next/navigation';
-import { editPost } from '@/pages/api/posts/updatePost';
-import { getPostDetail } from '@/pages/api/posts/getPostDetail';
-import AdminLayout from '@/pages/admin/layout';
+import { editPost } from 'pages/api/posts/updatePost';
+import { getPostDetail } from 'pages/api/posts/getPostDetail';
+import AdminLayout from 'pages/admin/layout';
 
 const MAX_IMAGES = 8;
 

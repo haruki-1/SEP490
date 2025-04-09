@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getAllVouchers } from '@/pages/api/voucher/getVouchers';
-import { createVoucher } from '@/pages/api/voucher/createVoucher';
-import { updateVoucher } from '@/pages/api/voucher/updateVoucher';
-import { receiveVoucher } from '@/pages/api/voucher/receiveVoucher';
-import { getUsers } from '@/pages/api/user/getUsers';
+import { getAllVouchers } from 'pages/api/voucher/getVouchers';
+import { createVoucher } from 'pages/api/voucher/createVoucher';
+import { updateVoucher } from 'pages/api/voucher/updateVoucher';
+import { receiveVoucher } from 'pages/api/voucher/receiveVoucher';
+import { getUsers } from 'pages/api/user/getUsers';
 import { toast } from 'sonner';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/components/ui/table';
 import { Button } from '@/components/components/ui/button';
@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from '@/components/components/ui/input';
 import { Label } from '@/components/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/components/ui/select';
-import { uploadImage } from '@/pages/api/image/uploadImage';
+import { uploadImage } from 'pages/api/image/uploadImage';
 import AdminLayout from '../layout';
 
 const VoucherList = () => {

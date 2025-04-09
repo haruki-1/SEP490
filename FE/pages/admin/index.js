@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useAuth } from '@/context/AuthProvider';
+import { useAuth } from 'context/AuthProvider';
 import { useQuery } from '@tanstack/react-query';
 import {
 	Chart as ChartJS,
@@ -16,7 +16,7 @@ import {
 } from 'chart.js';
 import { Bar, Doughnut } from 'react-chartjs-2';
 import { FaHotel, FaMoneyBillWave } from 'react-icons/fa';
-import { analyzeRevenueSystem } from '@/pages/api/booking/analyzeRevenueSystem';
+import { analyzeRevenueSystem } from 'pages/api/booking/analyzeRevenueSystem';
 import AdminLayout from './layout';
 
 // Register ChartJS components
