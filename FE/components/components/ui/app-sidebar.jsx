@@ -12,7 +12,7 @@ import {
 	SidebarMenuItem,
 } from './sidebar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './dropdown-menu';
-import { useAuth } from '@/context/AuthProvider';
+import { useAuth } from 'context/AuthProvider';
 import Image from 'next/image';
 
 const items = [

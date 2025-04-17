@@ -400,13 +400,6 @@ const Header = () => {
 											<span>{t('profile')}</span>
 										</DropdownMenuItem>
 										<DropdownMenuItem
-											onClick={() => router.push('/bookings')}
-											className='cursor-pointer'
-										>
-											<Settings className='mr-2 h-4 w-4' />
-											<span>{t('my-bookings')}</span>
-										</DropdownMenuItem>
-										<DropdownMenuItem
 											onClick={() => router.push('/help')}
 											className='cursor-pointer'
 										>

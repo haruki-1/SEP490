@@ -313,6 +313,7 @@ const VoucherList = () => {
 							<Input
 								id='quantityUsed'
 								name='quantityUsed'
+								type='number'
 								value={voucherData.quantityUsed}
 								onChange={handleChange}
 								required

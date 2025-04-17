@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAuth } from '@/context/AuthProvider';
+import { useAuth } from 'context/AuthProvider';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createPost } from 'pages/api/posts/createPost';
 import { Input } from '@/components/components/ui/input';
