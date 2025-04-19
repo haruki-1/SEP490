@@ -381,7 +381,7 @@ const HomeStayDetail = () => {
 											<div className='flex items-baseline gap-2'>
 												{priceForToday !== null ? (
 													<span className='text-3xl font-bold text-blue-600'>
-														${priceForToday.toLocaleString()}
+														{priceForToday.toLocaleString()}VND
 													</span>
 												) : (
 													<span className='px-3 py-1 text-lg font-medium text-red-500 rounded-md bg-red-50'>
@@ -750,7 +750,7 @@ const HomeStayDetail = () => {
 									<div>
 										<p className='text-sm text-gray-500'>Total for {selectedDates.length} nights</p>
 										<p className='text-xl font-bold text-gray-800'>
-											${(priceForToday * selectedDates.length).toLocaleString()}
+											{(priceForToday * selectedDates.length).toLocaleString()}VND
 										</p>
 									</div>
 									{voucherCode && (

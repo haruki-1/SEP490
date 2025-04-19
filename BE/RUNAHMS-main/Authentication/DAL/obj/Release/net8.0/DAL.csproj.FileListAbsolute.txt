@@ -1,0 +1,18 @@
+D:\SEP490\SEP490\BE\RUNAHMS-main\Authentication\DAL\bin\Release\net8.0\DAL.deps.json
+D:\SEP490\SEP490\BE\RUNAHMS-main\Authentication\DAL\bin\Release\net8.0\DAL.runtimeconfig.json
+D:\SEP490\SEP490\BE\RUNAHMS-main\Authentication\DAL\bin\Release\net8.0\DAL.dll
+D:\SEP490\SEP490\BE\RUNAHMS-main\Authentication\DAL\bin\Release\net8.0\DAL.pdb
+D:\SEP490\SEP490\BE\RUNAHMS-main\Authentication\DAL\bin\Release\net8.0\Bussiness Object.dll
+D:\SEP490\SEP490\BE\RUNAHMS-main\Authentication\DAL\bin\Release\net8.0\Bussiness Object.pdb
+D:\SEP490\SEP490\BE\RUNAHMS-main\Authentication\DAL\obj\Release\net8.0\DAL.csproj.AssemblyReference.cache
+D:\SEP490\SEP490\BE\RUNAHMS-main\Authentication\DAL\obj\Release\net8.0\DAL.GeneratedMSBuildEditorConfig.editorconfig
+D:\SEP490\SEP490\BE\RUNAHMS-main\Authentication\DAL\obj\Release\net8.0\DAL.AssemblyInfoInputs.cache
+D:\SEP490\SEP490\BE\RUNAHMS-main\Authentication\DAL\obj\Release\net8.0\DAL.AssemblyInfo.cs
+D:\SEP490\SEP490\BE\RUNAHMS-main\Authentication\DAL\obj\Release\net8.0\DAL.csproj.CoreCompileInputs.cache
+D:\SEP490\SEP490\BE\RUNAHMS-main\Authentication\DAL\obj\Release\net8.0\DAL.sourcelink.json
+D:\SEP490\SEP490\BE\RUNAHMS-main\Authentication\DAL\obj\Release\net8.0\DAL.csproj.Up2Date
+D:\SEP490\SEP490\BE\RUNAHMS-main\Authentication\DAL\obj\Release\net8.0\DAL.dll
+D:\SEP490\SEP490\BE\RUNAHMS-main\Authentication\DAL\obj\Release\net8.0\refint\DAL.dll
+D:\SEP490\SEP490\BE\RUNAHMS-main\Authentication\DAL\obj\Release\net8.0\DAL.pdb
+D:\SEP490\SEP490\BE\RUNAHMS-main\Authentication\DAL\obj\Release\net8.0\DAL.genruntimeconfig.cache
+D:\SEP490\SEP490\BE\RUNAHMS-main\Authentication\DAL\obj\Release\net8.0\ref\DAL.dll

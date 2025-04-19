@@ -361,7 +361,7 @@ const HomeStayCalendar = () => {
 																	})}
 																</p>
 																<p className='text-lg font-semibold text-green-600'>
-																	${entry.price}
+																	VND{entry.price}
 																</p>
 																{isToday && (
 																	<span className='mt-1 inline-block px-2 py-0.5 text-xs font-medium rounded-full bg-green-100 text-green-800'>
@@ -455,7 +455,7 @@ const HomeStayCalendar = () => {
 						</div>
 						<div className='grid items-center grid-cols-4 gap-4'>
 							<Label htmlFor='price' className='text-right'>
-								Price ($)
+								Price (VND)
 							</Label>
 							<Input
 								id='price'
@@ -501,7 +501,7 @@ const HomeStayCalendar = () => {
 						</div>
 						<div className='grid items-center grid-cols-4 gap-4'>
 							<Label htmlFor='editPrice' className='text-right'>
-								Price ($)
+								Price (VND)
 							</Label>
 							<Input
 								id='editPrice'

@@ -1,11 +1,11 @@
 'use client';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
-import AdminLayout from '@/pages/manager/layout';
 import { getHomeStayDetail } from 'pages/api/homestay/getHomeStayDetail';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
 import 'react-photo-view/dist/react-photo-view.css';
 import { Wifi, Car, PocketIcon as Pool, Star, Check, Coffee } from 'lucide-react';
+import ManagerLayout from 'pages/manager/layout';
 
 const formatDateForComparison = (dateInput) => {
 	const date = new Date(dateInput);
@@ -66,7 +66,7 @@ const DetailHomeStay = () => {
 	});
 
 	return (
-		<AdminLayout>
+		<ManagerLayout>
 			<div>
 				{isLoading ? (
 					<p className='h-screen py-8 text-center'>Loading...</p>
@@ -127,7 +127,7 @@ const DetailHomeStay = () => {
 								<strong className='text-gray-800'>Price for Today:</strong>
 								{getPriceForToday(data?.calendar) !== null ? (
 									<p className='text-xl font-semibold text-green-600'>
-										${getPriceForToday(data?.calendar)}
+										{getPriceForToday(data?.calendar)}VND
 									</p>
 								) : (
 									<p className='text-xl font-semibold text-red-500'>Decommission</p>
@@ -310,7 +310,7 @@ const DetailHomeStay = () => {
 					</div>
 				)}
 			</div>
-		</AdminLayout>
+		</ManagerLayout>
 	);
 };
 

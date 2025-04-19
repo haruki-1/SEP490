@@ -1,83 +1,73 @@
 import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
-import ReactMapGL, { Marker, Popup } from "react-map-gl";
-import { resultImages } from "../data";
 import { MapPin } from "react-feather";
+import Map, { Marker, Popup } from "react-map-gl/mapbox";
+import { resultImages } from "../data";
 
-const Map = React.memo(
-  ({
-    results,
-    selectedLocation,
-    setSelectedLocation,
-    viewport,
-    setViewport,
-  }) => {
-    const containerRef = useRef(null);
+const MapComponent = React.memo(
+	({ results, selectedLocation, setSelectedLocation, viewport, setViewport }) => {
+		const containerRef = useRef(null);
 
-    useEffect(() => {
-      const handleScroll = () => {
-        if (window.scrollY < window.innerHeight * 1.2) {
-          containerRef.current.style.transform =
-            "translateY(" + window.scrollY * 0.2 + "px)";
-        }
-      };
-      const containerRefCurr = containerRef.current;
-      window.addEventListener("scroll", handleScroll);
-      return () => window.removeEventListener("scroll", handleScroll);
-    }, []);
+		// Scroll animation effect
+		useEffect(() => {
+			const handleScroll = () => {
+				if (window.scrollY < window.innerHeight * 1.2) {
+					containerRef.current.style.transform =
+						"translateY(" + window.scrollY * 0.2 + "px)";
+				}
+			};
+			const containerRefCurr = containerRef.current;
+			window.addEventListener("scroll", handleScroll);
+			return () => window.removeEventListener("scroll", handleScroll);
+		}, []);
 
-    return (
-      <MapContainer ref={containerRef}>
-        <ReactMapGL
-          mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_TOKEN}
-          mapStyle="mapbox://styles/mapbox/streets-v11"
-          mapboxApiAccessToken="sk.eyJ1IjoiZHVvbmdjb25nc29uIiwiYSI6ImNtOGhrMjBjNjAyc3YyanF5YW9hdWZ0NmUifQ.xfC6aAm2AJoVsoVAd_meCQ"
-          {...viewport}
-          width="100%"
-          height="100%"
-          className="mapgl-container"
-          onViewportChange={(nextViewport) => setViewport(nextViewport)}
-        >
-          {results.map((result, index) => (
-            <div key={result.long}>
-              <Marker longitude={result.long} latitude={result.lat}>
-                <p
-                  role="img"
-                  className={`mapMarker ${
-                    selectedLocation.long === result.long ? "active" : null
-                  }`}
-                  onClick={() => setSelectedLocation({ ...result, index })}
-                  aria-label="push-pin"
-                >
-                  <MapPin className="mapPin" />
-                </p>
-              </Marker>
+		return (
+			<MapContainer ref={containerRef}>
+				<Map
+					mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_TOKEN}
+					mapStyle="mapbox://styles/mapbox/streets-v11"
+					initialViewState={viewport}
+					style={{ width: "100%", height: "100%" }}
+					onMove={(e) => setViewport(e.viewState)}
+				>
+					{results.map((result, index) => (
+						<div key={result.long}>
+							<Marker longitude={result.long} latitude={result.lat}>
+								<p
+									role="img"
+									className={`mapMarker ${selectedLocation.long === result.long ? "active" : ""}`}
+									onClick={() => setSelectedLocation({ ...result, index })}
+									aria-label="push-pin"
+								>
+									<MapPin className="mapPin" />
+								</p>
+							</Marker>
 
-              {selectedLocation.long === result.long ? (
-                <Popup
-                  onClose={() => setSelectedLocation({})}
-                  closeOnClick={true}
-                  latitude={result.lat}
-                  longitude={result.long}
-                  className="popup"
-                >
-                  <PopupInner bg={resultImages[selectedLocation.index][0]}>
-                    <h5>{result.title}</h5>
-                    <h4>{result.price}</h4>
-                  </PopupInner>
-                </Popup>
-              ) : (
-                false
-              )}
-            </div>
-          ))}
-        </ReactMapGL>
-      </MapContainer>
-    );
-  }
+							{selectedLocation.long === result.long && (
+								<Popup
+									onClose={() => setSelectedLocation({})}
+									closeOnClick={true}
+									latitude={result.lat}
+									longitude={result.long}
+									className="popup"
+								>
+									<PopupInner bg={resultImages[selectedLocation.index]?.[0] || ''}>
+										<h5>{result.title}</h5>
+										<h4>{result.price}</h4>
+									</PopupInner>
+								</Popup>
+							)}
+						</div>
+					))}
+				</Map>
+			</MapContainer>
+		);
+	}
 );
 
-export default Map;
+export default MapComponent;
+
+// Styled components
 
 const MapContainer = styled.div`
   width: 100%;
@@ -102,6 +92,7 @@ const MapContainer = styled.div`
   .mapMarker {
     position: relative;
     animation: markerAnim 0.5s infinite ease-out alternate;
+
     &.active {
       animation-play-state: paused;
       &::before {
@@ -176,34 +167,8 @@ const MapContainer = styled.div`
     border-bottom-color: var(--dark);
   }
 
-  .mapboxgl-popup-anchor-top-left .mapboxgl-popup-tip {
-    border-bottom-color: var(--dark);
-  }
-
-  .mapboxgl-popup-anchor-top-right .mapboxgl-popup-tip {
-    border-bottom-color: var(--dark);
-  }
-
   .mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip {
     border-top-color: var(--dark);
-  }
-
-  .mapboxgl-popup-anchor-bottom-left .mapboxgl-popup-tip {
-    border-bottom: none;
-    border-left: none;
-    border-top-color: var(--dark);
-  }
-
-  .mapboxgl-popup-anchor-bottom-right .mapboxgl-popup-tip {
-    border-top-color: var(--dark);
-  }
-
-  .mapboxgl-popup-anchor-left .mapboxgl-popup-tip {
-    border-right-color: var(--dark);
-  }
-
-  .mapboxgl-popup-anchor-right .mapboxgl-popup-tip {
-    border-left-color: var(--dark);
   }
 
   @media (min-width: 48rem) {

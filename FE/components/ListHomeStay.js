@@ -2,9 +2,9 @@ import { getAllHomeStay } from 'pages/api/homestay/getAllHomeStay';
 import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-const ListHomeStay = () => {
+const ListHomeStay = ({ setResults }) => {
 	const [filters, setFilters] = useState({
 		amenityNames: [],
 		priceRange: [0, 1000],
@@ -15,6 +15,19 @@ const ListHomeStay = () => {
 		queryKey: ['homeStays', filters],
 		queryFn: () => getAllHomeStay(filters),
 	});
+
+	// ⬇️ Gửi dữ liệu về Map
+	useEffect(() => {
+		if (data?.length && setResults) {
+			const formatted = data.map((item) => ({
+				title: item.name,
+				price: `${item.pricePerNight} VND`,
+				lat: item.location?.latitude || 21.0285,
+				long: item.location?.longitude || 105.8542,
+			}));
+			setResults(formatted);
+		}
+	}, [data, setResults]);
 
 	const dataHot = data?.filter((item) => item.standar === 5).slice(0, 4);
 
