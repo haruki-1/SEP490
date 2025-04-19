@@ -254,7 +254,7 @@ const HomeStay = () => {
 									<hr className='border-gray-200' />
 
 									{/* Standard */}
-									<div>
+									{/* <div>
 										<h3 className='mb-3 text-lg font-medium text-gray-900'>Standard</h3>
 										<div className='space-y-2'>
 											{standardOptions.map((option) => (
@@ -288,7 +288,7 @@ const HomeStay = () => {
 												</div>
 											))}
 										</div>
-									</div>
+									</div> */}
 								</div>
 							</div>
 						</div>

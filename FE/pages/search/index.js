@@ -25,7 +25,7 @@ const SearchPage = () => {
 
 			try {
 				setLoading(true);
-				const results = await searchHomeStay(checkIn, checkOut);
+				const results = await searchHomeStay(location.trim(), checkIn, checkOut);
 				setSearchResults(results);
 			} catch (err) {
 				console.error('Failed to search homestays:', err);
@@ -56,16 +56,16 @@ const SearchPage = () => {
 				<div className='container-lg'>
 					{/* Search summary */}
 					<div className='mb-8'>
-						<h1 className='text-3xl font-bold mb-2'>Search Results</h1>
+						<h1 className='mb-2 text-3xl font-bold'>Search Results</h1>
 						<div className='flex flex-wrap items-center gap-3 text-gray-600'>
 							{location && (
-								<Badge variant='outline' className='text-blue-600 bg-blue-50 border-blue-200'>
+								<Badge variant='outline' className='text-blue-600 border-blue-200 bg-blue-50'>
 									<MapPin className='w-3.5 h-3.5 mr-1' />
 									{location}
 								</Badge>
 							)}
 							{checkIn && checkOut && (
-								<Badge variant='outline' className='text-green-600 bg-green-50 border-green-200'>
+								<Badge variant='outline' className='text-green-600 border-green-200 bg-green-50'>
 									<Calendar className='w-3.5 h-3.5 mr-1' />
 									{formatDateDisplay(checkIn)} - {formatDateDisplay(checkOut)}
 								</Badge>
@@ -78,17 +78,17 @@ const SearchPage = () => {
 						<div className='grid gap-6 md:grid-cols-2 lg:grid-cols-3'>
 							{[1, 2, 3].map((item) => (
 								<Card key={item} className='overflow-hidden'>
-									<Skeleton className='h-48 w-full' />
+									<Skeleton className='w-full h-48' />
 									<CardHeader className='pb-2'>
-										<Skeleton className='h-4 w-1/2' />
-										<Skeleton className='h-6 w-3/4' />
+										<Skeleton className='w-1/2 h-4' />
+										<Skeleton className='w-3/4 h-6' />
 									</CardHeader>
 									<CardContent>
-										<Skeleton className='h-4 w-full mb-2' />
-										<Skeleton className='h-4 w-3/4' />
+										<Skeleton className='w-full h-4 mb-2' />
+										<Skeleton className='w-3/4 h-4' />
 									</CardContent>
 									<CardFooter>
-										<Skeleton className='h-10 w-full' />
+										<Skeleton className='w-full h-10' />
 									</CardFooter>
 								</Card>
 							))}
@@ -97,17 +97,17 @@ const SearchPage = () => {
 
 					{/* Error state */}
 					{error && !loading && (
-						<div className='bg-red-50 border border-red-200 rounded-md p-6 text-center'>
-							<p className='text-red-600 mb-4'>{error}</p>
+						<div className='p-6 text-center border border-red-200 rounded-md bg-red-50'>
+							<p className='mb-4 text-red-600'>{error}</p>
 							<Button onClick={() => router.back()}>Go Back</Button>
 						</div>
 					)}
 
 					{/* No results */}
 					{!loading && !error && searchResults?.length === 0 && (
-						<div className='bg-gray-50 border border-gray-200 rounded-md p-8 text-center'>
-							<h2 className='text-xl font-semibold mb-2'>No homestays found</h2>
-							<p className='text-gray-600 mb-6'>
+						<div className='p-8 text-center border border-gray-200 rounded-md bg-gray-50'>
+							<h2 className='mb-2 text-xl font-semibold'>No homestays found</h2>
+							<p className='mb-6 text-gray-600'>
 								We couldn't find any homestays matching your search criteria. Try adjusting your dates
 								or location.
 							</p>
@@ -121,23 +121,23 @@ const SearchPage = () => {
 							{searchResults.map((homestay) => (
 								<div
 									key={homestay.id}
-									className='group relative bg-white rounded-xl overflow-hidden shadow hover:shadow-lg transition-all duration-300 border border-gray-100 flex flex-col h-full'
+									className='relative flex flex-col h-full overflow-hidden transition-all duration-300 bg-white border border-gray-100 shadow group rounded-xl hover:shadow-lg'
 								>
 									{/* Image container with overlay gradient */}
-									<div className='relative h-64 w-full overflow-hidden flex-shrink-0'>
+									<div className='relative flex-shrink-0 w-full h-64 overflow-hidden'>
 										<Image
 											src={homestay.mainImage || '/images/placeholder.jpg'}
 											alt={homestay.name}
 											fill
 											className='object-cover transition-transform duration-500 group-hover:scale-105'
 										/>
-										<div className='absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity'></div>
+										<div className='absolute inset-0 transition-opacity opacity-0 bg-gradient-to-t from-black/60 to-transparent group-hover:opacity-100'></div>
 
 										{/* Quick view button that appears on hover */}
-										<div className='absolute bottom-4 left-1/2 -translate-x-1/2 transform opacity-0 group-hover:opacity-100 transition-all duration-300 z-10'>
+										<div className='absolute z-10 transition-all duration-300 transform -translate-x-1/2 opacity-0 bottom-4 left-1/2 group-hover:opacity-100'>
 											<Button
 												size='sm'
-												className='bg-white text-gray-800 hover:bg-blue-50 shadow-md'
+												className='text-gray-800 bg-white shadow-md hover:bg-blue-50'
 												asChild
 											>
 												<Link
@@ -150,7 +150,7 @@ const SearchPage = () => {
 									</div>
 
 									{/* Star rating badge */}
-									{homestay.standar > 0 && (
+									{/* {homestay.standar > 0 && (
 										<div className='absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-yellow-600 px-2 py-1.5 rounded-lg text-xs font-medium shadow-sm flex items-center'>
 											{Array(homestay.standar)
 												.fill(0)
@@ -158,30 +158,30 @@ const SearchPage = () => {
 													<Star key={i} className='w-3.5 h-3.5 fill-current mr-0.5' />
 												))}
 										</div>
-									)}
+									)} */}
 
 									{/* Location tag */}
 									<div className='absolute top-3 left-3'>
-										<Badge className='bg-white/90 backdrop-blur-sm text-blue-600 border-0 shadow-sm'>
+										<Badge className='text-blue-600 border-0 shadow-sm bg-white/90 backdrop-blur-sm'>
 											<MapPin className='w-3.5 h-3.5 mr-1' />
 											{homestay.city}
 										</Badge>
 									</div>
 
 									{/* Card content - flex-grow will push the footer down */}
-									<div className='p-5 flex-grow flex flex-col'>
-										<h3 className='text-xl font-semibold mb-2 line-clamp-1'>{homestay.name}</h3>
+									<div className='flex flex-col flex-grow p-5'>
+										<h3 className='mb-2 text-xl font-semibold line-clamp-1'>{homestay.name}</h3>
 
-										<p className='text-gray-600 text-sm line-clamp-2 mb-4'>
+										<p className='mb-4 text-sm text-gray-600 line-clamp-2'>
 											{homestay.description}
 										</p>
 
 										{/* Divider */}
-										<div className='h-px bg-gray-100 my-4'></div>
+										<div className='h-px my-4 bg-gray-100'></div>
 
 										{/* Amenities section */}
-										<div className='mb-4 flex-grow'>
-											<h4 className='text-xs text-gray-500 uppercase tracking-wider mb-2'>
+										<div className='flex-grow mb-4'>
+											<h4 className='mb-2 text-xs tracking-wider text-gray-500 uppercase'>
 												Amenities
 											</h4>
 											<div className='flex flex-wrap gap-1.5'>
@@ -190,7 +190,7 @@ const SearchPage = () => {
 														<Badge
 															key={amenity.id}
 															variant='outline'
-															className='text-xs bg-gray-50 py-1 px-2 rounded-md border-gray-200'
+															className='px-2 py-1 text-xs border-gray-200 rounded-md bg-gray-50'
 														>
 															<Wifi className='w-3 h-3 mr-1 text-blue-500' />
 															{amenity.name}
@@ -203,7 +203,7 @@ const SearchPage = () => {
 												{homestay.amenities && homestay.amenities.length > 3 && (
 													<Badge
 														variant='outline'
-														className='text-xs bg-gray-50 py-1 border-gray-200'
+														className='py-1 text-xs border-gray-200 bg-gray-50'
 													>
 														+{homestay.amenities.length - 3} more
 													</Badge>

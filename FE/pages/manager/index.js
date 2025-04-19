@@ -170,7 +170,7 @@ const Manager = () => {
 				beginAtZero: true,
 				ticks: {
 					callback: function (value) {
-						return '$' + value.toLocaleString();
+						return 'VND' + value.toLocaleString();
 					},
 				},
 			},
@@ -402,7 +402,7 @@ const Manager = () => {
 								<div className='text-sm font-medium text-gray-500'>Total Revenue</div>
 							</CardHeader>
 							<CardContent>
-								<div className='text-2xl font-bold'>${totalRevenue.toLocaleString() || 0}</div>
+								<div className='text-2xl font-bold'>{totalRevenue.toLocaleString() || 0}VND</div>
 							</CardContent>
 						</Card>
 						<Card>
@@ -419,10 +419,9 @@ const Manager = () => {
 							</CardHeader>
 							<CardContent>
 								<div className='text-2xl font-bold'>
-									$
 									{averageMonthly.toLocaleString(undefined, {
 										maximumFractionDigits: 2,
-									}) || 0}
+									}) || 0}VND
 								</div>
 							</CardContent>
 						</Card>

@@ -358,7 +358,7 @@ const HomeStayDetail = () => {
 												{homestay.address}, {homestay.city}
 											</span>
 										</div>
-										<div className='flex items-center mt-1'>
+										{/* <div className='flex items-center mt-1'>
 											{[...Array(5)].map((_, i) => (
 												<Star
 													key={i}
@@ -372,7 +372,7 @@ const HomeStayDetail = () => {
 											<span className='ml-2 text-sm text-gray-600'>
 												{homestay.standar}-star rating
 											</span>
-										</div>
+										</div> */}
 									</div>
 
 									<div className='flex flex-col items-start justify-center md:items-end'>

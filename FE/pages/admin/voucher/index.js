@@ -326,7 +326,7 @@ const VoucherList = () => {
 								name='discount'
 								type='number'
 								min='0'
-								max='100'
+								max='80'
 								value={voucherData.discount}
 								onChange={handleChange}
 								required

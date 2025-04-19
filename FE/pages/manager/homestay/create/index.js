@@ -455,7 +455,7 @@ const CreateHomeStay = () => {
 							<p className='mt-1 text-sm text-red-500'>{errors.checkOutTime}</p>
 						)}
 					</div>
-					<div>
+					{/* <div>
 						<Label className='block mb-2 font-medium'>
 							Price
 							<RequiredIndicator />
@@ -469,7 +469,7 @@ const CreateHomeStay = () => {
 							className={showError('price') ? 'border-red-500' : ''}
 						/>
 						{showError('price') && <p className='mt-1 text-sm text-red-500'>{errors.price}</p>}
-					</div>
+					</div> */}
 					<div>
 						<Label className='block mb-2 font-medium'>Date</Label>
 						<DatePicker

@@ -1,11 +1,11 @@
-import api from "utils/api";
+import api from 'utils/api';
 
-export const getRefunds = async () => {
+export const getRefunds = async (homeStayName) => {
 	try {
-		const response = await api.get('/Refunds/get-refunds');
+		const response = await api.get(`/Refunds/get-refunds${homeStayName ? `?homeStayName=${homeStayName}` : ''}`);
 		return response.data;
 	} catch (error) {
-		console.error('Error fetching refunds:', error);
+		console.error('Error getting refunds:', error);
 		throw error;
 	}
 };

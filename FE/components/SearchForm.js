@@ -6,13 +6,13 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Popover, PopoverContent, PopoverTrigger } from './components/ui/popover';
 import { Button } from './components/ui/button';
+import { cn } from './lib/utils';
 import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
 import { getCityList } from 'pages/api/city/getCityList';
 import { useQuery } from '@tanstack/react-query';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from './components/ui/command';
 import { useTranslation } from 'next-i18next';
-import { cn } from './lib/utils';
 
 export default function SearchForm() {
 	const router = useRouter();
@@ -61,7 +61,6 @@ export default function SearchForm() {
 			<div className='bg-white/95 backdrop-blur-md rounded-xl shadow-xl p-4 flex flex-col md:flex-row gap-3 border border-gray-100 animate-fadeIn'>
 				{/* Location */}
 				<div className='flex-1'>
-					<div className='text-xs font-medium text-gray-500 mb-1 ml-1'>WHERE</div>
 					<Popover open={openCity} onOpenChange={setOpenCity}>
 						<PopoverTrigger asChild>
 							<Button
@@ -73,7 +72,7 @@ export default function SearchForm() {
 								<div className='flex items-center'>
 									<MapPin className='mr-2 h-5 w-5 text-blue-500' />
 									<span className={selectedCity ? 'text-gray-900 font-medium' : 'text-gray-500'}>
-										{selectedCity || t('wheree')}
+										{selectedCity || t('where')}
 									</span>
 								</div>
 								<ChevronsUpDown className='h-4 w-4 text-gray-400' />
@@ -119,7 +118,6 @@ export default function SearchForm() {
 
 				{/* Date Range Picker */}
 				<div className='flex-1'>
-					<div className='text-xs font-medium text-gray-500 mb-1 ml-1'>WHEN</div>
 					<Popover open={openCalendar} onOpenChange={setOpenCalendar}>
 						<PopoverTrigger asChild>
 							<Button

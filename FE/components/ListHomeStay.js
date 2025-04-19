@@ -69,7 +69,7 @@ const ListHomeStay = ({ setResults }) => {
 									<h1 className='text-[1.5rem] font-bold text-white text-center capitalize'>
 										{item?.name || 'HomeStay Name'}
 									</h1>
-									<p className='flex items-center'>
+									{/* <p className='flex items-center'>
 										{[...Array(5)].map((_, index) => (
 											<svg
 												key={index}
@@ -83,7 +83,7 @@ const ListHomeStay = ({ setResults }) => {
 												<path d='M10 15l-5.09 3.09 1.64-6.88L0 6.91l6.91-.59L10 0l2.09 6.32 6.91.59-4.55 4.3 1.64 6.88L10 15z' />
 											</svg>
 										))}
-									</p>
+									</p> */}
 									<p
 										className={`text-center ${
 											!item.isBooked

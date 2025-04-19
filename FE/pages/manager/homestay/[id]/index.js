@@ -135,7 +135,7 @@ const DetailHomeStay = () => {
 							</div>
 
 							{/* Standard/Rating */}
-							<div className='mt-4'>
+							{/* <div className='mt-4'>
 								<h3 className='mb-2 text-lg font-semibold'>Standard</h3>
 								<div className='flex items-center'>
 									{[...Array(5)].map((_, index) => (
@@ -150,7 +150,7 @@ const DetailHomeStay = () => {
 									))}
 									<span className='ml-2 text-gray-700'>{data?.standar}/5</span>
 								</div>
-							</div>
+							</div> */}
 
 							{/* Amenities Section */}
 							{data?.amenities && data.amenities.length > 0 && (
