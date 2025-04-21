@@ -219,7 +219,7 @@ export default function SearchList() {
 													{/* Use the new priceForToday value */}
 													{priceForToday !== null ? (
 														<span className='text-green-600'>
-															${priceForToday.toLocaleString()}
+															{priceForToday.toLocaleString()}VND
 														</span>
 													) : (
 														<span className='text-gray-600'>Decommission</span>

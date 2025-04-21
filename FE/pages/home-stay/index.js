@@ -391,7 +391,7 @@ const HomeStay = () => {
 														<div className='font-bold text-blue-600'>
 															{priceForToday !== null ? (
 																<p className='text-lg text-green-600 md:text-xl'>
-																	${priceForToday.toLocaleString()}
+																	{priceForToday.toLocaleString()}VND
 																</p>
 															) : (
 																<p className='text-lg md:text-base'>Decommission</p>

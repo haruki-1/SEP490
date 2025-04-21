@@ -17,7 +17,7 @@ import ManagerLayout from '../../layout';
 const MAX_IMAGES = 8;
 
 // Required fields for the form
-const REQUIRED_FIELDS = ['mainImage', 'name', 'description', 'address', 'city', 'checkInTime', 'checkOutTime', 'price'];
+const REQUIRED_FIELDS = ['mainImage', 'name', 'description', 'address', 'city', 'checkInTime', 'checkOutTime'];
 
 const CreateHomeStay = () => {
 	const { dataProfile } = useAuth();
@@ -31,7 +31,7 @@ const CreateHomeStay = () => {
 		standar: 1,
 		address: '',
 		city: '',
-		IsBlocked: false,
+		isBlocked: false,
 		checkInTime: '',
 		checkOutTime: '',
 		images: [],

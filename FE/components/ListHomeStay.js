@@ -29,7 +29,7 @@ const ListHomeStay = ({ setResults }) => {
 		}
 	}, [data, setResults]);
 
-	const dataHot = data?.filter((item) => item.standar === 5).slice(0, 4);
+	const dataHot = data?.filter((item) => item.standar >= 0 && item.standar <= 5).slice(0, 4);
 
 	return (
 		<div className='sec-com'>
