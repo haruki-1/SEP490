@@ -133,7 +133,6 @@ namespace API.Controllers
                 if (request == null) return BadRequest();
 
                 var getHomeStay = await _homeStayRepository.GetByIdAsync(request.HomeStayID);
-                var listAmenityAlreadyExist = new List<string>();
 
                 if (getHomeStay == null) return NotFound();
                 foreach (var amenity in request.AmenityName)
@@ -144,7 +143,8 @@ namespace API.Controllers
                                                .FirstOrDefaultAsync();
                     if (existingAmenity != null)
                     {
-                        continue;
+                        return Conflict();
+
                     }
                     HomestayAmenity addAmenity = new HomestayAmenity
                     {
@@ -153,17 +153,8 @@ namespace API.Controllers
                     };
                     await _homeStayAmenity.AddAsync(addAmenity);
                     await _homeStayAmenity.SaveAsync();
-                    listAmenityAlreadyExist.Add(amenity);
                 }
-                foreach (var itemAlready in listAmenityAlreadyExist)
-                {
-
-                }
-                return Ok(new
-                {
-                    Message = "Add Amentity Success",
-                    DuplicateAmenities = listAmenityAlreadyExist
-                });
+                return Ok(new { Message = "Add Amentity Success" });
             }
             catch (Exception ex)
             {
@@ -638,7 +629,6 @@ namespace API.Controllers
                 Facility = h.HomestayFacilities!.Select(hf => new { hf.FacilityID, hf.Facility.Name, hf.Facility.Description }).ToList(),
                 TTlockAccuont = h.TTlockAccuonts.Select(ta => new { ta.TTLockID, ta.TTLockUserName, ta.Password })
             }).ToList();
-
             return Ok(response);
         }
 
@@ -704,6 +694,4 @@ namespace API.Controllers
 
     }
 }
-
-
 

@@ -302,7 +302,6 @@ namespace API.Controllers
         }
 
 
-
         [HttpPut("confirm-booking-status")]
         public async Task<IActionResult> ConfirmBookingStatus([FromQuery] Guid bookingID)
         {

@@ -21,7 +21,7 @@ namespace API.Controllers
     public class AuthController(IUserRepository _userRepository, ITokenService _tokenService
         , IPasswordHasher _passwordHasher
         , IEmailSender _emailSender
-        , IConfiguration _configuration, object value) : ControllerBase
+        , IConfiguration _configuration) : ControllerBase
     {
 
         [HttpGet("get-me")]
