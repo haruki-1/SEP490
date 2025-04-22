@@ -263,15 +263,20 @@ namespace API.Controllers
             }
         }
 
+
         [HttpPost("get-all-home-stay")]
         public async Task<IActionResult> GetAllHomeStay([FromBody] FilterDTO request)
         {
+            DateTime today = DateTime.Now;
+
             var query = _homeStayRepository
                 .FindWithInclude(h => h.Calendars!)
                 .Include(h => h.HomestayAmenities!)
                 .ThenInclude(ha => ha.Amenity)
                 .Include(hf => hf.HomestayFacilities)
                 .ThenInclude(fa => fa.Facility)
+                .Include(x => x.FeedBacks)
+                .ThenInclude(x => x.User)
                 .AsQueryable();
 
             if (request.Standard is { Count: > 0 })
@@ -289,6 +294,8 @@ namespace API.Controllers
             if (request.MinPrice.HasValue || request.MaxPrice.HasValue)
             {
                 query = query.Where(h => h.Calendars!.Any(c =>
+                    c.isDeleted == false &&
+                    c.Date == today &&
                     (!request.MinPrice.HasValue || c.Price >= request.MinPrice.Value) &&
                     (!request.MaxPrice.HasValue || c.Price <= request.MaxPrice.Value)
                 ));
@@ -334,6 +341,15 @@ namespace API.Controllers
                     hf.FacilityID,
                     hf.Facility.Name,
                     hf.Facility.Description
+                }).ToList(),
+                User = h.FeedBacks!.Select(fb => new
+                {
+                    fb.Id,
+                    fb.Rating,
+                    fb.Description,
+                    fb.User.FullName,
+                    fb.User.Email,
+                    fb.User.Avatar
                 }).ToList()
             }).ToList();
 
@@ -386,7 +402,7 @@ namespace API.Controllers
                 HomeStayImage = getDetail.HomestayImages!.Select(image => new
                 {
                     Image = image.Image,
-                }),
+                }).ToList(),
                 Amenities = getDetail.HomestayAmenities!.Select(ha => new
                 {
                     ha.Amenity.Id,
