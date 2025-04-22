@@ -299,7 +299,7 @@ const PostDetail = () => {
 
 					{/* Post Header */}
 					<header className='mb-8 overflow-hidden bg-white border border-gray-100 shadow-sm rounded-xl'>
-						{/* Hero Image if exists */}
+						{/* Main Image if exists */}
 						{data?.images && data.images.length > 0 && (
 							<div className='relative w-full overflow-hidden h-72 md:h-96'>
 								<img src={data.images[0]} alt={data.title} className='object-cover w-full h-full' />

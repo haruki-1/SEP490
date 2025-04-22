@@ -12,11 +12,13 @@ import { useAuth } from 'context/AuthProvider';
 import { toast } from 'sonner';
 import dynamic from 'next/dynamic';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 // Lazy load Map để tránh lỗi SSR
 const DynamicMap = dynamic(() => import('@/components/Map'), { ssr: false });
 
 export default function Home() {
+	const { t } = useTranslation('common');
 	const router = useRouter();
 	const { code, id, cancel, status, orderCode } = router.query;
 	const hasPaymentParams = !!(code || id || cancel || status || orderCode);
@@ -95,13 +97,16 @@ export default function Home() {
 	return (
 		<MainLayout>
 			{/* Nút Hiển thị bản đồ */}
+			<div className="fixed top-[90%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50">
 			<button
 				onClick={() => setShowMap(!showMap)}
-				className="fixed top-5 right-5 z-50 px-4 py-2 bg-white shadow-md rounded-full font-semibold"
+				className="flex items-center gap-2 px-5 py-3 bg-white shadow-md rounded-full font-semibold text-gray-800 hover:bg-gray-100 transition-all"
 			>
-				{showMap ? 'Ẩn bản đồ' : 'Hiển thị bản đồ'}
+				  <span>{showMap ? t('hideMap') : t('showMap')}</span>
+				{/* Thêm icon nếu cần */}
+				{/* <MapIcon className="w-5 h-5 text-blue-600" /> */}
 			</button>
-
+			</div>
 			{/* Hiển thị bản đồ có hiệu ứng */}
 			<AnimatePresence>
 				{showMap && (

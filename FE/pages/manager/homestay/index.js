@@ -947,7 +947,7 @@ const Homestay = () => {
 													<span className='font-medium text-gray-700'>Today's Rate:</span>
 													{priceForToday !== null ? (
 														<span className='text-xl font-bold text-green-600'>
-															{priceForToday.toLocaleString()}VND
+															{priceForToday.toLocaleString()} VND
 														</span>
 													) : (
 														<span className='px-2 py-1 text-sm text-red-600 bg-red-100 rounded'>

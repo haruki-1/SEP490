@@ -82,10 +82,11 @@ export default function ProfilePage() {
 	};
 
 	// Filter bookings based on selected status
-	const filteredBookings = bookings?.filter((booking) => {
-		if (statusFilter === 'All') return true;
-		return booking.status === statusFilter;
-	});
+	const filteredBookings = Array.isArray(bookings)
+	? bookings.filter(
+			(booking) => statusFilter === 'All' || booking.status === statusFilter
+		)
+	: [];
 
 	// Calculate booking statistics
 	const getBookingStats = () => {
@@ -661,7 +662,7 @@ export default function ProfilePage() {
 																				)}
 																			</div>
 																			<p className='text-xl font-bold'>
-																				${booking.totalPrice?.toLocaleString()}
+																				{booking.totalPrice?.toLocaleString()}
 																			</p>
 																		</div>
 																		<div className='flex mt-3 space-x-2'>

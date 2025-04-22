@@ -174,14 +174,6 @@ const Footer = () => {
 				<div className='flex flex-col items-center justify-between pt-8 mt-8 border-t border-gray-100 md:flex-row'>
 					<div className='flex items-center mb-4 space-x-4 md:mb-0'>
 						<ThemeToggle />
-						<div className='flex items-center text-gray-500 cursor-pointer hover:text-gray-700'>
-							<Globe className='w-4 h-4 mr-1' />
-							<span className='text-sm'>English</span>
-						</div>
-						<div className='flex items-center text-gray-500 cursor-pointer hover:text-gray-700'>
-							<DollarSign className='w-4 h-4 mr-1' />
-							<span className='text-sm'>USD</span>
-						</div>
 					</div>
 
 					<p className='text-sm text-gray-400'>

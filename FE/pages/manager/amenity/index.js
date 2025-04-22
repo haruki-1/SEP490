@@ -276,8 +276,8 @@ const Amenity = () => {
 								<TableHeader>
 									<TableRow>
 										<TableHead className='w-1/6'>Name</TableHead>
-										<TableHead className='w-2/6'>Home Stay Amenities</TableHead>
-										<TableHead className='w-1/6'>isDeleted</TableHead>
+										{/* <TableHead className='w-2/6'>Home Stay Amenities</TableHead>
+										<TableHead className='w-1/6'>isDeleted</TableHead> */}
 										<TableHead className='w-1/6'>Actions</TableHead>
 									</TableRow>
 								</TableHeader>
@@ -286,14 +286,14 @@ const Amenity = () => {
 										currentData.map((facility) => (
 											<TableRow key={facility.id}>
 												<TableCell>{facility.name}</TableCell>
-												<TableCell>
+												{/* <TableCell>
 													{facility.homeStayAmenities === null && (
 														<span>Not homestay amenity</span>
 													)}
-												</TableCell>
-												<TableCell>
+												</TableCell> */}
+												{/* <TableCell>
 													{facility.isDeleted === false && <span>false</span>}
-												</TableCell>
+												</TableCell> */}
 												<TableCell className='flex items-center gap-1'>
 													<Button
 														size='sm'

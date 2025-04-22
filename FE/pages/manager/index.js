@@ -170,7 +170,7 @@ const Manager = () => {
 				beginAtZero: true,
 				ticks: {
 					callback: function (value) {
-						return 'VND' + value.toLocaleString();
+						return value.toLocaleString() +' VND' ;
 					},
 				},
 			},
@@ -193,7 +193,7 @@ const Manager = () => {
 				<h1 className='mb-6 text-2xl font-bold'>Welcome, {dataProfile?.fullName}</h1>
 
 				<div className='grid grid-cols-1 gap-6 mb-6'>
-					<Card>
+					{/* <Card>
 						<CardHeader>
 							<CardTitle>Filter Homestays</CardTitle>
 						</CardHeader>
@@ -313,7 +313,7 @@ const Manager = () => {
 								)}
 							</div>
 						</CardContent>
-					</Card>
+					</Card> */}
 
 					<Card>
 						<CardHeader className='flex flex-col gap-3'>
@@ -402,7 +402,7 @@ const Manager = () => {
 								<div className='text-sm font-medium text-gray-500'>Total Revenue</div>
 							</CardHeader>
 							<CardContent>
-								<div className='text-2xl font-bold'>{totalRevenue.toLocaleString() || 0}VND</div>
+								<div className='text-2xl font-bold'>{totalRevenue.toLocaleString() || 0} VND</div>
 							</CardContent>
 						</Card>
 						<Card>
@@ -421,7 +421,7 @@ const Manager = () => {
 								<div className='text-2xl font-bold'>
 									{averageMonthly.toLocaleString(undefined, {
 										maximumFractionDigits: 2,
-									}) || 0}VND
+									}) || 0} VND
 								</div>
 							</CardContent>
 						</Card>

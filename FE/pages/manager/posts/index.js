@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { deletePost } from 'pages/api/posts/deletePost';
 import Swal from 'sweetalert2';
-import { Pencil, Trash2, PlusCircle, Calendar, MapPin, FileText } from 'lucide-react';
+import { Pencil, Trash2, PlusCircle, Calendar, MapPin, FileText, AlertTriangle } from 'lucide-react';
 import { getPostsByUser } from 'pages/api/posts/getPostsByUser';
 import ManagerLayout from '../layout';
 

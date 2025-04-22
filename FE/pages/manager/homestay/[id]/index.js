@@ -127,7 +127,7 @@ const DetailHomeStay = () => {
 								<strong className='text-gray-800'>Price for Today:</strong>
 								{getPriceForToday(data?.calendar) !== null ? (
 									<p className='text-xl font-semibold text-green-600'>
-										{getPriceForToday(data?.calendar)}VND
+										{getPriceForToday(data?.calendar)} VND
 									</p>
 								) : (
 									<p className='text-xl font-semibold text-red-500'>Decommission</p>

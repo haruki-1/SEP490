@@ -53,6 +53,7 @@ import {
 } from '@/components/components/ui/dropdown-menu';
 import AvailableDatesSelector from '@/components/AvailableDatesSelector';
 import { useTranslation } from 'next-i18next';
+import CancelPolicy from '@/components/CancelPolicy';
 
 // Helper function to format dates consistently for comparison
 const formatDateForComparison = (dateInput) => {
@@ -173,6 +174,18 @@ const HomeStayDetail = () => {
 	const handleBookNow = () => {
 		if (!isAuthenticated) {
 			toast.error('Please log in to book this homestay');
+
+			setTimeout(() => {
+				router.push('/auth/login'); // <- Đường dẫn về login
+			}, 1500); // chờ 1.5 giây để toast hiển thị xong
+			return;
+		}
+		if (!dataProfile?.address || !dataProfile?.avatar) {
+			toast.error('Please complete your profile with address and avatar before booking');
+
+			setTimeout(() => {
+				router.push('/profile'); // <- Đường dẫn đến trang hồ sơ
+			}, 1500); // chờ 1.5 giây để toast hiển thị xong
 			return;
 		}
 
@@ -199,6 +212,7 @@ const HomeStayDetail = () => {
 		setVoucherCode(code);
 		toast.success(`Voucher ${code} applied`);
 	};
+	
 
 	if (isLoading) {
 		return (
@@ -263,6 +277,7 @@ const HomeStayDetail = () => {
 				!date.isBooked
 		)
 		.sort((a, b) => new Date(a.date) - new Date(b.date));
+	const selectedCheckIn = availableDates?.find((date) => date.id === selectedDates[0]);
 
 	return (
 		<MainLayout>
@@ -358,7 +373,7 @@ const HomeStayDetail = () => {
 												{homestay.address}, {homestay.city}
 											</span>
 										</div>
-										{/* <div className='flex items-center mt-1'>
+										<div className='flex items-center mt-1'>
 											{[...Array(5)].map((_, i) => (
 												<Star
 													key={i}
@@ -372,7 +387,7 @@ const HomeStayDetail = () => {
 											<span className='ml-2 text-sm text-gray-600'>
 												{homestay.standar}-star rating
 											</span>
-										</div> */}
+										</div>
 									</div>
 
 									<div className='flex flex-col items-start justify-center md:items-end'>
@@ -712,9 +727,9 @@ const HomeStayDetail = () => {
 											disabled={homestay.isBooked}
 										/>
 										<div className='ml-3'>
-											<span className='font-medium text-gray-700'>Online Payment</span>
+											<span className='font-medium text-gray-700'>{t('online-payment')}</span>
 											<p className='mt-1 text-xs text-gray-500'>
-												Pay now with credit card, debit card or other methods
+												{('pay-now-with-payOS,QRcode')}
 											</p>
 										</div>
 									</label>
@@ -736,7 +751,11 @@ const HomeStayDetail = () => {
 									</label> */}
 								</div>
 							</div>
-
+							{selectedCheckIn && (
+								<div className="mt-2">
+									<CancelPolicy checkInDate={selectedCheckIn.date} />
+								</div>
+								)}
 							{/* Status indicators and booking button */}
 							{homestay.isBooked && (
 								<div className='flex items-center justify-center p-4 text-sm font-medium text-center text-red-600 border border-red-200 rounded-lg bg-red-50'>
@@ -748,7 +767,7 @@ const HomeStayDetail = () => {
 							{priceForToday !== null && !homestay.isBooked && selectedDates.length > 0 && (
 								<div className='flex items-center justify-between p-4 border border-blue-100 rounded-lg bg-blue-50'>
 									<div>
-										<p className='text-sm text-gray-500'>Total for {selectedDates.length} nights</p>
+										<p className='text-sm text-gray-500'>{t('total-for')}{selectedDates.length} {t('nights')}</p>
 										<p className='text-xl font-bold text-gray-800'>
 											{(priceForToday * selectedDates.length).toLocaleString()}VND
 										</p>

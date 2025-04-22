@@ -399,13 +399,6 @@ const Header = () => {
 											<User className='w-4 h-4 mr-2' />
 											<span>{t('profile')}</span>
 										</DropdownMenuItem>
-										<DropdownMenuItem
-											onClick={() => router.push('/help')}
-											className='cursor-pointer'
-										>
-											<User className='mr-2 h-4 w-4' />
-											<span>{t('Help-center')}</span>
-										</DropdownMenuItem>
 									</DropdownMenuGroup>
 									<DropdownMenuSeparator />
 									<DropdownMenuItem

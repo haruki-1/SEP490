@@ -16,9 +16,11 @@ export default function SearchPage() {
   return (
     <Container>
       {/* Nút toggle bản đồ */}
-      <ToggleButton onClick={() => setShowMap(!showMap)}>
-        {showMap ? "Ẩn bản đồ" : "Hiển thị bản đồ"}
-      </ToggleButton>
+      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50">
+        <ToggleButton onClick={() => setShowMap(!showMap)}>
+        {showMap ? t('hideMap') : t('showMap')}
+        </ToggleButton>
+      </div>
 
       <ContentWrapper>
         {/* Danh sách */}

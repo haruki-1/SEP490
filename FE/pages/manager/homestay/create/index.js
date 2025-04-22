@@ -471,7 +471,7 @@ const CreateHomeStay = () => {
 						{showError('price') && <p className='mt-1 text-sm text-red-500'>{errors.price}</p>}
 					</div> */}
 					<div>
-						<Label className='block mb-2 font-medium'>Date</Label>
+						<Label className='block mb-2 font-medium'>Open Date</Label>
 						<DatePicker
 							selected={formData.date}
 							onChange={(date) => handleDateChange(date, 'date')}

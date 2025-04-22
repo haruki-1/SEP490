@@ -169,7 +169,7 @@ const Post = () => {
 								</div>
 								<h3 className='mb-2 text-lg font-medium text-gray-800'>No Posts Found</h3>
 								<p className='mb-4 text-gray-500'>There are no posts available at the moment.</p>
-								<Link href='/manager/posts/create'>
+								<Link href='/admin/posts/create'>
 									<Button>
 										<PlusCircle size={16} className='mr-2' />
 										Create First Post
