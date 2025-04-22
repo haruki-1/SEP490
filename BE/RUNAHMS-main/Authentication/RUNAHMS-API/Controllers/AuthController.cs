@@ -21,7 +21,7 @@ namespace API.Controllers
     public class AuthController(IUserRepository _userRepository, ITokenService _tokenService
         , IPasswordHasher _passwordHasher
         , IEmailSender _emailSender
-        , IConfiguration _configuration, object value) : ControllerBase
+        , IConfiguration _configuration) : ControllerBase
     {
 
         [HttpGet("get-me")]
@@ -114,7 +114,7 @@ namespace API.Controllers
             if (confirm) await _userRepository.ConfirmEmail(userId);
 
             await _userRepository.SaveAsync();
-            return Redirect("http://localhost:3000");
+            return Redirect(_configuration["Base:UrlClient"]!);
         }
 
         [HttpPost("resend-confirm")]
@@ -236,6 +236,7 @@ namespace API.Controllers
             await _userRepository.SaveAsync();
             return Ok(new { message = "UnBlock successful" });
         }
+
     }
 }
 
