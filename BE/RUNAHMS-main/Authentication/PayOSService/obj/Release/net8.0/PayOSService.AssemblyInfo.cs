@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PayOSService")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8143d3c136328907cdef971493ea2ee26bc229d9")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3984f3fb7dc8766084444f46f7c1bcc599dd2e43")]
 [assembly: System.Reflection.AssemblyProductAttribute("PayOSService")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PayOSService")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

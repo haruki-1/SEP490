@@ -1,0 +1,13 @@
+D:\SEP490\SEP490\BE\RUNAHMS-main\Authentication\PayOSService\bin\Debug\net8.0\PayOSService.deps.json
+D:\SEP490\SEP490\BE\RUNAHMS-main\Authentication\PayOSService\bin\Debug\net8.0\PayOSService.dll
+D:\SEP490\SEP490\BE\RUNAHMS-main\Authentication\PayOSService\bin\Debug\net8.0\PayOSService.pdb
+D:\SEP490\SEP490\BE\RUNAHMS-main\Authentication\PayOSService\obj\Debug\net8.0\PayOSService.csproj.AssemblyReference.cache
+D:\SEP490\SEP490\BE\RUNAHMS-main\Authentication\PayOSService\obj\Debug\net8.0\PayOSService.GeneratedMSBuildEditorConfig.editorconfig
+D:\SEP490\SEP490\BE\RUNAHMS-main\Authentication\PayOSService\obj\Debug\net8.0\PayOSService.AssemblyInfoInputs.cache
+D:\SEP490\SEP490\BE\RUNAHMS-main\Authentication\PayOSService\obj\Debug\net8.0\PayOSService.AssemblyInfo.cs
+D:\SEP490\SEP490\BE\RUNAHMS-main\Authentication\PayOSService\obj\Debug\net8.0\PayOSService.csproj.CoreCompileInputs.cache
+D:\SEP490\SEP490\BE\RUNAHMS-main\Authentication\PayOSService\obj\Debug\net8.0\PayOSService.sourcelink.json
+D:\SEP490\SEP490\BE\RUNAHMS-main\Authentication\PayOSService\obj\Debug\net8.0\PayOSService.dll
+D:\SEP490\SEP490\BE\RUNAHMS-main\Authentication\PayOSService\obj\Debug\net8.0\refint\PayOSService.dll
+D:\SEP490\SEP490\BE\RUNAHMS-main\Authentication\PayOSService\obj\Debug\net8.0\PayOSService.pdb
+D:\SEP490\SEP490\BE\RUNAHMS-main\Authentication\PayOSService\obj\Debug\net8.0\ref\PayOSService.dll

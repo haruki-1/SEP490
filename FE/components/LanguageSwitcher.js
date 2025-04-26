@@ -20,7 +20,13 @@ export default function LanguageSwitcher() {
 			<DropdownMenuTrigger asChild>
 				<Button variant='ghost' size='sm' className='flex items-center gap-2 px-3 rounded-md hover:bg-gray-100'>
 					<Globe className='w-4 h-4' />
-					<span>{router.locale === 'en' ? 'English' : 'Tiếng Việt'}</span>
+						<span>
+							{router.locale === 'en' 
+								? 'English' 
+								: router.locale === 'ja' 
+								? '日本語' 
+								: 'Tiếng Việt'}
+						</span>
 				</Button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align='end'>
@@ -35,6 +41,12 @@ export default function LanguageSwitcher() {
 					className={router.locale === 'vi' ? 'bg-gray-100 font-medium' : ''}
 				>
 					Tiếng Việt
+				</DropdownMenuItem>
+				<DropdownMenuItem
+					onClick={() => handleLanguageChange('ja')}
+					className={router.locale === 'ja' ? 'bg-gray-100 font-medium' : ''}
+				>
+					日本語
 				</DropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>

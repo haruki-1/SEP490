@@ -116,7 +116,7 @@ const Refund = () => {
 								onChange={handleHomeStayChange}
 								className='px-4 py-2 pr-8 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500'
 							>
-								<option value=''>All HomeStays</option>
+								<option value=''>Select HomeStays</option>
 								{!loadingHomeStay &&
 									DataHomeStay?.map((homeStay) => (
 										<option key={homeStay.id} value={homeStay.name}>

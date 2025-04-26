@@ -280,7 +280,7 @@ const BookingHomestay = () => {
 												{booking.checkOutDate}
 											</td>
 											<td className='px-6 py-4 text-sm text-gray-500 whitespace-nowrap'>
-												{booking.totalPrice?.toLocaleString() || 'N/A'}
+												{booking.totalPrice?.toLocaleString() || 'N/A'} VND
 											</td>
 											<td className='px-6 py-4 whitespace-nowrap'>
 												<span
