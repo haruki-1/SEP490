@@ -38,7 +38,8 @@ namespace BusinessObject.Entities
         public Guid UserID { get; set; }
 
         [ForeignKey("UserID")]
-        public User User { get; set; }     
+        public User User { get; set; }    
+        
         public ICollection<Calendar> Calendars { get; set; }
 
     }
