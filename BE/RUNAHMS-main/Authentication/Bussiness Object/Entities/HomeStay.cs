@@ -33,6 +33,9 @@ namespace BusinessObject.Entities
         [MaxLength(255)]
         public string City { get; set; }
 
+        [MaxLength(255)]
+        public string? Password { get; set; }
+
 
         [MaxLength(255)]
         public string CheckInTime {  get; set; }

@@ -96,6 +96,7 @@ namespace API.Controllers
                     City = request.City,
                     OpenIn = request.OpenIn,
                     Standar = request.Standar,
+                    Password = request.Password,
                     UserID = userID
                 };
                 await _homeStayRepository.AddAsync(createHomeStay);
@@ -203,6 +204,7 @@ namespace API.Controllers
                 getHomeStay.CheckOutTime = request.CheckOutTime ?? getHomeStay.CheckOutTime;
                 getHomeStay.CheckInTime = request.CheckInTime ?? getHomeStay.CheckInTime;
                 getHomeStay.Address = request.Address ?? getHomeStay.Address;
+                getHomeStay.Password = request.Password ?? getHomeStay.Password; 
                 getHomeStay.OpenIn = request.OpenIn = request.OpenIn != 0 ? request.OpenIn : getHomeStay.OpenIn;
                 getHomeStay.Description = request.Description ?? getHomeStay.Description;
                 getHomeStay.City = request.City ?? getHomeStay.City;
@@ -393,6 +395,7 @@ namespace API.Controllers
                 getDetail.CheckInTime,
                 getDetail.CheckOutTime,
                 getDetail.OpenIn,
+                getDetail.Password,
                 getDetail.Description,
                 getDetail.Standar,
                 getDetail.isDeleted,

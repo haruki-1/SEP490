@@ -173,40 +173,42 @@ const HomeStayDetail = () => {
 
 	const handleBookNow = () => {
 		if (!isAuthenticated) {
-			toast.error('Please log in to book this homestay');
-
-			setTimeout(() => {
-				router.push('/auth/login'); // <- Đường dẫn về login
-			}, 1500); // chờ 1.5 giây để toast hiển thị xong
-			return;
+		  toast.error('Please log in to book this homestay');
+		  setTimeout(() => router.push('/auth/login'), 1500);
+		  return;
 		}
+	  
 		if (!dataProfile?.address || !dataProfile?.avatar) {
-			toast.error('Please complete your profile with address and avatar before booking');
-
-			setTimeout(() => {
-				router.push('/profile'); // <- Đường dẫn đến trang hồ sơ
-			}, 1500); // chờ 1.5 giây để toast hiển thị xong
-			return;
+		  toast.error('Please complete your profile with address and avatar before booking');
+		  setTimeout(() => router.push('/profile'), 1500);
+		  return;
 		}
-
+	  
 		if (homestay.isBooked) {
-			toast.error('This homestay is already booked');
-			return;
+		  toast.error('This homestay is already booked');
+		  return;
 		}
-
+	  
 		if (selectedDates.length === 0) {
-			toast.error('Please select at least one date to book.');
-			return;
+		  toast.error('Please select at least one date to book.');
+		  return;
 		}
-
+	  
+		// 🛠 Tính Check-in và Check-out đúng:
+		const sortedDates = [...selectedDates].sort((a, b) => a - b); // sắp xếp
+		const checkInDate = homestay.calendar.find(c => c.id === sortedDates[0])?.date;
+		const checkOutDate = homestay.calendar.find(c => c.id === sortedDates[sortedDates.length - 1])?.date;
+	  
 		const bookingData = {
-			calenders: selectedDates.map((calenderID) => ({ calenderID })),
-			voucherCode: voucherCode || null,
-			isOnline: isOnline,
+		  calenders: selectedDates.map((calenderID) => ({ calenderID })),
+		  voucherCode: voucherCode || null,
+		  isOnline: isOnline,
+		  checkInDate: checkInDate,
+		  checkOutDate: checkOutDate,
 		};
-
+	  
 		bookingMutation.mutate(bookingData);
-	};
+	  };
 
 	const handleSelectVoucher = (code) => {
 		setVoucherCode(code);

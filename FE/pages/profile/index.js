@@ -22,6 +22,7 @@ import { getUserVouchers } from 'pages/api/voucher/getUserVouchers';
 import { getBookingHistory } from 'pages/api/homestay/getHomeStayByUser';
 import { cancelBooking } from 'pages/api/booking/cancelBooking';
 import FeedbackModal from '@/components/FeedbackModal';
+import { useRouter } from 'next/router';
 
 export default function ProfilePage() {
 	const { dataProfile, refetch } = useAuth();
@@ -31,6 +32,8 @@ export default function ProfilePage() {
 	const [statusFilter, setStatusFilter] = useState('All');
 	const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
 	const [selectedHomeStay, setSelectedHomeStay] = useState(null);
+	const router = useRouter();
+
 
 	// Profile state
 	const [profile, setProfile] = useState({
@@ -340,6 +343,14 @@ export default function ProfilePage() {
 										>
 											<Ticket className='w-4 h-4 mr-2' />
 											My Vouchers
+										</Button>
+										<Button
+											variant={activeTab === 'myhomestay' ? 'default' : 'ghost'}
+											className='justify-start w-full'
+											onClick={() => setActiveTab('myhomestay')}
+										>
+											<Home className='w-4 h-4 mr-2' />
+											My Homestay
 										</Button>
 										<Button
 											variant={activeTab === 'security' ? 'default' : 'ghost'}
@@ -792,7 +803,66 @@ export default function ProfilePage() {
 									</CardContent>
 								</Card>
 							)}
-
+							{activeTab === 'myhomestay' && (
+								<Card>
+									<CardHeader>
+									<CardTitle>My Homestay</CardTitle>
+									<CardDescription>View the homestays you have successfully paid for.</CardDescription>
+									</CardHeader>
+									<CardContent>
+									{bookingsLoading ? (
+										<div className='flex items-center justify-center h-40'>
+										<div className='w-10 h-10 border-t-4 border-blue-500 rounded-full animate-spin'></div>
+										</div>
+									) : bookingsError ? (
+										<div className='p-4 text-red-500'>Error loading bookings. Please try again later.</div>
+									) : (
+										<div className='space-y-4'>
+										{bookings?.filter(b => b.status === 'Paid').length === 0 ? (
+											<div className='p-6 text-center rounded-lg bg-gray-50'>
+											<Home className='w-10 h-10 mx-auto text-gray-400' />
+											<h3 className='mt-4 text-lg font-medium'>No homestays found</h3>
+											<p className='mt-2 text-gray-500'>You haven't paid for any homestays yet.</p>
+											</div>
+										) : (
+											bookings?.filter(b => b.status === 'Paid').map((booking) => (
+											<Card
+												key={booking.id || booking.bookingID}
+												className='overflow-hidden hover:shadow-lg cursor-pointer'
+												onClick={() => router.push(`/profile/view-detail/${booking.homeStay?.id}`)}
+											>
+												<div className='flex flex-col md:flex-row'>
+												<div className='relative w-full h-48 md:w-1/3'>
+													{booking.homeStay?.mainImage ? (
+													<Image
+														src={booking.homeStay?.mainImage}
+														alt='homestay'
+														fill
+														className='object-cover'
+													/>
+													) : (
+													<div className='flex items-center justify-center w-full h-full bg-gray-200'>
+														<Home className='w-12 h-12 text-gray-400' />
+													</div>
+													)}
+												</div>
+												<div className='flex-1 p-4'>
+													<div className='flex flex-col justify-between h-full'>
+													<div>
+														<h3 className='text-lg font-semibold'>{booking.homeStay?.name || 'Homestay'}</h3>
+														<p className='text-sm text-gray-500'>{booking.homeStay?.address}</p>
+													</div>
+													</div>
+												</div>
+												</div>
+											</Card>
+											))
+										)}
+										</div>
+									)}
+									</CardContent>
+								</Card>
+								)}
 							{/* Security Tab */}
 							{activeTab === 'security' && (
 								<Card>

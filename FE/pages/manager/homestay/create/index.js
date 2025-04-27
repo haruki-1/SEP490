@@ -36,6 +36,7 @@ const CreateHomeStay = () => {
 		checkOutTime: '',
 		images: [],
 		price: '',
+		password: '',
 		isDeleted: false,
 		date: '',
 	});
@@ -63,6 +64,7 @@ const CreateHomeStay = () => {
 				images: [],
 				price: '',
 				isDeleted: false,
+				password: '',
 				date: '',
 			});
 			// Reset validation states
@@ -478,6 +480,17 @@ const CreateHomeStay = () => {
 							placeholderText='Date'
 							className='w-full px-2 py-1 bg-transparent border rounded'
 							withPortal
+						/>
+					</div>
+					<div>
+					<Label className='block mb-2 font-medium'>Password</Label>
+					<Input
+						name="password"
+						value={formData.password}
+						onChange={(e) => setPassword(e.target.value)}
+						placeholder="Enter password for Homestay"
+						className='w-full px-2 py-1 bg-transparent border rounded'
+						withPortal
 						/>
 					</div>
 				</div>

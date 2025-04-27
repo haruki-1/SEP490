@@ -9,13 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RUNAHMS-API", "RUNAHMS-API\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bussiness Object", "Bussiness Object\Bussiness Object.csproj", "{7501CA43-744D-43EC-B51E-0D5FE2A43FF1}"
 EndProject
-
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APITesting", "APITesting\APITesting.csproj", "{D0E0E37B-A771-4324-B73C-263E30EF37C9}"
-EndProject
-
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PayOSService", "PayOSService\PayOSService.csproj", "{20D6DABC-FC25-4CAB-A3D0-626BAC98290E}"
 EndProject
-
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,17 +29,10 @@ Global
 		{7501CA43-744D-43EC-B51E-0D5FE2A43FF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7501CA43-744D-43EC-B51E-0D5FE2A43FF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7501CA43-744D-43EC-B51E-0D5FE2A43FF1}.Release|Any CPU.Build.0 = Release|Any CPU
-
-		{D0E0E37B-A771-4324-B73C-263E30EF37C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D0E0E37B-A771-4324-B73C-263E30EF37C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D0E0E37B-A771-4324-B73C-263E30EF37C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D0E0E37B-A771-4324-B73C-263E30EF37C9}.Release|Any CPU.Build.0 = Release|Any CPU
-
 		{20D6DABC-FC25-4CAB-A3D0-626BAC98290E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{20D6DABC-FC25-4CAB-A3D0-626BAC98290E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{20D6DABC-FC25-4CAB-A3D0-626BAC98290E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{20D6DABC-FC25-4CAB-A3D0-626BAC98290E}.Release|Any CPU.Build.0 = Release|Any CPU
-
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -2960,6 +2960,10 @@
             },
             "nullable": true
           },
+          "password": {
+            "type": "string",
+            "nullable": true
+          },
           "date": {
             "type": "string",
             "format": "date-time"
@@ -3374,6 +3378,10 @@
             "type": "string",
             "nullable": true
           },
+          "password": {
+            "type": "string",
+            "nullable": true
+          },
           "city": {
             "type": "string",
             "nullable": true
@@ -3624,6 +3632,11 @@
             "nullable": true
           },
           "city": {
+            "maxLength": 255,
+            "type": "string",
+            "nullable": true
+          },
+          "password": {
             "maxLength": 255,
             "type": "string",
             "nullable": true

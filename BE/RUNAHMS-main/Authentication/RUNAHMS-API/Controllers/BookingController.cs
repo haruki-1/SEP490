@@ -54,7 +54,7 @@ namespace API.Controllers
                 CheckInDate = b.CheckInDate.ToString("dd/MM/yyyy HH:mm"),
                 CheckOutDate = b.CheckOutDate.ToString("dd/MM/yyyy HH:mm"),
                 UnitPrice = b.UnitPrice,
-                TotalPrice = b.TotalPrice.ToString("C", new System.Globalization.CultureInfo("vi-VN")),
+                TotalPrice = string.Format("{0:N0} VND", b.TotalPrice),
                 Status = b.Status,
                 ReasonCancel = b.ReasonCancel,
                 HomeStay = new

@@ -58,6 +58,7 @@ builder.Services.AddSwaggerGen(opt =>
     });
 });
 
+
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -145,7 +146,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseStaticFiles();
 app.MapControllers();
 
 app.UseMiddleware<ApiUserIdMiddleware>();

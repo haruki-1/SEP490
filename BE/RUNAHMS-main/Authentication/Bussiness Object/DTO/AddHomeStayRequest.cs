@@ -22,7 +22,8 @@ namespace BusinessObject.DTO
         public string CheckInTime {  get; set; }
         public string CheckOutTime { get; set; }
         public List<string> Images { get; set; } = new List<string>();
-        
+        public string Password { get; set; }
+
         public DateTime Date {  get; set; }        
         public bool IsDeleted { get; set; } = false;
     }

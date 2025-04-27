@@ -39,6 +39,7 @@ const UpdateHomeStay = () => {
 		standar: 1,
 		address: '',
 		city: '',
+		password: '',
 		checkInTime: '',
 		checkOutTime: '',
 	});
@@ -55,6 +56,7 @@ const UpdateHomeStay = () => {
 				standar: data.standar || 1,
 				address: data.address || '',
 				city: data.city || '',
+				password:data.password ||'',
 				checkInTime: data.checkInTime || '',
 				checkOutTime: data.checkOutTime || '',
 			});
@@ -230,7 +232,15 @@ const UpdateHomeStay = () => {
 						/>
 					</div>
 				</div>
-
+					<div>
+						<Label>Password</Label>
+							<Input
+								name="password"
+								value={formData.password}
+								onChange={handleChange}
+								placeholder="Enter password for Homestay"								
+							/>
+					</div>
 				<div>
 					<Label>Additional Images</Label>
 					<div className='grid grid-cols-4 gap-4 mb-4 sm:grid-cols-6 lg:grid-cols-8'>

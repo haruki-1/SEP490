@@ -81,11 +81,8 @@ const Refund = () => {
 
 	// Format currency
 	const formatCurrency = (amount) => {
-		return new Intl.NumberFormat('en-US', {
-			style: 'currency',
-			currency: 'VND',
-		}).format(amount);
-	};
+		return `${new Intl.NumberFormat('vi-VN').format(amount)} VND`;
+	  };
 
 	const handleSelectRefund = (refund) => {
 		setSelectedRefund(refund);

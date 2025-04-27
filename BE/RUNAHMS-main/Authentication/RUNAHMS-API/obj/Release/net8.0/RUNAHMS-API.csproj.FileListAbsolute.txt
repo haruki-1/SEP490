@@ -109,3 +109,4 @@ D:\SEP490\SEP490\BE\RUNAHMS-main\Authentication\RUNAHMS-API\obj\Release\net8.0\r
 D:\SEP490\SEP490\BE\RUNAHMS-main\Authentication\RUNAHMS-API\obj\Release\net8.0\RUNAHMS-API.pdb
 D:\SEP490\SEP490\BE\RUNAHMS-main\Authentication\RUNAHMS-API\obj\Release\net8.0\RUNAHMS-API.genruntimeconfig.cache
 D:\SEP490\SEP490\BE\RUNAHMS-main\Authentication\RUNAHMS-API\obj\Release\net8.0\ref\RUNAHMS-API.dll
+D:\SEP490\SEP490\BE\RUNAHMS-main\Authentication\RUNAHMS-API\bin\Release\net8.0\RUNAHMS-API.staticwebassets.runtime.json

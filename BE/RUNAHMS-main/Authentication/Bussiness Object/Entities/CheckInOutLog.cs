@@ -14,6 +14,6 @@ namespace BusinessObject.Entities
         public string? Note { get; set; }
         public DateTime ActionTime { get; set; } = DateTime.Now;
         public bool IsDeleted { get; set; } = false;
-        public ICollection<CheckInOutImage>? Images { get; set; }
+        public ICollection<CheckInOutImage> Images { get; set; }
     }
 }

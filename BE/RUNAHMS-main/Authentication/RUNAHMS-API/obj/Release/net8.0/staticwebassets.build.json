@@ -1,12 +1,125 @@
 {
   "Version": 1,
-  "Hash": "LoC4jTJv2nrFamUnRUFE2wnX6d2xLJOgJgnUhac5MRU=",
+  "Hash": "0m+sC+3umqDLHgqwKRNoEoyRatsVae50zvShFa/5ARs=",
   "Source": "RUNAHMS-API",
   "BasePath": "_content/RUNAHMS-API",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],
-  "DiscoveryPatterns": [],
-  "Assets": [],
-  "Endpoints": []
+  "DiscoveryPatterns": [
+    {
+      "Name": "RUNAHMS-API\\wwwroot",
+      "Source": "RUNAHMS-API",
+      "ContentRoot": "D:\\SEP490\\SEP490\\BE\\RUNAHMS-main\\Authentication\\RUNAHMS-API\\wwwroot\\",
+      "BasePath": "_content/RUNAHMS-API",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "D:\\SEP490\\SEP490\\BE\\RUNAHMS-main\\Authentication\\RUNAHMS-API\\wwwroot\\images\\e838ab78-15cd-43b2-bf20-a75113608413.png",
+      "SourceId": "RUNAHMS-API",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\SEP490\\SEP490\\BE\\RUNAHMS-main\\Authentication\\RUNAHMS-API\\wwwroot\\",
+      "BasePath": "_content/RUNAHMS-API",
+      "RelativePath": "images/e838ab78-15cd-43b2-bf20-a75113608413#[.{fingerprint}]?.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "d828ag46l1",
+      "Integrity": "TQf7H+ZGbbsasrRxuw4ZyNq5bVGOfQrzpobHcydB6pE=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\e838ab78-15cd-43b2-bf20-a75113608413.png"
+    }
+  ],
+  "Endpoints": [
+    {
+      "Route": "images/e838ab78-15cd-43b2-bf20-a75113608413.d828ag46l1.png",
+      "AssetFile": "D:\\SEP490\\SEP490\\BE\\RUNAHMS-main\\Authentication\\RUNAHMS-API\\wwwroot\\images\\e838ab78-15cd-43b2-bf20-a75113608413.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "20199"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"TQf7H+ZGbbsasrRxuw4ZyNq5bVGOfQrzpobHcydB6pE=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sun, 27 Apr 2025 13:15:50 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "d828ag46l1"
+        },
+        {
+          "Name": "label",
+          "Value": "images/e838ab78-15cd-43b2-bf20-a75113608413.png"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-TQf7H+ZGbbsasrRxuw4ZyNq5bVGOfQrzpobHcydB6pE="
+        }
+      ]
+    },
+    {
+      "Route": "images/e838ab78-15cd-43b2-bf20-a75113608413.png",
+      "AssetFile": "D:\\SEP490\\SEP490\\BE\\RUNAHMS-main\\Authentication\\RUNAHMS-API\\wwwroot\\images\\e838ab78-15cd-43b2-bf20-a75113608413.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "20199"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"TQf7H+ZGbbsasrRxuw4ZyNq5bVGOfQrzpobHcydB6pE=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sun, 27 Apr 2025 13:15:50 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-TQf7H+ZGbbsasrRxuw4ZyNq5bVGOfQrzpobHcydB6pE="
+        }
+      ]
+    }
+  ]
 }

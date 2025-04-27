@@ -1,6 +1,7 @@
 ﻿using BusinessObject.DTO;
 using BusinessObject.Entities;
 using BusinessObject.Interfaces;
+using Bussiness_Object.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,6 +18,7 @@ namespace API.Controllers
             {
                 if (request == null) return BadRequest();
 
+                // 1. Tạo mới 1 Log entry
                 var log = new CheckInOutLog
                 {
                     BookingId = request.BookingId,
@@ -26,27 +28,44 @@ namespace API.Controllers
                 };
 
                 await _logRepository.AddAsync(log);
-                await _logRepository.SaveAsync();
+                await _logRepository.SaveAsync(); // 🆗 Lưu CheckInOutLog trước
 
-                // Xử lý ảnh upload
+                // 2. Nếu có ảnh thì lưu vào CheckInOutImage thay vì CheckInOutLog
                 if (request.Images != null && request.Images.Any())
                 {
                     foreach (var file in request.Images)
                     {
-                        var fileName = Guid.NewGuid() + Path.GetExtension(file.FileName);
-                        var uploadPath = Path.Combine(_env.WebRootPath, "uploads", fileName);
-
-                        Directory.CreateDirectory(Path.GetDirectoryName(uploadPath)!);
-
-                        using var stream = new FileStream(uploadPath, FileMode.Create);
-                        await file.CopyToAsync(stream);
-
-                        var image = new CheckInOutImage
+                        if (file != null && file.Length > 0 && !string.IsNullOrEmpty(file.FileName))
                         {
-                            LogId = log.Id,
-                            ImageUrl = "/uploads/" + fileName
-                        };
-                        await _imageRepository.AddAsync(image);
+                            var fileName = Guid.NewGuid() + Path.GetExtension(file.FileName);
+
+                            // Thư mục lưu ảnh
+                            var uploadDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
+                            var uploadPath = Path.Combine(uploadDirectory, fileName);
+
+                            // Tạo thư mục nếu chưa tồn tại
+                            if (!Directory.Exists(uploadDirectory))
+                            {
+                                Directory.CreateDirectory(uploadDirectory);
+                            }
+
+                            using var stream = new FileStream(uploadPath, FileMode.Create);
+                            await file.CopyToAsync(stream);
+
+                            // Tạo bản ghi mới cho CheckInOutImage, liên kết với log vừa tạo
+                            var imageUrl = "/images/" + fileName; // URL để truy cập ảnh
+
+                            var image = new CheckInOutImage
+                            {
+                                LogId = log.Id,  // Liên kết ảnh với log vừa tạo
+                                ImageUrl = imageUrl
+                            };
+                            await _imageRepository.AddAsync(image);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Invalid file detected.");
+                        }
                     }
                     await _imageRepository.SaveAsync();
                 }
@@ -59,21 +78,34 @@ namespace API.Controllers
             }
         }
 
+
         [HttpGet("get-all")]
         public async Task<IActionResult> GetAll()
         {
             try
             {
-                var list = await _logRepository.Find(x => true)
-                    .Include(x => x.Images)
+                var logs = await _logRepository.Find(x => true)
+                    .Include(x => x.Images) // Include Images dựa theo LogId
+                    .Select(log => new CheckInOutLogDTO
+                    {
+                        Id = log.Id,
+                        BookingId = log.BookingId,
+                        ActionType = log.ActionType,
+                        Note = log.Note,
+                        ActionTime = log.ActionTime,
+                        Images = log.Images != null
+                                ? log.Images.Select(img => img.ImageUrl).ToList()
+                                : new List<string>() // Nếu không có ảnh thì trả array rỗng
+                    })
                     .ToListAsync();
 
-                if (list.Count == 0) return NotFound(new { Message = "No logs found" });
-                return Ok(list);
+                if (logs.Count == 0) return NotFound(new { Message = "No logs found" });
+
+                return Ok(logs);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.ToString());
+                return StatusCode(500, ex.Message);
             }
         }
 
