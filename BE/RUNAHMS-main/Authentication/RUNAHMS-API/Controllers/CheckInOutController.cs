@@ -2,6 +2,7 @@
 using BusinessObject.Entities;
 using BusinessObject.Interfaces;
 using Bussiness_Object.DTO;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,7 +10,12 @@ namespace API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class CheckInOutLogController(IRepository<CheckInOutLog> _logRepository, IRepository<CheckInOutImage> _imageRepository, IWebHostEnvironment _env) : ControllerBase
+    public class CheckInOutLogController(IRepository<CheckInOutLog> _logRepository,
+        IRepository<CheckInOutImage> _imageRepository,
+        IWebHostEnvironment _env,
+        IBookingRepository _bookingRepository,
+        IRepository<HomeStay> _homeStayRepository,
+        IEmailSender _emailSender) : ControllerBase
     {
         [HttpPost("add-log")]
         public async Task<IActionResult> AddLog([FromForm] CheckInOutRequest request)
@@ -17,6 +23,46 @@ namespace API.Controllers
             try
             {
                 if (request == null) return BadRequest();
+                var getBooking = await _bookingRepository.FindWithInclude()
+                                                   .Include(x => x.User)
+                                                   .FirstOrDefaultAsync(x => x.Id == request.BookingId);
+                if (getBooking == null)
+                {
+                    return NotFound("Booking not found");
+                }
+                if (request.ActionType == "CheckIn")
+                {
+                    var getHomeStay = await _homeStayRepository.FindWithInclude().FirstOrDefaultAsync(x => x.Name.Equals(getBooking.HomeStayName));
+                    if (getHomeStay != null)
+                    {
+
+                        string emailContent = $@"
+                <p>Xin chào {getBooking.User.FullName},</p>
+
+                <p>Cảm ơn bạn đã đặt phòng với chúng tôi! Dưới đây là thông tin chi tiết cho kỳ nghỉ của bạn:</p>
+
+                <ul>
+                    <li><b>Check-in:</b> {getBooking.CheckInDate:dd/MM/yyyy HH:mm}</li>
+                    <li><b>Check-out:</b> {getBooking.CheckOutDate:dd/MM/yyyy HH:mm}</li>
+                </ul>
+
+                <h3 style='color: #2E86C1;'>🔒 Mật mã mở khóa cửa của home stay {getBooking.HomeStayName}:</h3>
+                <p style='font-size: 20px; font-weight: bold; background-color: #f2f2f2; padding: 10px; width: fit-content; border-radius: 8px;'>
+                    {getHomeStay.Password}
+                </p>
+
+                <p>Xin lưu ý: Mật mã này sẽ có hiệu lực từ thời gian Check-in đến Check-out.</p>
+
+                <br>
+
+                <p>Chúng tôi mong được chào đón bạn sớm!</p>
+
+                <p style='color: gray;'>Trân trọng,<br>Đội ngũ khách sạn</p>
+                ";
+                    await _emailSender.SendEmailAsync(getBooking.User.Email, "Door Password", emailContent);
+                    }
+                }
+
 
                 // 1. Tạo mới 1 Log entry
                 var log = new CheckInOutLog

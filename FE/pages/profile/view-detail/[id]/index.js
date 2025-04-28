@@ -6,23 +6,22 @@ import {
   Star,
   Coffee,
   Check,
+  Badge,
 } from 'lucide-react';
 import Image from 'next/image';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { getHomeStayDetail } from 'pages/api/homestay/getHomeStayDetail';
 import MainLayout from 'pages/layout';
 import React, { useEffect, useState } from 'react';
-import { PhotoProvider, PhotoView } from 'react-photo-view';
 import 'react-photo-view/dist/react-photo-view.css';
-import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
-import { Navigation, Pagination, EffectFade, Autoplay } from 'swiper/modules';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import { useTranslation } from 'next-i18next';
 import { toast } from 'sonner';
 import { addCheckInOutLog } from 'pages/api/checklog/addCheckInOutLog';
 import { useAuth } from 'context/AuthProvider';
+import { getBookingHistory } from 'pages/api/homestay/getHomeStayByUser';
+import { Card } from '@/components/components/ui/card';
 
 const HomeStayDetail = () => {
   const { id } = useParams() ?? {};
@@ -31,24 +30,34 @@ const HomeStayDetail = () => {
   const bookingIdFromQuery = searchParams.get('bookingId');
   const { t } = useTranslation('common');
   const { dataProfile, refetch } = useAuth();
-
   const [bookingId, setBookingId] = useState('');
   const [note, setNote] = useState('');
   const [images, setImages] = useState([]);
   const [isCheckedIn, setIsCheckedIn] = useState(false);
   const [isCheckedOut, setIsCheckedOut] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+  const [statusFilter, setStatusFilter] = useState('All');
 
-  const { data, isLoading } = useQuery({
-    queryKey: ['homeStayDetail', id],
-    queryFn: () => getHomeStayDetail(id),
-    enabled: !!id,
+
+  const {
+    data: bookings,
+    isLoading: bookingsLoading,
+    error: bookingsError,
+  } = useQuery({
+    queryKey: ['historyBooking'],
+    queryFn: getBookingHistory,
+    enabled: isMounted && !!dataProfile?.id,
   });
 
-  const homestay = data || [];
+  
+	const filteredBookings = Array.isArray(bookings)
+	? bookings.filter(
+			(booking) => statusFilter === 'All' || booking.status === statusFilter
+		)
+	: [];
 
   useEffect(() => {
     if (!bookingIdFromQuery) {
-      toast.error('Booking ID not found!');
     } else {
       setBookingId(bookingIdFromQuery);
     }
@@ -83,8 +92,6 @@ const HomeStayDetail = () => {
       toast.success('Check-in successful!');
       startAutoCheckoutTimer();
     } catch (error) {
-      console.error('Check-in error:', error.response || error);
-      toast.error('Failed to check-in!');
     }
   };
 
@@ -93,7 +100,7 @@ const HomeStayDetail = () => {
       const formData = new FormData();
       formData.append('BookingId', bookingId);
       formData.append('ActionType', 'CheckOut');
-      formData.append('Note', '');
+      formData.append('Note', note);
 
       await addCheckInOutLog(formData);
       setIsCheckedOut(true);
@@ -132,52 +139,48 @@ const HomeStayDetail = () => {
             <ArrowLeft className='w-4 h-4 mr-2' />
             {t('backto')}
           </Button>
-
-          <div className='p-4 space-y-6 bg-white shadow-lg sm:p-6 lg:p-8 rounded-2xl'>
-            <PhotoProvider>
-              <div className='flex flex-col h-full gap-4'>
-                <div className='relative overflow-hidden shadow-lg rounded-2xl aspect-video'>
-                  <Swiper
-                    modules={[Navigation, Pagination, EffectFade, Autoplay]}
-                    effect='fade'
-                    navigation
-                    pagination={{ clickable: true }}
-                    autoplay={{ delay: 5000, disableOnInteraction: false }}
-                    loop={homestay?.homeStayImage?.length > 1}
-                    className='w-full h-full'
-                  >
-                    {homestay?.homeStayImage?.map((img, idx) => (
-                      <SwiperSlide key={idx}>
-                        <PhotoView src={img.image}>
-                          <Image src={img.image} alt={homestay.name} fill className='object-cover' />
-                        </PhotoView>
-                      </SwiperSlide>
-                    ))}
-                  </Swiper>
-
-                  {homestay.isBooked && (
-                    <div className='absolute top-4 left-4 z-10 bg-red-500 text-white px-4 py-2 rounded-lg shadow-md font-bold'>
-                      <span className='mr-1 animate-pulse'>●</span> BOOKED
-                    </div>
-                  )}
-                </div>
-              </div>
-            </PhotoProvider>
-
-            <div className='flex flex-col gap-8'>
-              <div>
-                <h1 className='text-2xl font-bold'>{homestay.name}</h1>
-                <div className='flex items-center text-gray-500'>
-                  <MapPin className='w-4 h-4 mr-1 text-blue-500' />
-                  <span>{homestay.address}, {homestay.city}</span>
-                </div>
-                <div className='flex items-center mt-1'>
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className={`w-5 h-5 ${homestay.standar > i ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`} />
-                  ))}
-                </div>
-              </div>
-
+          
+              {/* Homestay Details */}
+              <div className='space-y-4'>
+								{filteredBookings .filter(booking => booking.status === 'Paid' &&
+                (booking.id === bookingIdFromQuery || booking.bookingID === bookingIdFromQuery)
+                ).map((booking) => (
+									<Card
+									key={booking.id || booking.bookingID}
+									className='overflow-hidden'
+									>
+									<div className='flex flex-col md:flex-row'>
+										<div className='relative w-full h-48 md:w-1/3'>
+										{booking.homeStay?.mainImage ? (
+											<Image
+											src={booking.homeStay?.mainImage}
+											alt='homestay-history'
+											fill
+											className='object-cover'
+											/>
+										) : (
+											<div className='flex items-center justify-center w-full h-full bg-gray-200'>
+											<Home className='w-12 h-12 text-gray-400' />
+											</div>
+										)}
+										</div>
+										<div className='flex-1 p-4'>
+										<div className='flex flex-col justify-between h-full'>
+											<div>
+											<h3 className='text-lg font-semibold'>
+												{booking.homeStay?.name || 'Homestay'}
+											</h3>
+											<div className='flex items-center mt-1 text-sm text-gray-500'>
+												<MapPin className='w-4 h-4 mr-1' />
+												<span>{booking.homeStay?.address}</span>
+											</div>
+											</div>
+										</div>
+										</div>
+									</div>
+								</Card>
+								))}
+								</div>
               {/* Checkin - Checkout Section */}
               <div className='flex flex-col gap-4'>
                 <input type='file' multiple onChange={handleFileChange} className='border p-2 rounded' />
@@ -212,10 +215,7 @@ const HomeStayDetail = () => {
                   </div>
                 )}
               </div>
-            </div>
-
-          </div>
-        </div>
+           </div>
       </div>
     </MainLayout>
   );

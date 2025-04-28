@@ -519,27 +519,7 @@ export default function ProfilePage() {
 							)}
 
 							{/* Status Filter */}
-							<div className='flex flex-wrap items-center justify-between mt-4'>
-								<div className='text-sm text-gray-500'>{t('filter-status')}</div>
-								<div className='flex flex-wrap gap-2 mt-2 sm:mt-0'>
-								{['All', 'Pending', 'Completed', 'Canceled', 'Confirmed'].map(
-									(status) => (
-									<Badge
-										key={status}
-										variant={statusFilter === status ? 'default' : 'outline'}
-										className={`cursor-pointer ${
-										statusFilter === status
-											? 'bg-primary'
-											: 'hover:bg-primary/10'
-										}`}
-										onClick={() => setStatusFilter(status)}
-									>
-										{t(status.toLowerCase())}
-									</Badge>
-									)
-								)}
-								</div>
-							</div>
+							
 							</CardHeader>
 							<CardContent>
 							{bookingsLoading ? (
