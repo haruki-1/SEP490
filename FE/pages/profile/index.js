@@ -803,6 +803,7 @@ export default function ProfilePage() {
 									</CardContent>
 								</Card>
 							)}
+							{/* chỗ checkinout */}
 							{activeTab === 'myhomestay' && (
 								<Card>
 									<CardHeader>
@@ -829,7 +830,7 @@ export default function ProfilePage() {
 											<Card
 												key={booking.id || booking.bookingID}
 												className='overflow-hidden hover:shadow-lg cursor-pointer'
-												onClick={() => router.push(`/profile/view-detail/${booking.homeStay?.id}`)}
+												onClick={() => router.push(`/profile/view-detail/${booking.UserID}?bookingId=${booking.bookingID}`)}
 											>
 												<div className='flex flex-col md:flex-row'>
 												<div className='relative w-full h-48 md:w-1/3'>
