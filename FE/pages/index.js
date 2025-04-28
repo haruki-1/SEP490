@@ -103,7 +103,6 @@ export default function Home() {
 				className="flex items-center gap-2 px-5 py-3 bg-white shadow-md rounded-full font-semibold text-gray-800 hover:bg-gray-100 transition-all"
 			>
 				  <span>{showMap ? t('hideMap') : t('showMap')}</span>
-				{/* Thêm icon nếu cần */}
 				{/* <MapIcon className="w-5 h-5 text-blue-600" /> */}
 			</button>
 			</div>
