@@ -8,8 +8,13 @@ import Link from 'next/link';
 import { Calendar, MapPin, ArrowRight, Clock, Eye, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/components/ui/button';
 import { Badge } from '@/components/components/ui/badge';
+import { useTranslation } from 'react-i18next'; 
+import Loading from 'pages/loading';
+
+// (PostCard, FeaturedPost giữ nguyên, chỉ sửa text phần No Image)
 
 const PostCard = ({ post }) => {
+	const { t } = useTranslation();
 	const formattedDate = format(new Date(post.publishDate), 'dd MMMM, yyyy', { locale: vi });
 
 	return (
@@ -23,23 +28,17 @@ const PostCard = ({ post }) => {
 					/>
 				) : (
 					<div className='flex items-center justify-center w-full h-full bg-gray-100'>
-						<span className='text-gray-400'>No image available</span>
+						<span className='text-gray-400'>{t('no-image')}</span>
 					</div>
 				)}
-
-				{/* Location badge */}
 				<Badge className='absolute text-blue-600 border-0 shadow-sm top-3 left-3 bg-white/90 backdrop-blur-sm'>
 					<MapPin className='w-3 h-3 mr-1' />
 					{post.location}
 				</Badge>
-
-				{/* Date badge */}
 				<Badge className='absolute text-gray-700 border-0 shadow-sm top-3 right-3 bg-white/90 backdrop-blur-sm'>
 					<Calendar className='w-3 h-3 mr-1' />
 					{formattedDate}
 				</Badge>
-
-				{/* Gradient overlay */}
 				<div className='absolute inset-0 transition-opacity bg-gradient-to-t from-black/70 to-transparent opacity-60 group-hover:opacity-80'></div>
 			</div>
 
@@ -55,7 +54,7 @@ const PostCard = ({ post }) => {
 						variant='outline'
 						className='justify-center w-full mt-auto text-blue-600 transition-colors border-blue-200 hover:bg-blue-50 hover:text-blue-700 group-hover:border-blue-300'
 					>
-						Read More
+						{t('read-more')} {/* ✅ */}
 						<ArrowRight className='w-4 h-4 ml-2 transition-transform group-hover:translate-x-1' />
 					</Button>
 				</Link>
@@ -65,6 +64,7 @@ const PostCard = ({ post }) => {
 };
 
 const FeaturedPost = ({ post }) => {
+	const { t } = useTranslation(); // ✅
 	const formattedDate = format(new Date(post.publishDate), 'dd MMMM, yyyy', { locale: vi });
 
 	return (
@@ -81,7 +81,7 @@ const FeaturedPost = ({ post }) => {
 							<div className='absolute inset-0 bg-gradient-to-r from-black/50 via-black/30 to-transparent md:bg-gradient-to-t'></div>
 
 							<div className='absolute bottom-0 left-0 p-6 md:hidden'>
-								<Badge className='mb-2 text-white bg-blue-600 border-0'>Featured Post</Badge>
+								<Badge className='mb-2 text-white bg-blue-600 border-0'>{t('featured-badge')}</Badge>
 								<h2 className='mb-2 text-2xl font-bold text-white'>{post.title}</h2>
 								<div className='flex items-center space-x-3 text-sm text-white/80'>
 									<span className='flex items-center'>
@@ -97,7 +97,7 @@ const FeaturedPost = ({ post }) => {
 						</div>
 					) : (
 						<div className='flex items-center justify-center w-full bg-gray-100 h-96'>
-							<span className='text-gray-400'>No image available</span>
+							<span className='text-gray-400'>{t('no-image')}</span> 
 						</div>
 					)}
 				</div>
@@ -105,7 +105,7 @@ const FeaturedPost = ({ post }) => {
 				<div className='flex flex-col p-6 md:w-1/3'>
 					<div className='flex-grow'>
 						<Badge className='hidden mb-3 text-white bg-blue-600 border-0 md:inline-flex'>
-							Featured Post
+							{t('featured-badge')}
 						</Badge>
 						<h2 className='hidden mb-3 text-2xl font-bold text-gray-800 transition-colors md:text-3xl md:block group-hover:text-blue-600'>
 							{post.title}
@@ -127,7 +127,7 @@ const FeaturedPost = ({ post }) => {
 
 					<Link href={`/posts/${post.id}`} className='mt-4 md:mt-auto'>
 						<Button className='w-full text-white bg-blue-600 hover:bg-blue-700'>
-							Read the Article
+							{t('read-article-button')}
 							<ArrowRight className='w-4 h-4 ml-2 transition-transform group-hover:translate-x-1' />
 						</Button>
 					</Link>
@@ -137,69 +137,37 @@ const FeaturedPost = ({ post }) => {
 	);
 };
 
-const Loading = () => (
-	<div className='flex flex-col w-full space-y-4'>
-		<div className='w-full h-64 bg-gray-100 animate-pulse rounded-xl'></div>
-		<div className='w-3/4 h-8 bg-gray-100 rounded-lg animate-pulse'></div>
-		<div className='w-full h-20 bg-gray-100 rounded-lg animate-pulse'></div>
-		<div className='w-1/2 h-10 bg-gray-100 rounded-lg animate-pulse'></div>
-	</div>
-);
-
-const ErrorDisplay = ({ message }) => (
-	<div className='p-8 text-center border border-red-100 bg-red-50 rounded-xl'>
-		<div className='flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full'>
-			<svg
-				xmlns='http://www.w3.org/2000/svg'
-				className='w-8 h-8 text-red-500'
-				fill='none'
-				viewBox='0 0 24 24'
-				stroke='currentColor'
+const ErrorDisplay = ({ message }) => {
+	const { t } = useTranslation(); 
+	return (
+		<div className='p-8 text-center border border-red-100 bg-red-50 rounded-xl'>
+			...
+			<h3 className='mb-2 text-xl font-bold text-red-800'>{t('error-title')}</h3>
+			<p className='mb-6 text-red-600'>{message || t('error-description')}</p>
+			<Button
+				variant='outline'
+				className='text-red-600 border-red-200 hover:bg-red-50'
+				onClick={() => window.location.reload()}
 			>
-				<path
-					strokeLinecap='round'
-					strokeLinejoin='round'
-					strokeWidth={2}
-					d='M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
-				/>
-			</svg>
+				{t('error-button')}
+			</Button>
 		</div>
-		<h3 className='mb-2 text-xl font-bold text-red-800'>Something went wrong</h3>
-		<p className='mb-6 text-red-600'>{message || 'Unable to load articles. Please try again later.'}</p>
-		<Button
-			variant='outline'
-			className='text-red-600 border-red-200 hover:bg-red-50'
-			onClick={() => window.location.reload()}
-		>
-			Try Again
-		</Button>
-	</div>
-);
+	);
+};
 
-const EmptyState = () => (
-	<div className='p-8 text-center border border-blue-100 bg-blue-50 rounded-xl'>
-		<div className='flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-blue-100 rounded-full'>
-			<svg
-				xmlns='http://www.w3.org/2000/svg'
-				className='w-8 h-8 text-blue-500'
-				fill='none'
-				viewBox='0 0 24 24'
-				stroke='currentColor'
-			>
-				<path
-					strokeLinecap='round'
-					strokeLinejoin='round'
-					strokeWidth={2}
-					d='M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10'
-				/>
-			</svg>
+const EmptyState = () => {
+	const { t } = useTranslation(); 
+	return (
+		<div className='p-8 text-center border border-blue-100 bg-blue-50 rounded-xl'>
+			...
+			<h3 className='mb-2 text-xl font-bold text-blue-800'>{t('empty-title')}</h3>
+			<p className='mb-6 text-blue-600'>{t('empty-description')}</p>
 		</div>
-		<h3 className='mb-2 text-xl font-bold text-blue-800'>No posts yet</h3>
-		<p className='mb-6 text-blue-600'>There are currently no published travel articles. Please check back later!</p>
-	</div>
-);
+	);
+};
 
 const PostPage = () => {
+	const { t } = useTranslation();
 	const { data, isLoading, error } = useQuery({
 		queryKey: ['posts'],
 		queryFn: getAllPost,
@@ -215,11 +183,7 @@ const PostPage = () => {
 	const hasPosts = filteredPosts.length > 0;
 	const featuredPost = hasPosts ? filteredPosts[0] : null;
 	const otherPosts = hasPosts ? filteredPosts.slice(1) : [];
-
-	// Get currently visible posts based on the state
 	const visiblePosts = otherPosts.slice(0, visiblePostCount);
-
-	// Check if we have more posts to load
 	const hasMorePosts = visiblePosts.length < otherPosts.length;
 
 	// Function to handle loading more posts
@@ -233,13 +197,8 @@ const PostPage = () => {
 			<section className='sec-com bg-gray-50'>
 				<div className='container-lg'>
 					<div className='mb-12 text-center'>
-						<h1 className='mb-4 text-4xl font-bold'>
-							Explore <span className='text-blue-600'>Destinations</span>
-						</h1>
-						<p className='max-w-3xl mx-auto text-gray-600'>
-							Discover exciting destinations, share experiences and find new perspectives on the world
-							around us.
-						</p>
+						<h1 className='mb-4 text-4xl font-bold'>{t('page-title')}</h1>
+						<p className='max-w-3xl mx-auto text-gray-600'>{t('page-subtitle')}</p>
 					</div>
 
 					{isLoading ? (
@@ -262,7 +221,7 @@ const PostPage = () => {
 							{otherPosts.length > 0 && (
 								<div className='space-y-8'>
 									<div className='flex items-center'>
-										<h2 className='text-2xl font-bold text-gray-800'>Latest Articles</h2>
+										<h2 className='text-2xl font-bold text-gray-800'>{t('latest-articles')}</h2>
 										<div className='flex-grow h-px ml-4 bg-gray-200'></div>
 									</div>
 
@@ -276,11 +235,8 @@ const PostPage = () => {
 
 							{hasMorePosts && (
 								<div className='mt-12 text-center'>
-									<Button
-										onClick={handleSeeMoreArticles}
-										className='px-8 bg-blue-600 hover:bg-blue-700'
-									>
-										Load More Articles
+									<Button onClick={handleSeeMoreArticles} className='px-8 bg-blue-600 hover:bg-blue-700'>
+										{t('load-more-articles')}
 										<ChevronDown className='w-4 h-4 ml-2' />
 									</Button>
 								</div>

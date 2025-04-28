@@ -81,7 +81,6 @@ const HomeStayDetail = () => {
   
       setIsCheckedIn(true);
       toast.success('Check-in successful!');
-      setTimeout(() => router.back(), 2000);
       startAutoCheckoutTimer();
     } catch (error) {
       console.error('Check-in error:', error.response || error);
@@ -99,7 +98,6 @@ const HomeStayDetail = () => {
       await addCheckInOutLog(formData);
       setIsCheckedOut(true);
       toast.success('Check-out successful!');
-      setTimeout(() => router.back(), 2000);
     } catch (error) {
       console.error(error);
       toast.error('Failed to check-out!');

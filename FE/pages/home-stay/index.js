@@ -5,8 +5,12 @@ import { getAllAmenity } from 'pages/api/amenity/getAmenity';
 import { getAllHomeStay } from 'pages/api/homestay/getAllHomeStay';
 import React, { useState, useEffect } from 'react';
 import MainLayout from '../layout';
+import { useTranslation } from 'react-i18next';
 
 const HomeStay = () => {
+
+	const { t } = useTranslation(); 
+
 	const [searchParams, setSearchParams] = useState({
 		amenityNames: [],
 		minPrice: 0,
@@ -184,17 +188,17 @@ const HomeStay = () => {
 							<div className='sticky overflow-hidden bg-white rounded-lg shadow-md top-20'>
 								{/* Sidebar Header */}
 								<div className='px-6 py-4 bg-indigo-600'>
-									<h2 className='text-xl font-semibold text-white'>Search</h2>
+									<h2 className='text-xl font-semibold text-white'>{t('search')}</h2>
 								</div>
 
 								<div className='p-6 space-y-6'>
 									{/* Price Range */}
 									<div>
-										<h3 className='mb-3 text-lg font-medium text-gray-900'>Price</h3>
+										<h3 className='mb-3 text-lg font-medium text-gray-900'>{t('price')}</h3>
 										<div className='space-y-4'>
 											<div>
 												<label className='block mb-1 text-sm font-medium text-gray-700'>
-													Minimum Price:
+													{t('Minimum-Price')}:
 												</label>
 												<input
 													type='number'
@@ -205,7 +209,7 @@ const HomeStay = () => {
 											</div>
 											<div>
 												<label className='block mb-1 text-sm font-medium text-gray-700'>
-													Maximum Price:
+													{t('Maximum-Price')}:
 												</label>
 												<input
 													type='number'
@@ -413,7 +417,7 @@ const HomeStay = () => {
 													<div className='mt-auto'>
 														<Link href={`/home-stay/${homestay.id}`}>
 															<button className='w-full py-2 font-medium text-white transition-colors duration-200 bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'>
-																View Details
+																{t('view-details')}
 															</button>
 														</Link>
 													</div>
