@@ -9,7 +9,10 @@ export const createBooking = async (userId, bookingData) => {
 			})),
 			voucherCode: bookingData.voucherCode || null,
 			isOnline: bookingData.isOnline,
+			checkInDate: bookingData.checkInDate, 
+			checkOutDate: bookingData.checkOutDate, 
 		};
+
 
 		const response = await fetch(url, {
 			method: 'POST',

@@ -93,6 +93,13 @@ namespace API.Controllers
             if (homeStay == null)
                 return BadRequest(new { Message = "HomeStay not found" });
 
+            var sortedCalendars = calendars.OrderBy(c => c.Date).ToList();
+            var lastCalendar = sortedCalendars.Last();
+
+            var alreadyBooked = sortedCalendars
+                .Take(sortedCalendars.Count - 1) // Exclude the last date
+                .Any(c => c.BookingID != null);
+
             if (calendars.Any(c => c.BookingID != null))
                 return BadRequest(new { Message = "Some selected dates are already booked" });
 
@@ -103,10 +110,10 @@ namespace API.Controllers
             var replaceCheckOutDate = homeStay.CheckInTime.Replace("PM", "").Replace("AM", "");
 
             DateTime checkInDate = firstDate.Date.Add(TimeSpan.Parse(replaceCheckInDate));
-            DateTime checkOutDate = lastDate.AddDays(1).Date.Add(TimeSpan.Parse(replaceCheckOutDate));
+            DateTime checkOutDate = lastDate.Date.Add(TimeSpan.Parse(replaceCheckOutDate));
 
             if (firstDate == lastDate)
-                checkOutDate = firstDate.Date.AddDays(1).Add(TimeSpan.Parse(homeStay.CheckOutTime.Replace("PM", "").Replace("AM", "")));
+                checkOutDate = firstDate.Date.Add(TimeSpan.Parse(homeStay.CheckOutTime.Replace("PM", "").Replace("AM", "")));
 
             decimal totalPrice = calendars.Sum(c => c.Price);
 
@@ -150,7 +157,7 @@ namespace API.Controllers
                 HomeStayImage = homeStay.MainImage
             };
 
-            foreach (var calendar in calendars)
+            foreach (var calendar in sortedCalendars.Take(sortedCalendars.Count - 1))
             {
                 calendar.BookingID = booking.Id;
                 calendar.isBooked = true;
@@ -158,6 +165,9 @@ namespace API.Controllers
             }
 
             // After booking change isBooked in home stay table is true
+            lastCalendar.BookingID = null;
+            lastCalendar.isBooked = false;
+            await _calendarRepository.UpdateAsync(lastCalendar);
             await _bookingRepository.AddAsync(booking);
             await _calendarRepository.SaveAsync();
             await _bookingRepository.SaveAsync();

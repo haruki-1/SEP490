@@ -195,16 +195,30 @@ const HomeStayDetail = () => {
 		}
 	  
 		// 🛠 Tính Check-in và Check-out đúng:
-		const sortedDates = [...selectedDates].sort((a, b) => a - b); // sắp xếp
+		const sortedDates = [...selectedDates].sort((a, b) => {
+			const dateA = homestay.calendar.find(c => c.id === a)?.date;
+			const dateB = homestay.calendar.find(c => c.id === b)?.date;
+			return new Date(dateA) - new Date(dateB);
+		});
+
 		const checkInDate = homestay.calendar.find(c => c.id === sortedDates[0])?.date;
-		const checkOutDate = homestay.calendar.find(c => c.id === sortedDates[sortedDates.length - 1])?.date;
+		const lastSelectedDate = homestay.calendar.find(c => c.id === sortedDates[sortedDates.length - 1])?.date;
+		const checkoutDateObj = new Date(lastSelectedDate);
+		const checkOutDate = checkoutDateObj.toISOString().split('T')[0]; 
+
+		const checkInTime = homestay.checkInTime || '14:00:00';
+		const checkOutTime = homestay.checkOutTime || '12:00:00';
+	  
+		// Tạo datetime hoàn chỉnh cho check-in và check-out
+		const checkInDateTime = `${checkInDate}T${checkInTime}`;
+		const checkOutDateTime = `${checkOutDate}T${checkOutTime}`;
 	  
 		const bookingData = {
 		  calenders: selectedDates.map((calenderID) => ({ calenderID })),
 		  voucherCode: voucherCode || null,
 		  isOnline: isOnline,
-		  checkInDate: checkInDate,
-		  checkOutDate: checkOutDate,
+		  checkInDate: checkInDateTime,
+		  checkOutDate: checkOutDateTime,
 		};
 	  
 		bookingMutation.mutate(bookingData);
@@ -769,9 +783,9 @@ const HomeStayDetail = () => {
 							{priceForToday !== null && !homestay.isBooked && selectedDates.length > 0 && (
 								<div className='flex items-center justify-between p-4 border border-blue-100 rounded-lg bg-blue-50'>
 									<div>
-										<p className='text-sm text-gray-500'>{t('total-for')}{selectedDates.length} {t('nights')}</p>
+										<p className='text-sm text-gray-500'>{t('total-for')} {(selectedDates.length-1)} {t('nights')}</p>
 										<p className='text-xl font-bold text-gray-800'>
-											{(priceForToday * selectedDates.length).toLocaleString()}VND
+											{(priceForToday * (selectedDates.length-1)).toLocaleString()}VND
 										</p>
 									</div>
 									{voucherCode && (

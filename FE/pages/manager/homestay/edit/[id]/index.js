@@ -244,11 +244,11 @@ const UpdateHomeStay = () => {
 				<div>
 					<Label>Additional Images</Label>
 					<div className='grid grid-cols-4 gap-4 mb-4 sm:grid-cols-6 lg:grid-cols-8'>
-						{formData.homeStayImage.map((img, index) => (
+						{formData.homeStayImage.map((url, index) => (
 							<PhotoProvider key={index}>
-								<PhotoView src={img.image}>
+								<PhotoView src={url.image}>
 									<img
-										src={img.image}
+										src={url.image}
 										alt={`Image ${index + 1}`}
 										className='object-cover w-full transition rounded-lg cursor-pointer hover:opacity-90'
 									/>
