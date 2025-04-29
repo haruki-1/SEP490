@@ -48,8 +48,12 @@ namespace API.Controllers
             if (!bookings.Any())
                 return Ok(new { Message = "No booking history found." });
 
-            var bookingHistory = bookings.Select(b => new
+            var bookingHistory = bookings.Select(b =>
             {
+            var validCalendars = b.Calendars
+            .Where(c => c.HomeStayID != Guid.Empty) // hoặc c.HomeStay != null nếu cần
+            .ToList();
+            return new {
                 BookingID = b.Id,
                 CheckInDate = b.CheckInDate.ToString("dd/MM/yyyy HH:mm"),
                 CheckOutDate = b.CheckOutDate.ToString("dd/MM/yyyy HH:mm"),
@@ -57,13 +61,16 @@ namespace API.Controllers
                 TotalPrice = string.Format("{0:N0} VND", b.TotalPrice),
                 Status = b.Status,
                 ReasonCancel = b.ReasonCancel,
-                HomeStay = new
+                HomeStay = validCalendars.Any()
+                ? new
                 {
-                    Id = b.Calendars.FirstOrDefault(c => c.HomeStay != null)?.HomeStay.Id,
+                    Id = b.Calendars.FirstOrDefault()?.HomeStayID,
                     Name = b.HomeStayName,
                     Address = b.HomeStayAddress,
                     MainImage = b.HomeStayImage
                 }
+                : null
+             };
             })
             .OrderByDescending(b => b.CheckInDate)
             .ToList();
@@ -115,7 +122,7 @@ namespace API.Controllers
             if (firstDate == lastDate)
                 checkOutDate = firstDate.Date.Add(TimeSpan.Parse(homeStay.CheckOutTime.Replace("PM", "").Replace("AM", "")));
 
-            decimal totalPrice = calendars.Sum(c => c.Price);
+            decimal totalPrice = sortedCalendars.Take(sortedCalendars.Count - 1).Sum(c => c.Price);
 
             if (!string.IsNullOrEmpty(bookingDTO.VoucherCode))
             {
