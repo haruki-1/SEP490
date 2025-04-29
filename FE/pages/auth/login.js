@@ -8,7 +8,7 @@ import { Label } from '@/components/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/components/ui/card';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Eye, EyeOff } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/components/ui/dialog';
 import { useAuth } from 'context/AuthProvider';
@@ -22,6 +22,8 @@ export default function LoginForm() {
 	const [showForgotDialog, setShowForgotDialog] = useState(false);
 	const router = useRouter();
 	const { login } = useAuth();
+	const searchParams = useSearchParams();
+	const callbackUrl = searchParams.get('callbackUrl') || '/';
 
 	const {
 		register,
@@ -62,7 +64,7 @@ export default function LoginForm() {
 					? router.push('/manager')
 					: role === 'Admin'
 					? router.push('/admin')
-					: router.push('/');
+					: router.push(callbackUrl);
 			} else {
 				console.error('Login failed:', responseData);
 				toast.error(`Login failed: ${responseData.message || 'Invalid credentials'}`);

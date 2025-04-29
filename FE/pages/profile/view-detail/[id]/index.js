@@ -36,8 +36,19 @@ const HomeStayDetail = () => {
   const [isCheckedIn, setIsCheckedIn] = useState(false);
   const [isCheckedOut, setIsCheckedOut] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const [statusFilter, setStatusFilter] = useState('All');
 
+  useEffect(() => {
+    if (isMounted && !dataProfile?.id) {
+      toast.error('Bạn cần đăng nhập để tiếp tục.');
+      setTimeout(() => router.push(`/auth/login?callbackUrl=${encodeURIComponent(window.location.href)}`), 2000);
+    }
+  }, [isMounted, dataProfile, router]);
 
   const {
     data: bookings,
@@ -68,6 +79,11 @@ const HomeStayDetail = () => {
   };
 
   const handleCheckIn = async () => {
+    if (!dataProfile || !dataProfile.id) {
+      toast.error('Bạn cần đăng nhập để Check-in!');
+      router.push('/login'); // hoặc trang đăng nhập của bạn
+      return;
+    }
     if (!bookingId) {
       toast.error('Booking ID not found!');
       return;
@@ -191,18 +207,18 @@ const HomeStayDetail = () => {
                   className='border p-2 rounded w-full'
                 />
 
-                <div className='flex gap-4'>
-                  {!isCheckedIn && (
-                    <Button className='bg-green-600 text-white' onClick={handleCheckIn} disabled={!bookingId}>
-                      Check In
-                    </Button>
-                  )}
-                  {isCheckedIn && !isCheckedOut && (
-                    <Button className='bg-red-600 text-white' onClick={handleCheckOut}>
-                      Check Out
-                    </Button >
-                  )}
-                </div>
+              <div className='flex gap-4'>
+                {dataProfile?.id && !isCheckedIn && (
+                  <Button className='bg-green-600 text-white' onClick={handleCheckIn} disabled={!bookingId}>
+                    Check In
+                  </Button>
+                )}
+                {isCheckedIn && !isCheckedOut && (
+                  <Button className='bg-red-600 text-white' onClick={handleCheckOut}>
+                    Check Out
+                  </Button>
+                )}
+              </div>
 
                 {/* Preview uploaded images */}
                 {images.length > 0 && (

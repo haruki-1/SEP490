@@ -102,7 +102,7 @@ export default function Home() {
 				onClick={() => setShowMap(!showMap)}
 				className="flex items-center gap-2 px-5 py-3 bg-white shadow-md rounded-full font-semibold text-gray-800 hover:bg-gray-100 transition-all"
 			>
-				  <span>{showMap ? t('hideMap') : t('showMap')}</span>
+				  <span>{showMap ? t('Hide Map') : t('Show Map')}</span>
 				{/* <MapIcon className="w-5 h-5 text-blue-600" /> */}
 			</button>
 			</div>

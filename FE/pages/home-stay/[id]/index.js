@@ -174,7 +174,7 @@ const HomeStayDetail = () => {
 	const handleBookNow = () => {
 		if (!isAuthenticated) {
 		  toast.error('Please log in to book this homestay');
-		  setTimeout(() => router.push('/auth/login'), 1500);
+		  setTimeout(() => router.push(`/auth/login?callbackUrl=${encodeURIComponent(window.location.href)}`), 1500);
 		  return;
 		}
 	  
