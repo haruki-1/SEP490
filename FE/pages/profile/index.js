@@ -28,7 +28,7 @@ import { useTranslation } from 'react-i18next';
 export default function ProfilePage() {
 	const { dataProfile, refetch } = useAuth();
 	const queryClient = useQueryClient();
-	const [activeTab, setActiveTab] = useState('profile');
+	const [activeTab, setActiveTab] = useState('myhomestay');
 	const [isMounted, setIsMounted] = useState(false);
 	const [statusFilter, setStatusFilter] = useState('All');
 	const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
@@ -323,13 +323,14 @@ export default function ProfilePage() {
 							<CardContent>
 							<nav className='space-y-2'>
 								<Button
-								variant={activeTab === 'profile' ? 'default' : 'ghost'}
+								variant={activeTab === 'myhomestay' ? 'default' : 'ghost'}
 								className='justify-start w-full'
-								onClick={() => setActiveTab('profile')}
+								onClick={() => setActiveTab('myhomestay')}
 								>
-								<User className='w-4 h-4 mr-2' />
-								{t('profile-tab')} 
+								<Home className='w-4 h-4 mr-2' />
+								{t('myhomestay-tab')} 
 								</Button>
+								
 								<Button
 								variant={activeTab === 'bookings' ? 'default' : 'ghost'}
 								className='justify-start w-full'
@@ -347,12 +348,12 @@ export default function ProfilePage() {
 								{t('vouchers-tab')} 
 								</Button>
 								<Button
-								variant={activeTab === 'myhomestay' ? 'default' : 'ghost'}
+								variant={activeTab === 'profile' ? 'default' : 'ghost'}
 								className='justify-start w-full'
-								onClick={() => setActiveTab('myhomestay')}
+								onClick={() => setActiveTab('profile')}
 								>
-								<Home className='w-4 h-4 mr-2' />
-								{t('myhomestay-tab')} 
+								<User className='w-4 h-4 mr-2' />
+								{t('profile-tab')} 
 								</Button>
 								<Button
 								variant={activeTab === 'security' ? 'default' : 'ghost'}
@@ -793,7 +794,7 @@ export default function ProfilePage() {
 										<Card
 											key={booking.id || booking.bookingID}
 											className='overflow-hidden hover:shadow-lg cursor-pointer'
-											onClick={() => router.push(`/profile/view-detail/${booking.UserID}?bookingId=${booking.bookingID}`)}
+											onClick={() => router.push(`/profile/view-detail/${booking.homeStay?.id}`)}
 										>
 											<div className='flex flex-col md:flex-row'>
 											<div className='relative w-full h-48 md:w-1/3'>
@@ -815,6 +816,22 @@ export default function ProfilePage() {
 												<div>
 													<h3 className='text-lg font-semibold'>{booking.homeStay?.name || t('homestay')}</h3>
 													<p className='text-sm text-gray-500'>{booking.homeStay?.address}</p>
+												</div>
+												<div className='grid grid-cols-2 gap-4 mt-4'>
+												<div>
+												<p className='text-sm text-gray-500'>{t('check-in')}</p>
+												<p className='flex items-center text-sm'>
+													<Calendar className='w-4 h-4 mr-1' />
+													{booking.checkInDate}
+												</p>
+												</div>
+												<div>
+												<p className='text-sm text-gray-500'>{t('check-out')}</p>
+												<p className='flex items-center text-sm'>
+													<Calendar className='w-4 h-4 mr-1' />
+													{booking.checkOutDate}
+												</p>
+												</div>
 												</div>
 												</div>
 											</div>

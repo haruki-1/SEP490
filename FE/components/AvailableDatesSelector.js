@@ -99,65 +99,85 @@ const AvailableDatesSelector = ({ availableDates = [], selectedDates, setSelecte
 
     // Handle date selection
 	const handleDateClick = (day) => {
-		if (isDisabled || !day.isAvailable) return;
-	
-		if (selectionMode === 'checkin') {
-			// Set check-in date and switch to checkout mode
-			setCheckinDate(day);
-			setCheckoutDate(null);
-			setSelectionMode('checkout');
-			setSelectedDates([day.calendarId]);
-		} else {
-			// For checkout, we need to select all dates from checkin to checkout (inclusive)
-			if (day.date < checkinDate.date) {
-				// If selected date is before checkin, swap them
-				setCheckoutDate(checkinDate);
-				setCheckinDate(day);
-				setSelectionMode('checkin');
-				
-				// Select all dates between new checkin and checkout
-				const startDate = new Date(day.date);
-				const endDate = new Date(checkinDate.date);
-				const selectedIds = [];
-				
-				for (let d = startDate; d <= endDate; d.setDate(d.getDate() + 1)) {
-					const dateStr = d.toISOString().split('T')[0];
-					const dateItem = processedDates.find(item => 
-						item.dateObj.toISOString().split('T')[0] === dateStr
-					);
-					if (dateItem) {
-						selectedIds.push(dateItem.id);
-					}
-				}
-				setSelectedDates(selectedIds);
-			} else {
-				// Normal case - select all dates from checkin to checkout (inclusive)
-				setCheckoutDate(day);
-				setSelectionMode('checkin');
-				
-				const startDate = new Date(checkinDate.date);
-				const endDate = new Date(day.date);
-				const selectedIds = [];
-				
-				for (let d = startDate; d <= endDate; d.setDate(d.getDate() + 1)) {
-					const dateStr = d.toISOString().split('T')[0];
-					const dateItem = processedDates.find(item => 
-						item.dateObj.toISOString().split('T')[0] === dateStr
-					);
-					if (dateItem) {
-						selectedIds.push(dateItem.id);
-					}
-				}
-				setSelectedDates(selectedIds);
-			}
-		}
-	};
+        if (isDisabled || !day.isAvailable || day.isBooked) return;
+    
+        if (selectionMode === 'checkin') {
+            // Set check-in date and switch to checkout mode
+            setCheckinDate(day);
+            setCheckoutDate(null);
+            setSelectionMode('checkout');
+            setSelectedDates([day.calendarId]);
+        } else {
+            if (day.date.getTime() === checkinDate.date.getTime()) {
+                // Prevented 1 day pick
+                return;
+            }
+            // For checkout, we need to select all dates from checkin to checkout (inclusive)
+            if (day.date < checkinDate.date) {
+                // If selected date is before checkin, swap them
+                // But first check if the new checkin date is not booked
+                if (day.isBooked) return;
+                
+                setCheckoutDate(checkinDate);
+                setCheckinDate(day);
+                setSelectionMode('checkin');
+                
+                // Select all dates between new checkin and checkout
+                const startDate = new Date(day.date);
+                const endDate = new Date(checkinDate.date);
+                const selectedIds = [];
+                
+                for (let d = startDate; d <= endDate; d.setDate(d.getDate() + 1)) {
+                    const dateStr = d.toISOString().split('T')[0];
+                    const dateItem = processedDates.find(item => 
+                        item.dateObj.toISOString().split('T')[0] === dateStr &&
+                        !item.isBooked
+                    );
+                    if (dateItem) {
+                        selectedIds.push(dateItem.id);
+                    }
+                }
+                setSelectedDates(selectedIds);
+            } else {
+                // Normal case - select all dates from checkin to checkout (inclusive)
+                // First check if any date in the range is booked
+                const startDate = new Date(checkinDate.date);
+                const endDate = new Date(day.date);
+                
+                // Check if any date in the range is booked
+                for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+                    const dateStr = d.toISOString().split('T')[0];
+                    const dateItem = processedDates.find(item => 
+                        item.dateObj.toISOString().split('T')[0] === dateStr
+                    );
+                    if (dateItem?.isBooked) {
+                        return; // Don't allow selection if any date in range is booked
+                    }
+                }
+                
+                setCheckoutDate(day);
+                setSelectionMode('checkin');
+                
+                const selectedIds = [];
+                for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+                    const dateStr = d.toISOString().split('T')[0];
+                    const dateItem = processedDates.find(item => 
+                        item.dateObj.toISOString().split('T')[0] === dateStr
+                    );
+                    if (dateItem) {
+                        selectedIds.push(dateItem.id);
+                    }
+                }
+                setSelectedDates(selectedIds);
+            }
+        }
+    };
 	
 	const calculateNights = () => {
 		if (!checkinDate || !checkoutDate) return 0;
 		// Calculate difference in days (inclusive of checkout date)
 		const timeDiff = checkoutDate.date.getTime() - checkinDate.date.getTime();
-		const dayDiff = timeDiff / (1000 * 60 * 60 * 24) + 1; // Add 1 to include checkout day
+		const dayDiff = timeDiff / (1000 * 60 * 60 * 24) ; // Add 1 to include checkout day
 		return dayDiff;
 	};
 	
@@ -172,9 +192,24 @@ const AvailableDatesSelector = ({ availableDates = [], selectedDates, setSelecte
 
     // Check if a date is in the selected range
 	const isInSelectedRange = (day) => {
-		if (!checkinDate || !checkoutDate) return false;
-		return day.date >= checkinDate.date && day.date <= checkoutDate.date;
-	};
+        if (!checkinDate || !checkoutDate) return false;
+        
+        // Check if any date in the range is booked
+        const startDate = new Date(checkinDate.date);
+        const endDate = new Date(checkoutDate.date);
+        
+        for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+            const dateStr = d.toISOString().split('T')[0];
+            const dateItem = processedDates.find(item => 
+                item.dateObj.toISOString().split('T')[0] === dateStr
+            );
+            if (dateItem?.isBooked) {
+                return false;
+            }
+        }
+        
+        return day.date >= checkinDate.date && day.date <= checkoutDate.date;
+    };
 
     return (
         <div className='flex flex-col gap-3'>
@@ -248,10 +283,10 @@ const AvailableDatesSelector = ({ availableDates = [], selectedDates, setSelecte
                                         <span className='absolute bottom-0 w-1 h-1 -translate-x-1/2 bg-red-400 rounded-full left-1/2'></span>
                                     )}
                                     {day.calendarId === checkinDate?.calendarId && (
-                                        <span className='absolute text-xs bottom-1'>IN</span>
+                                        <span className='absolute text-xs bottom-1'></span>
                                     )}
                                     {day.calendarId === checkoutDate?.calendarId && (
-                                        <span className='absolute text-xs bottom-1'>OUT</span>
+                                        <span className='absolute text-xs bottom-1'></span>
                                     )}
                                 </button>
                             ) : (
