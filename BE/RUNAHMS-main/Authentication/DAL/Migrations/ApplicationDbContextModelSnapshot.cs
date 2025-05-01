@@ -17,7 +17,7 @@ namespace DataAccess.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.12")
+                .HasAnnotation("ProductVersion", "7.0.20")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -51,6 +51,18 @@ namespace DataAccess.Migrations
 
                     b.Property<DateTime>("CheckOutDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("HomeStayAddress")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("HomeStayImage")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("HomeStayName")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("ReasonCancel")
                         .HasColumnType("nvarchar(max)");
@@ -99,6 +111,9 @@ namespace DataAccess.Migrations
                         .HasPrecision(18, 4)
                         .HasColumnType("decimal(18,4)");
 
+                    b.Property<bool>("isBooked")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("isDeleted")
                         .HasColumnType("bit");
 
@@ -109,6 +124,56 @@ namespace DataAccess.Migrations
                     b.HasIndex("HomeStayID");
 
                     b.ToTable("Calendar");
+                });
+
+            modelBuilder.Entity("BusinessObject.Entities.CheckInOutImage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("LogId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LogId");
+
+                    b.ToTable("CheckInOutImages");
+                });
+
+            modelBuilder.Entity("BusinessObject.Entities.CheckInOutLog", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ActionTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ActionType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("BookingId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CheckInOutLogs");
                 });
 
             modelBuilder.Entity("BusinessObject.Entities.CommentPost", b =>
@@ -208,6 +273,9 @@ namespace DataAccess.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid>("BookingID")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -215,16 +283,18 @@ namespace DataAccess.Migrations
                     b.Property<Guid>("HomeStayID")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<bool>("IsReply")
+                        .HasColumnType("bit");
+
                     b.Property<int>("Rating")
                         .HasColumnType("int");
 
                     b.Property<Guid>("UserID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<bool>("isDeleted")
-                        .HasColumnType("bit");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("BookingID");
 
                     b.HasIndex("HomeStayID");
 
@@ -281,9 +351,6 @@ namespace DataAccess.Migrations
 
                     b.Property<Guid>("UserID")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("isBooked")
-                        .HasColumnType("bit");
 
                     b.Property<bool>("isDeleted")
                         .HasColumnType("bit");
@@ -450,6 +517,27 @@ namespace DataAccess.Migrations
                     b.ToTable("RefreshTokens");
                 });
 
+            modelBuilder.Entity("BusinessObject.Entities.Refunds", b =>
+                {
+                    b.Property<long>("RefundID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("RefundID"));
+
+                    b.Property<bool>("Status")
+                        .HasColumnType("bit");
+
+                    b.Property<long>("TransactionID")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("RefundID");
+
+                    b.HasIndex("TransactionID");
+
+                    b.ToTable("Refunds");
+                });
+
             modelBuilder.Entity("BusinessObject.Entities.Role", b =>
                 {
                     b.Property<int>("Id")
@@ -483,6 +571,28 @@ namespace DataAccess.Migrations
                             Id = 3,
                             Name = "User"
                         });
+                });
+
+            modelBuilder.Entity("BusinessObject.Entities.TTlockAccuont", b =>
+                {
+                    b.Property<Guid>("TTLockID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("HomeStayID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Password")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TTLockUserName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("TTLockID");
+
+                    b.HasIndex("HomeStayID");
+
+                    b.ToTable("TTLockAccount");
                 });
 
             modelBuilder.Entity("BusinessObject.Entities.Transaction", b =>
@@ -582,42 +692,42 @@ namespace DataAccess.Migrations
                         new
                         {
                             Id = new Guid("d87b4b72-609b-4979-b758-7771481da883"),
-                            Address = "Ninh Kiều, Cần Thơ",
-                            CreatedAt = new DateTime(2025, 2, 19, 18, 55, 30, 275, DateTimeKind.Utc).AddTicks(3676),
+                            Address = "Hà Nội",
+                            CreatedAt = new DateTime(2025, 4, 26, 17, 19, 23, 403, DateTimeKind.Utc).AddTicks(7983),
                             Email = "admin@gmail.com",
                             FullName = "admin",
                             IsDeleted = false,
                             IsEmailConfirmed = true,
-                            LastModifiedAt = new DateTime(2025, 2, 19, 18, 55, 30, 275, DateTimeKind.Utc).AddTicks(3683),
-                            PasswordHash = "$2a$11$QmaoNKpHvSXaH7z.L5JNEu2BqPOqCAA11K3j5fgTSXyZ/DzlH3k9q",
+                            LastModifiedAt = new DateTime(2025, 4, 26, 17, 19, 23, 403, DateTimeKind.Utc).AddTicks(7993),
+                            PasswordHash = "$2a$11$JthqCA9fI2lF.gHReWjSFO02rjMi5jDNUmzvfK1na55yyBp7SFAXC",
                             Phone = "0987654321",
                             RoleId = 1
                         },
                         new
                         {
                             Id = new Guid("4b7b0200-70f9-416a-9a3f-29ccab0deec4"),
-                            Address = "Bình Thủy, Cần Thơ",
-                            CreatedAt = new DateTime(2025, 2, 19, 18, 55, 30, 386, DateTimeKind.Utc).AddTicks(7530),
-                            Email = "staff@gmail.com",
-                            FullName = "staff",
+                            Address = "Hà Nội",
+                            CreatedAt = new DateTime(2025, 4, 26, 17, 19, 23, 696, DateTimeKind.Utc).AddTicks(1408),
+                            Email = "manager@gmail.com",
+                            FullName = "manager",
                             IsDeleted = false,
                             IsEmailConfirmed = true,
-                            LastModifiedAt = new DateTime(2025, 2, 19, 18, 55, 30, 386, DateTimeKind.Utc).AddTicks(7532),
-                            PasswordHash = "$2a$11$OXNTN3DX/qiCOsb85xT/j.gD3wmhx/HXQbhxiokqYA.YKOfcgpR5e",
+                            LastModifiedAt = new DateTime(2025, 4, 26, 17, 19, 23, 696, DateTimeKind.Utc).AddTicks(1419),
+                            PasswordHash = "$2a$11$5jTDdf1eqky49/RV/L4ZR.O2Z/w8UVxWQ6dn5FhN5QqmXu/QDJF7C",
                             Phone = "0987654123",
                             RoleId = 2
                         },
                         new
                         {
                             Id = new Guid("a85f272f-353e-4ff6-be2b-a15f1e7c0c47"),
-                            Address = "Phong Điền, Cần Thơ",
-                            CreatedAt = new DateTime(2025, 2, 19, 18, 55, 30, 498, DateTimeKind.Utc).AddTicks(2447),
+                            Address = "Hà Nội",
+                            CreatedAt = new DateTime(2025, 4, 26, 17, 19, 24, 24, DateTimeKind.Utc).AddTicks(725),
                             Email = "user@gmail.com",
                             FullName = "user",
                             IsDeleted = false,
                             IsEmailConfirmed = true,
-                            LastModifiedAt = new DateTime(2025, 2, 19, 18, 55, 30, 498, DateTimeKind.Utc).AddTicks(2448),
-                            PasswordHash = "$2a$11$EC6i/JG6s4X3z6S4ZQdiAO2lMDSLJp67YvGMcID9kRLoDXnfITUH6",
+                            LastModifiedAt = new DateTime(2025, 4, 26, 17, 19, 24, 24, DateTimeKind.Utc).AddTicks(742),
+                            PasswordHash = "$2a$11$bCb6qmuNMCCYhwFM7WdG7OSxVA.KG4Lp2xv9mxDuNP2lRtHcCImB.",
                             Phone = "0987654312",
                             RoleId = 3
                         });
@@ -711,6 +821,17 @@ namespace DataAccess.Migrations
                     b.Navigation("HomeStay");
                 });
 
+            modelBuilder.Entity("BusinessObject.Entities.CheckInOutImage", b =>
+                {
+                    b.HasOne("BusinessObject.Entities.CheckInOutLog", "Log")
+                        .WithMany("Images")
+                        .HasForeignKey("LogId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Log");
+                });
+
             modelBuilder.Entity("BusinessObject.Entities.CommentPost", b =>
                 {
                     b.HasOne("BusinessObject.Entities.CommentPost", "ReplyToUser")
@@ -750,6 +871,12 @@ namespace DataAccess.Migrations
 
             modelBuilder.Entity("BusinessObject.Entities.FeedBack", b =>
                 {
+                    b.HasOne("BusinessObject.Entities.Booking", "Booking")
+                        .WithMany()
+                        .HasForeignKey("BookingID")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.HasOne("BusinessObject.Entities.HomeStay", "HomeStay")
                         .WithMany("FeedBacks")
                         .HasForeignKey("HomeStayID")
@@ -761,6 +888,8 @@ namespace DataAccess.Migrations
                         .HasForeignKey("UserID")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+
+                    b.Navigation("Booking");
 
                     b.Navigation("HomeStay");
 
@@ -860,6 +989,27 @@ namespace DataAccess.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("BusinessObject.Entities.Refunds", b =>
+                {
+                    b.HasOne("BusinessObject.Entities.Transaction", "Transaction")
+                        .WithMany()
+                        .HasForeignKey("TransactionID")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Transaction");
+                });
+
+            modelBuilder.Entity("BusinessObject.Entities.TTlockAccuont", b =>
+                {
+                    b.HasOne("BusinessObject.Entities.HomeStay", "HomeStay")
+                        .WithMany("TTlockAccuonts")
+                        .HasForeignKey("HomeStayID")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("HomeStay");
+                });
+
             modelBuilder.Entity("BusinessObject.Entities.Transaction", b =>
                 {
                     b.HasOne("BusinessObject.Entities.Booking", "Booking")
@@ -911,6 +1061,11 @@ namespace DataAccess.Migrations
                     b.Navigation("Calendars");
                 });
 
+            modelBuilder.Entity("BusinessObject.Entities.CheckInOutLog", b =>
+                {
+                    b.Navigation("Images");
+                });
+
             modelBuilder.Entity("BusinessObject.Entities.CommentPost", b =>
                 {
                     b.Navigation("ChildComments");
@@ -927,6 +1082,8 @@ namespace DataAccess.Migrations
                     b.Navigation("HomestayFacilities");
 
                     b.Navigation("HomestayImages");
+
+                    b.Navigation("TTlockAccuonts");
                 });
 
             modelBuilder.Entity("BusinessObject.Entities.Post", b =>

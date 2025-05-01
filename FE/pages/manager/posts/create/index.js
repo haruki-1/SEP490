@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
+import { useAuth } from 'context/AuthProvider';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createPost } from '@/pages/api/posts/createPost';
+import { createPost } from 'pages/api/posts/createPost';
 import { Input } from '@/components/components/ui/input';
 import { Button } from '@/components/components/ui/button';
-import { uploadImages } from '@/pages/api/homestay/uploadImageHomeStay';
+import { uploadImages } from 'pages/api/homestay/uploadImageHomeStay';
 import { Label } from '@/components/components/ui/label';
 import { ImagePlus, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { Textarea } from '@/components/components/ui/textarea';
 import ManagerLayout from '../../layout';
-import { useAuth } from '@/context/AuthProvider';
 
 const MAX_IMAGES = 8;
 
@@ -101,7 +101,7 @@ const createPostPage = () => {
 							className='hidden'
 							id='imagesInput'
 						/>
-						<div className='grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4'>
+						<div className='grid grid-cols-4 gap-4 md:grid-cols-6 lg:grid-cols-8'>
 							{formData.images.map((url, index) => (
 								<div key={index} className='relative group'>
 									<img

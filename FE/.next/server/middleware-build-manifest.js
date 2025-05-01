@@ -24,15 +24,35 @@ self.__BUILD_MANIFEST = {
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
+    "/auth/login": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/auth/login.js"
+    ],
+    "/home-stay": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/home-stay.js"
+    ],
     "/home-stay/[id]": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
       "static/chunks/pages/home-stay/[id].js"
     ],
-    "/searchList": [
+    "/manager/homestay/calendar/[id]": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/searchList.js"
+      "static/chunks/pages/manager/homestay/calendar/[id].js"
+    ],
+    "/profile": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/profile.js"
+    ],
+    "/profile/view-detail/[id]": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/profile/view-detail/[id].js"
     ]
   },
   "ampFirstPages": []

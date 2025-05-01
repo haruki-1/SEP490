@@ -1,210 +1,140 @@
-import styled from 'styled-components';
-import { Globe, DollarSign, Facebook, Twitter, Instagram } from 'react-feather';
+import React from 'react';
+import Link from 'next/link';
+import { Globe, DollarSign, Facebook, Twitter, Instagram, MapPin, Mail, Phone, ChevronRight } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
+import { Button } from './components/ui/button';
+import { useTranslation } from 'react-i18next'; // <--- Thêm dòng này
 
 const Footer = () => {
+	const { t } = useTranslation(); // <--- Sử dụng hook
+
 	return (
-		<FooterSection>
-			<div className='footerInner'>
-				<span>
-					<h2>About</h2>
-					<ul>
-						<li>How Runa works</li>
-						<li>Newsroom</li>
-						<li>Investors</li>
-						<li className='lg-hidden'>HotelTonight</li>
-						<li className='lg-hidden'>Made possible by Hosts</li>
-						<li className='lg-hidden'>Careers</li>
-						<li className='lg-hidden'>Founders&apos; Letter</li>
-					</ul>
-				</span>
-				<span>
-					<h2>Community</h2>
-					<ul>
-						<li>Diversity &amp; Belonging</li>
-						<li>Accessibility</li>
-						<li>Runa Associates</li>
-						<li>Frontline Stays</li>
-						<li>Guest Referrals</li>
-						<li>Runa.org</li>
-					</ul>
-				</span>
-				<span>
-					<h2>Host</h2>
-					<ul>
-						<li>Host your home</li>
-						<li>Host an Online Experience</li>
-						<li>Host an Experience</li>
-						<li>Responsible hosting</li>
-						<li>Resource Centre</li>
-						<li>Community Centre</li>
-					</ul>
-				</span>
-				<span>
-					<h2>Support</h2>
-					<ul>
-						<li>Help Centre</li>
-						<li>Cancellation options</li>
-						<li>Neighbourhood Support</li>
-						<li>Trust &amp; Safety</li>
-					</ul>
-				</span>
-				<div className='footer-bottom'>
+		<footer className='text-gray-600 bg-white border-t border-gray-100 sec-com'>
+			<div className='container-lg'>
+				<div className='grid grid-cols-1 gap-8 mb-8 md:grid-cols-2 lg:grid-cols-4'>
+					{/* About Section */}
 					<div>
-						<ThemeToggle text />
+						<h2 className='mb-4 text-lg font-bold text-gray-800'>{t('about-homestay')}</h2>
+						<p className='mb-4 text-sm leading-relaxed text-gray-500'>
+							{t('about-description')}
+						</p>
+						<div className='flex items-center mt-6 space-x-4'>
+							{/* ... */}
+						</div>
 					</div>
-					<p>
-						<span>
-							<Globe className='globe' />
-							English
-						</span>
-						<span>
-							<DollarSign className='dollar' />
-							USD
-						</span>
-						<span>
-							<Facebook />
-						</span>
-						<span>
-							<Twitter />
-						</span>
-						<span>
-							<Instagram />
-						</span>
-					</p>
-					<p>
-						&copy; 2022{' '}
-						<a href='https://shubhporwal.me' target='_blank' rel='noreferrer'>
-							Shubh Porwal
-						</a>
+
+					{/* Useful Links */}
+					<div>
+						<h2 className='mb-4 text-lg font-bold text-gray-800'>{t('useful-links')}</h2>
+						<ul className='space-y-2'>
+							<li>
+								<Link href='/home-stay' className='flex items-center text-gray-500 hover:text-blue-600 group'>
+									{/* ChevronRight */}
+									<span>{t('browse-homestays')}</span>
+								</Link>
+							</li>
+							<li>
+								<Link href='#' className='flex items-center text-gray-500 hover:text-blue-600 group'>
+									<span>{t('about-us')}</span>
+								</Link>
+							</li>
+							<li>
+								<Link href='#' className='flex items-center text-gray-500 hover:text-blue-600 group'>
+									<span>{t('blog-news')}</span>
+								</Link>
+							</li>
+							<li>
+								<Link href='#' className='flex items-center text-gray-500 hover:text-blue-600 group'>
+									<span>{t('faqs')}</span>
+								</Link>
+							</li>
+							<li>
+								<Link href='#' className='flex items-center text-gray-500 hover:text-blue-600 group'>
+									<span>{t('privacy-policy')}</span>
+								</Link>
+							</li>
+							<li>
+								<Link href='#' className='flex items-center text-gray-500 hover:text-blue-600 group'>
+									<span>{t('terms-conditions')}</span>
+								</Link>
+							</li>
+						</ul>
+					</div>
+
+					{/* Host Section */}
+					<div>
+						<h2 className='mb-4 text-lg font-bold text-gray-800'>{t('host-with-us')}</h2>
+						<ul className='space-y-2'>
+							<li>
+								<Link href='#' className='flex items-center text-gray-500 hover:text-blue-600 group'>
+									<span>{t('list-your-property')}</span>
+								</Link>
+							</li>
+							<li>
+								<Link href='#' className='flex items-center text-gray-500 hover:text-blue-600 group'>
+									<span>{t('host-resources')}</span>
+								</Link>
+							</li>
+							<li>
+								<Link href='#' className='flex items-center text-gray-500 hover:text-blue-600 group'>
+									<span>{t('hosting-guidelines')}</span>
+								</Link>
+							</li>
+							<li>
+								<Link href='#' className='flex items-center text-gray-500 hover:text-blue-600 group'>
+									<span>{t('responsible-hosting')}</span>
+								</Link>
+							</li>
+						</ul>
+						<Button className='mt-4 bg-blue-600 hover:bg-blue-700'>{t('become-host')}</Button>
+					</div>
+
+					{/* Contact Section */}
+					<div>
+						<h2 className='mb-4 text-lg font-bold text-gray-800'>{t('contact-us')}</h2>
+						<ul className='space-y-3'>
+							<li className='flex items-start'>
+								{/* MapPin */}
+								<span className='text-gray-500'>{t('contact-address')}</span>
+							</li>
+							<li className='flex items-center'>
+								{/* Phone */}
+								<span className='text-gray-500'>{t('contact-phone')}</span>
+							</li>
+							<li className='flex items-center'>
+								{/* Mail */}
+								<span className='text-gray-500'>{t('contact-email')}</span>
+							</li>
+						</ul>
+						<div className='mt-6'>
+							<h3 className='mb-2 text-sm font-semibold text-gray-800'>{t('subscribe-newsletter')}</h3>
+							<div className='flex'>
+								<input
+									type='email'
+									placeholder={t('your-email')}
+									className='...'
+								/>
+								<button className='...'>
+									{t('send')}
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				{/* Footer Bottom */}
+				<div className='flex flex-col items-center justify-between pt-8 mt-8 border-t border-gray-100 md:flex-row'>
+					<div className='flex items-center mb-4 space-x-4 md:mb-0'>
+						<ThemeToggle />
+					</div>
+
+					<p className='text-sm text-gray-400'>
+						&copy; {new Date().getFullYear()} HomeStay. {t('all-rights-reserved')}
 					</p>
 				</div>
 			</div>
-		</FooterSection>
+		</footer>
 	);
 };
 
 export default Footer;
-
-const FooterSection = styled.footer`
-	padding: 3rem var(--sidePadding);
-	background: var(--gray);
-	border-top: 1px solid #0002;
-
-	h2 {
-		font-size: 0.85rem;
-		text-transform: uppercase;
-		margin-bottom: 0.5rem;
-		font-weight: 800;
-	}
-
-	.footerInner {
-		& > span {
-			display: flex;
-			flex-direction: column;
-			padding: 1.5rem 0;
-		}
-
-		& > span + span {
-			border-top: 1px solid #0002;
-		}
-
-		& > span:first-of-type {
-			padding-top: 0;
-		}
-
-		& > span:last-of-type {
-			padding-bottom: 0;
-		}
-
-		ul {
-			list-style: none;
-			display: grid;
-			grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-
-			li {
-				padding: 0.25rem 0;
-				font-size: 0.85rem;
-				cursor: pointer;
-				opacity: 0.8;
-				transition: all 0.2s;
-				width: fit-content;
-
-				&:hover {
-					opacity: 1;
-					text-decoration: underline;
-				}
-			}
-		}
-
-		.footer-bottom {
-			display: flex;
-			flex-direction: row-reverse;
-			align-items: flex-end;
-			justify-content: space-between;
-
-			a {
-				margin-left: 0.5rem;
-			}
-
-			a:hover {
-				text-decoration: underline;
-				color: var(--pink);
-			}
-
-			svg {
-				height: 1rem;
-				cursor: pointer;
-			}
-
-			svg.globe {
-				margin-right: 0.1rem;
-			}
-
-			svg.dollar {
-				margin-right: -0.1rem;
-			}
-
-			span + span {
-				margin-left: 1rem;
-			}
-
-			p,
-			span {
-				display: flex;
-				align-items: center;
-			}
-		}
-	}
-
-	@media (max-width: 576px) {
-		.footerInner .footer-bottom {
-			flex-direction: column;
-			align-items: center;
-			gap: 1.5rem;
-		}
-	}
-
-	@media (min-width: 1296px) {
-		.footerInner {
-			display: flex;
-			flex-flow: row wrap;
-			max-width: 1200px;
-			margin: 0 auto;
-			justify-content: space-between;
-
-			.footer-bottom {
-				flex: 0 0 100%;
-				padding-top: 1.5rem;
-				margin-top: 1.5rem;
-			}
-			.lg-hidden {
-				display: none;
-			}
-			& > span:not(.footer-bottom) {
-				padding: 0;
-				border-top: none !important;
-			}
-		}
-	}
-`;

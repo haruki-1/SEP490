@@ -14,7 +14,7 @@ import { useRouter } from 'next/navigation';
 import { Eye, EyeOff } from 'lucide-react';
 
 export default function RegisterForm() {
-	const [isManager, setIsManager] = useState(false);
+	const [role, setRole] = useState('user');
 	const [loading, setLoading] = useState(false);
 	const [showPassword, setShowPassword] = useState(false);
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -30,14 +30,14 @@ export default function RegisterForm() {
 	const onSubmit = async (data) => {
 		setLoading(true);
 		try {
-			const response = await fetch('https://localhost:7194/api/Auth/register', {
+			const response = await fetch('https://duongcongson-001-site1.jtempurl.com/api/Auth/register', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
 				},
 				body: JSON.stringify({
 					...data,
-					roleId: isManager ? 2 : 1,
+					roleId: role == 'manager' ? 2 : 3,
 				}),
 			});
 
@@ -176,17 +176,14 @@ export default function RegisterForm() {
 								)}
 							</div>
 
-							<div className='relative space-y-2'>
-								<Label className='flex items-center gap-1'>
-									<input
-										type='checkbox'
-										className='px-2 size-4'
-										onChange={() => setIsManager(!isManager)}
-									/>
-									Register as Manager
-								</Label>
-							</div>
-
+							{/* <div className='relative space-y-2'>
+								<Label className='flex items-center gap-1'>Register as</Label>
+									<select className='w-full p-2 border rounded' value={role} onChange={(e) => setRole(e.target.value)}>
+                                    <option value='user'>User</option>
+                                    <option value='staff'>Staff</option>
+                                    <option value='manager'>Manager</option>
+                                </select>
+							</div> */}
 							<div className='mt-4 text-center'>
 								<p>
 									Already have an account?{' '}

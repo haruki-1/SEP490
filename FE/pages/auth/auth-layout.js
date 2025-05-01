@@ -2,6 +2,7 @@ import Head from 'next/head';
 import React from 'react';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Toaster } from 'sonner';
 
 const AuthLayout = ({ children }) => {
 	return (
@@ -14,8 +15,9 @@ const AuthLayout = ({ children }) => {
 				/>
 				<link rel='icon' href='images/logo.svg' />
 			</Head>
-			<div className='w-full max-w-md p-8 bg-white shadow-xl rounded-xl'>
+			<div className='w-full mx-auto'>
 				{children}
+				<Toaster position='top-right' richColors />
 				<ToastContainer />
 			</div>
 		</div>

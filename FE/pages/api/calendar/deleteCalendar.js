@@ -1,8 +1,8 @@
-import api from "@/utils/api";
+import api from 'utils/api';
 
 export const deleteCalendarEntry = async (calendarId) => {
 	try {
-		const response = await api.delete(`/Calendar/${calendarId}`);
+		const response = await api.delete(`/Calendar/delete/${calendarId}`);
 		return response.data;
 	} catch (error) {
 		console.error('Error deleting calendar entry:', error);

@@ -1,5 +1,5 @@
 export const createBooking = async (userId, bookingData) => {
-	const url = 'https://localhost:7194/api/Booking/create';
+	const url = 'https://duongcongson-001-site1.jtempurl.com/api/Booking/create';
 
 	try {
 		// Ensure proper format of payload based on Postman example
@@ -9,9 +9,10 @@ export const createBooking = async (userId, bookingData) => {
 			})),
 			voucherCode: bookingData.voucherCode || null,
 			isOnline: bookingData.isOnline,
+			checkInDate: bookingData.checkInDate, 
+			checkOutDate: bookingData.checkOutDate, 
 		};
 
-		console.log('Sending booking data:', JSON.stringify(formattedData));
 
 		const response = await fetch(url, {
 			method: 'POST',
@@ -24,15 +25,14 @@ export const createBooking = async (userId, bookingData) => {
 		});
 
 		if (!response.ok) {
-			const errorText = await response.text();
-			console.error('Server error response:', errorText);
-			throw new Error(`HTTP error! Status: ${response.status}`);
+			const errorData = await response.json();
+			throw new Error(errorData.message || 'Failed to create booking');
 		}
 
 		const data = await response.json();
 		return data;
 	} catch (error) {
 		console.error('Error creating booking:', error);
-		throw error; // Re-throw to allow proper handling in the component
+		throw error;
 	}
 };

@@ -1,9 +1,10 @@
-import api from '@/utils/api';
+import api from "utils/api";
 
-export const searchHomeStay = async (checkInDate, checkOutDate) => {
+export const searchHomeStay = async (city, checkInDate, checkOutDate) => {
 	try {
 		const response = await api.get('/HomeStay/search-home-stay', {
 			params: {
+				City: city,
 				CheckInDate: checkInDate,
 				CheckOutDate: checkOutDate,
 			},

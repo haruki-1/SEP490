@@ -38,7 +38,7 @@ const ManagerBreadcrumb = () => {
 								{isLast ? (
 									<BreadcrumbPage>{label}</BreadcrumbPage>
 								) : (
-									<BreadcrumbLink href={`/manager/${pathSegments.slice(0, index + 1).join('/')}`}>
+									<BreadcrumbLink href={`/${pathSegments.slice(0, index + 1).join('/')}`}>
 										{label}
 									</BreadcrumbLink>
 								)}

@@ -11,7 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bussiness Object", "Bussine
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PayOSService", "PayOSService\PayOSService.csproj", "{20D6DABC-FC25-4CAB-A3D0-626BAC98290E}"
 EndProject
-
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

@@ -1,5 +1,6 @@
+// Updated createHomeStay function
 export const createHomeStay = async (userId, homeStayData) => {
-	const url = 'https://localhost:7194/api/HomeStay/add-home-stay';
+	const url = 'https://duongcongson-001-site1.jtempurl.com/api/HomeStay/add-home-stay';
 
 	try {
 		const response = await fetch(url, {
@@ -12,14 +13,20 @@ export const createHomeStay = async (userId, homeStayData) => {
 			body: JSON.stringify(homeStayData),
 		});
 
+		// Important: Check if the response is not ok and throw an error
 		if (!response.ok) {
+			// For 409 conflict errors
+			if (response.status === 409) {
+				throw new Error('Duplicate homestay name. Please choose a different name.');
+			}
+			// For other errors
 			throw new Error(`HTTP error! Status: ${response.status}`);
 		}
 
 		const data = await response.json();
 		return data;
 	} catch (error) {
-		console.error('Error creating home stay:', error);
-		return null;
+		// Re-throw the error so it can be caught by the mutation
+		throw error;
 	}
 };

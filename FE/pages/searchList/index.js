@@ -4,9 +4,9 @@ import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { format } from 'date-fns';
 import { CalendarIcon, MapPin } from 'lucide-react';
-import { searchHomeStayByCity } from 'pages/api/city/searchHomeStayByCity';
+import { searchHomeStayByCity } from '@/pages/api/city/searchHomeStayByCity';
 import { Button } from '@/components/components/ui/button';
-import MainLayout from 'pages/layout';
+import MainLayout from '../layout';
 
 export default function SearchList() {
 	const router = useRouter();
@@ -219,7 +219,7 @@ export default function SearchList() {
 													{/* Use the new priceForToday value */}
 													{priceForToday !== null ? (
 														<span className='text-green-600'>
-															${priceForToday.toLocaleString()}
+															{priceForToday.toLocaleString()}VND
 														</span>
 													) : (
 														<span className='text-gray-600'>Decommission</span>

@@ -1,0 +1,29 @@
+{
+  "Files": [
+    {
+      "Id": "D:\\SEP490\\SEP490\\BE\\RUNAHMS-main\\Authentication\\RUNAHMS-API\\wwwroot\\images\\e838ab78-15cd-43b2-bf20-a75113608413.png",
+      "PackagePath": "staticwebassets\\images\\e838ab78-15cd-43b2-bf20-a75113608413.png"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.RUNAHMS-API.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssetEndpoints.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.RUNAHMS-API.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.RUNAHMS-API.props",
+      "PackagePath": "build\\RUNAHMS-API.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.RUNAHMS-API.props",
+      "PackagePath": "buildMultiTargeting\\RUNAHMS-API.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.RUNAHMS-API.props",
+      "PackagePath": "buildTransitive\\RUNAHMS-API.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

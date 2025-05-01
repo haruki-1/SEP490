@@ -1,11 +1,16 @@
 import { useQuery } from '@tanstack/react-query';
+import Image from 'next/image';
 import Link from 'next/link';
+import { getAllAmenity } from 'pages/api/amenity/getAmenity';
+import { getAllHomeStay } from 'pages/api/homestay/getAllHomeStay';
 import React, { useState, useEffect } from 'react';
-import { getAllHomeStay } from '../api/homestay/getAllHomeStay';
-import { getAllAmenity } from '../api/amenity/getAmenity';
 import MainLayout from '../layout';
+import { useTranslation } from 'react-i18next';
 
 const HomeStay = () => {
+
+	const { t } = useTranslation(); 
+
 	const [searchParams, setSearchParams] = useState({
 		amenityNames: [],
 		minPrice: 0,
@@ -177,23 +182,23 @@ const HomeStay = () => {
 		<MainLayout>
 			<div className='sec-com'>
 				<div className='container-lg'>
-					<div className='flex flex-col lg:flex-row gap-6'>
+					<div className='flex flex-col gap-6 lg:flex-row'>
 						{/* Left Sidebar - Search Filters */}
 						<div className='w-full lg:w-1/4 shrink-0'>
-							<div className='sticky top-20 bg-white rounded-lg shadow-md overflow-hidden'>
+							<div className='sticky overflow-hidden bg-white rounded-lg shadow-md top-20'>
 								{/* Sidebar Header */}
-								<div className='bg-indigo-600 px-6 py-4'>
-									<h2 className='text-xl font-semibold text-white'>Search</h2>
+								<div className='px-6 py-4 bg-indigo-600'>
+									<h2 className='text-xl font-semibold text-white'>{t('search')}</h2>
 								</div>
 
 								<div className='p-6 space-y-6'>
 									{/* Price Range */}
 									<div>
-										<h3 className='text-lg font-medium text-gray-900 mb-3'>Price</h3>
+										<h3 className='mb-3 text-lg font-medium text-gray-900'>{t('price')}</h3>
 										<div className='space-y-4'>
 											<div>
-												<label className='block text-sm font-medium text-gray-700 mb-1'>
-													Minimum Price:
+												<label className='block mb-1 text-sm font-medium text-gray-700'>
+													{t('Minimum-Price')}:
 												</label>
 												<input
 													type='number'
@@ -203,8 +208,8 @@ const HomeStay = () => {
 												/>
 											</div>
 											<div>
-												<label className='block text-sm font-medium text-gray-700 mb-1'>
-													Maximum Price:
+												<label className='block mb-1 text-sm font-medium text-gray-700'>
+													{t('Maximum-Price')}:
 												</label>
 												<input
 													type='number'
@@ -221,7 +226,7 @@ const HomeStay = () => {
 
 									{/* Amenities */}
 									<div>
-										<h3 className='text-lg font-medium text-gray-900 mb-3'>Amenities</h3>
+										<h3 className='mb-3 text-lg font-medium text-gray-900'>Amenities</h3>
 										{loadingAmenity ? (
 											<p className='text-sm text-gray-500'>Loading amenities...</p>
 										) : errorAmenity ? (
@@ -233,7 +238,7 @@ const HomeStay = () => {
 														<input
 															id={`amenity-${index}`}
 															type='checkbox'
-															className='h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded'
+															className='w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500'
 															checked={searchParams.amenityNames.includes(amenity)}
 															onChange={() => handleAmenityChange(amenity)}
 														/>
@@ -253,23 +258,23 @@ const HomeStay = () => {
 									<hr className='border-gray-200' />
 
 									{/* Standard */}
-									<div>
-										<h3 className='text-lg font-medium text-gray-900 mb-3'>Standard</h3>
+									{/* <div>
+										<h3 className='mb-3 text-lg font-medium text-gray-900'>Standard</h3>
 										<div className='space-y-2'>
 											{standardOptions.map((option) => (
 												<div className='flex items-center' key={option}>
 													<input
 														id={`standard-${option}`}
 														type='checkbox'
-														className='h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded'
+														className='w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500'
 														checked={searchParams.standard.includes(option)}
 														onChange={() => handleStandardChange(option)}
 													/>
 													<label
 														htmlFor={`standard-${option}`}
-														className='ml-3 flex items-center'
+														className='flex items-center ml-3'
 													>
-														<span className='text-sm text-gray-700 mr-1'>{option}</span>
+														<span className='mr-1 text-sm text-gray-700'>{option}</span>
 														<div className='flex items-center'>
 															{[...Array(option)].map((_, i) => (
 																<svg
@@ -287,7 +292,7 @@ const HomeStay = () => {
 												</div>
 											))}
 										</div>
-									</div>
+									</div> */}
 								</div>
 							</div>
 						</div>
@@ -295,9 +300,9 @@ const HomeStay = () => {
 						{/* Right Content - Homestay Listings */}
 						<div className='flex-1'>
 							{loadingHomeStay ? (
-								<div className='bg-white rounded-lg shadow-md p-10 text-center'>
+								<div className='p-10 text-center bg-white rounded-lg shadow-md'>
 									<svg
-										className='animate-spin mx-auto h-10 w-10 text-indigo-600'
+										className='w-10 h-10 mx-auto text-indigo-600 animate-spin'
 										xmlns='http://www.w3.org/2000/svg'
 										fill='none'
 										viewBox='0 0 24 24'
@@ -319,9 +324,9 @@ const HomeStay = () => {
 									<h3 className='mt-4 text-lg font-medium text-gray-900'>Loading homestays...</h3>
 								</div>
 							) : errorHomeStay ? (
-								<div className='bg-white rounded-lg shadow-md p-10 text-center'>
+								<div className='p-10 text-center bg-white rounded-lg shadow-md'>
 									<svg
-										className='mx-auto h-12 w-12 text-red-500'
+										className='w-12 h-12 mx-auto text-red-500'
 										fill='none'
 										viewBox='0 0 24 24'
 										stroke='currentColor'
@@ -337,7 +342,7 @@ const HomeStay = () => {
 									<p className='mt-1 text-gray-500'>Could not load homestay listings.</p>
 								</div>
 							) : filteredHomestays.length > 0 ? (
-								<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+								<div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
 									{filteredHomestays.map((homestay) => {
 										// Get price for today or the next available day
 										const priceData = getPriceForToday(homestay.calendar);
@@ -346,14 +351,19 @@ const HomeStay = () => {
 										return (
 											<div
 												key={homestay.id}
-												className='bg-white rounded-lg shadow-md h-fit transition-transform duration-300 hover:shadow-xl hover:-translate-y-1'
+												className='flex flex-col h-full transition-transform duration-300 bg-white rounded-lg shadow-md hover:shadow-xl hover:-translate-y-1'
 											>
 												<div className='relative'>
-													<div
-														className='h-48 bg-gray-200 bg-cover bg-center'
-														style={{ backgroundImage: `url(${homestay.mainImage})` }}
-													/>
-													<div className='absolute top-0 right-0 bg-yellow-400 text-gray-900 font-medium px-3 py-1 rounded-bl-lg flex items-center'>
+													<div className='h-48 bg-gray-200 rounded-tr-md rounded-tl-md'>
+														<Image
+															src={homestay.mainImage}
+															width={200}
+															height={200}
+															alt='homestay img'
+															className='object-cover w-full h-full rounded-tr-md rounded-tl-md'
+														/>
+													</div>
+													<div className='absolute top-0 right-0 flex items-center px-3 py-1 font-medium text-gray-900 bg-yellow-400 rounded-bl-lg rounded-tr-md'>
 														{[...Array(homestay.standar)].map((_, i) => (
 															<svg
 																key={i}
@@ -367,15 +377,15 @@ const HomeStay = () => {
 														))}
 													</div>
 													{homestay.isBooked && (
-														<div className='absolute top-0 left-0 bg-red-500 text-white font-medium px-3 py-1 rounded-br-lg'>
+														<div className='absolute top-0 left-0 px-3 py-1 font-medium text-white bg-red-500 rounded-br-lg'>
 															Booked
 														</div>
 													)}
 												</div>
 
-												<div className='p-4 flex flex-col gap-2'>
-													<div className='flex flex-col gap-2'>
-														<h3 className='text-lg font-semibold text-gray-900'>
+												<div className='flex flex-col flex-grow p-4'>
+													<div className='flex flex-col flex-grow gap-2'>
+														<h3 className='text-lg font-semibold text-gray-900 line-clamp-1'>
 															{homestay.name}
 														</h3>
 														<p className='text-sm text-gray-500'>
@@ -384,40 +394,42 @@ const HomeStay = () => {
 														</p>
 														<div className='font-bold text-blue-600'>
 															{priceForToday !== null ? (
-																<p className='text-lg md:text-xl text-green-600'>
-																	${priceForToday.toLocaleString()}
+																<p className='text-lg text-green-600 md:text-xl'>
+																	{priceForToday.toLocaleString()}VND
 																</p>
 															) : (
-																<p className='md:text-base text-lg'>Decommission</p>
+																<p className='text-lg md:text-base'>Decommission</p>
 															)}
 														</div>
 
-														<div className='flex flex-wrap gap-2'>
+														<div className='flex flex-wrap gap-2 mb-4 overflow-hidden max-h-16'>
 															{homestay.amenities &&
 																homestay.amenities.map((amenity, index) => (
 																	<span
 																		key={index}
-																		className='px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full'
+																		className='px-2 py-1 text-xs font-medium text-blue-800 bg-blue-100 rounded-full'
 																	>
 																		{amenity.name}
 																	</span>
 																))}
 														</div>
 													</div>
-													<Link href={`/home-stay/${homestay.id}`}>
-														<button className='w-full bg-indigo-600 text-white py-2 rounded-md font-medium hover:bg-indigo-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'>
-															View Details
-														</button>
-													</Link>
+													<div className='mt-auto'>
+														<Link href={`/home-stay/${homestay.id}`}>
+															<button className='w-full py-2 font-medium text-white transition-colors duration-200 bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'>
+																{t('view-details')}
+															</button>
+														</Link>
+													</div>
 												</div>
 											</div>
 										);
 									})}
 								</div>
 							) : (
-								<div className='bg-white rounded-lg shadow-md p-10 text-center'>
+								<div className='p-10 text-center bg-white rounded-lg shadow-md'>
 									<svg
-										className='mx-auto h-12 w-12 text-gray-400'
+										className='w-12 h-12 mx-auto text-gray-400'
 										fill='none'
 										viewBox='0 0 24 24'
 										stroke='currentColor'
