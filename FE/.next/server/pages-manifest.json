@@ -3,10 +3,9 @@
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
   "/auth/login": "pages/auth/login.js",
-  "/manager/homestay/calendar/[id]": "pages/manager/homestay/calendar/[id].js",
   "/profile": "pages/profile.js",
-  "/home-stay": "pages/home-stay.js",
-  "/home-stay/[id]": "pages/home-stay/[id].js",
-  "/": "pages/index.js",
-  "/profile/view-detail/[id]": "pages/profile/view-detail/[id].js"
+  "/manager/homestay": "pages/manager/homestay.js",
+  "/profile/view-detail/[id]": "pages/profile/view-detail/[id].js",
+  "/api/auth/[...nextauth]": "pages/api/auth/[...nextauth].js",
+  "/": "pages/index.js"
 }

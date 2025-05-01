@@ -29,20 +29,10 @@ self.__BUILD_MANIFEST = {
       "static/chunks/main.js",
       "static/chunks/pages/auth/login.js"
     ],
-    "/home-stay": [
+    "/manager/homestay": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/home-stay.js"
-    ],
-    "/home-stay/[id]": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/home-stay/[id].js"
-    ],
-    "/manager/homestay/calendar/[id]": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/manager/homestay/calendar/[id].js"
+      "static/chunks/pages/manager/homestay.js"
     ],
     "/profile": [
       "static/chunks/webpack.js",

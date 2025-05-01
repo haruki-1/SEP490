@@ -136,10 +136,7 @@ const HomeStayDetail = () => {
       images.forEach((file) => formData.append('Images', file));
       await addCheckInOutLog(formData);
       setIsCheckedIn(true);
-      toast.success('Check-in thành công!', { duration: 2000 });
-      setTimeout(() => {
-        router.push('/');
-      }, 4000); 
+      toast.success('Check-in thành công!', { duration: 2000 }); 
       
     } catch (error) {
       console.error(error);
@@ -189,9 +186,12 @@ const HomeStayDetail = () => {
   const isCheckInTodayOrPast = checkInDate && today >= new Date(checkInDate.setHours(0, 0, 0, 0));
   const isBeforeCheckOut = checkOutDate && today <= new Date(checkOutDate.setHours(0, 0, 0, 0));
 
+  const [showMoreRules, setShowMoreRules] = useState(false);
+
+
   return (
     <MainLayout>
-      <div className="p-4">
+      <div className="p-4 sm:p-6 md:p-8">
         <Button variant="ghost" onClick={() => router.back()}>
           <ArrowLeft className="w-4 h-4 mr-2" /> {t('backto')}
         </Button>
@@ -246,19 +246,38 @@ const HomeStayDetail = () => {
             {!hasCheckedIn && isCheckInTodayOrPast && (
               
               <div className="my-6">
-                <div>Đăng ảnh ở đây </div>
-              <input type="file" multiple onChange={handleFileChange} className="border p-2 rounded mb-2" />
-              <div>Nếu mất/ thiếu đồ hãy ghi chú vào đây </div>
+              <div>Nếu gặp khó khăn hay vấn đề gì hãy ghi chú lại ở đây</div>
               <textarea
-                value={note}
-                onChange={(e) => setNote(e.target.value)}
-                placeholder="Ghi chú thêm..."
-                className="border p-2 rounded w-full mb-4"
-              />
+                  className="border p-3 rounded-md w-full text-sm sm:text-base"
+                />
               
-              <Button className="bg-green-600 text-white" onClick={handleCheckInClick} disabled={!bookingId}>
+              <div>Cung cấp ảnh chi tiết nếu có</div>
+              <input type="file" multiple onChange={handleFileChange} className="border p-2 rounded mb-2" />
+              {/* Preview uploaded images */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-4">
+                  {images.map((file, idx) => (
+                    <div
+                      key={idx}
+                      className="relative w-full aspect-square border rounded-xl overflow-hidden shadow-md group"
+                    >
+                      <Image
+                        src={URL.createObjectURL(file)}
+                        alt={`preview-${idx}`}
+                        fill
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                      <div className="absolute bottom-0 left-0 w-full text-center bg-black/50 text-white text-xs py-1">
+                        Ảnh {idx + 1}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div>
+              <Button className="bg-green-600 text-white w-full sm:w-auto" onClick={handleCheckInClick} disabled={!bookingId}>
                 Check In
               </Button>
+              </div>
               </div>
             )}
             {hasCheckedIn && !hasCheckedOut && (
@@ -283,7 +302,8 @@ const HomeStayDetail = () => {
         {/* Modal hiển thị quy tắc, tiện nghi, mã khóa */}
         {showConfirmModal && confirmAction === 'checkin' && (
           <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
-            <div className="bg-white p-6 rounded-lg w-full max-w-lg shadow-xl">
+          <div className="bg-white p-5 rounded-lg w-[95%] max-w-md shadow-lg overflow-y-auto max-h-[90vh]">
+
             <h3 className="text-lg font-semibold mb-2">Quy tắc sử dụng phòng</h3>
                 <div className="text-sm mb-4 space-y-2">
                   <p>🔇 Giữ yên lặng trong hành lang chung, đặc biệt từ 22h đến 6h sáng.</p>
@@ -294,14 +314,25 @@ const HomeStayDetail = () => {
                   <p>🚭 Không hút thuốc hoặc sử dụng chất cấm. Căn hộ chứa vật liệu dễ cháy.</p>
                   <p>⚠️ Khi rời khỏi nhà, vui lòng tắt hết thiết bị điện và điều hòa.</p>
                 </div>
-
               <p className="font-semibold mb-2">Mã khóa cửa: <span className="text-blue-600">{homestayDetail?.password || '---'}</span></p>
+              {!showMoreRules ? (
+              <>
               <p className="font-semibold mb-2">Danh sách tiện nghi:</p>
+              <button
+                onClick={() => setShowMoreRules(true)}
+                className="text-blue-600 text-sm underline mb-4"
+              >
+                Hiển thị thêm
+              </button>
+              </>
+              ) : (
+                
               <ul className="list-disc list-inside text-sm mb-4">
                 {homestayDetail?.facility?.map((f) => (
                   <li key={f.id}>{f.name}</li>
                 ))}
               </ul>
+              )}
               <label className="flex gap-2 items-start mb-4">
                 <input
                   type="checkbox"
@@ -329,13 +360,23 @@ const HomeStayDetail = () => {
                 <p>🔇 Tránh gây ồn khi rời khỏi phòng.</p>
                 <p>⚡ Tắt hết các thiết bị điện và điều hòa trước khi rời đi.</p>
               </div>
-              
-              <p className="font-semibold mb-2">Danh sách tiện nghi cần kiểm tra:</p>
+              {!showMoreRules ? (
+              <>
+              <p className="font-semibold mb-2">Danh sách tiện nghi:</p>
+              <button
+                onClick={() => setShowMoreRules(true)}
+                className="text-blue-600 text-sm underline mb-4"
+              >
+                Hiển thị thêm
+              </button>
+              </>
+              ) : (
               <ul className="list-disc list-inside text-sm mb-4">
                 {homestayDetail?.facility?.map((f) => (
                   <li key={f.id}>{f.name}</li>
                 ))}
               </ul>
+              )}
               <label className="flex gap-2 items-start mb-4">
                 <input
                   type="checkbox"
