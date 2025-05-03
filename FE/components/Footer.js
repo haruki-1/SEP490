@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Globe, DollarSign, Facebook, Twitter, Instagram, MapPin, Mail, Phone, ChevronRight } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
@@ -8,7 +8,13 @@ import { useTranslation } from 'react-i18next'; // <--- Thêm dòng này
 const Footer = () => {
 	const { t } = useTranslation(); // <--- Sử dụng hook
 
+const [mounted, setMounted] = useState(false);
+useEffect(() => {
+  setMounted(true);
+}, []);
+
 	return (
+		mounted && (
 		<footer className='text-gray-600 bg-white border-t border-gray-100 sec-com'>
 			<div className='container-lg'>
 				<div className='grid grid-cols-1 gap-8 mb-8 md:grid-cols-2 lg:grid-cols-4'>
@@ -134,7 +140,8 @@ const Footer = () => {
 				</div>
 			</div>
 		</footer>
-	);
+	)
+	)
 };
 
 export default Footer;
