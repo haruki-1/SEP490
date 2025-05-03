@@ -93,8 +93,13 @@ export default function Home() {
 			</MainLayout>
 		);
 	}
+	const [mounted, setMounted] = useState(false);
+	useEffect(() => {
+	  setMounted(true);
+	}, []);
 
 	return (
+		mounted && (
 		<MainLayout>
 			{/* Nút Hiển thị bản đồ */}
 			<div className="fixed top-[90%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50">
@@ -134,7 +139,8 @@ export default function Home() {
 				<AmenityList />
 			</main>
 		</MainLayout>
-	);
+		)
+	)
 }
 
 export async function getStaticProps({ locale }) {

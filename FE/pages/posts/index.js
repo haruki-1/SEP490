@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { getAllPost } from 'pages/api/posts/getPosts';
 import MainLayout from 'pages/layout';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
 import Link from 'next/link';
@@ -192,7 +192,12 @@ const PostPage = () => {
 		setVisiblePostCount((prevCount) => prevCount + 6);
 	};
 
+	const [mounted, setMounted] = useState(false);
+	useEffect(() => {
+	  setMounted(true);
+	}, []);
 	return (
+		mounted && (
 		<MainLayout>
 			<section className='sec-com bg-gray-50'>
 				<div className='container-lg'>
@@ -246,7 +251,7 @@ const PostPage = () => {
 				</div>
 			</section>
 		</MainLayout>
-	);
+	))
 };
 
 export default PostPage;

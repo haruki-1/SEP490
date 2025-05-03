@@ -177,8 +177,13 @@ const HomeStay = () => {
 	const formatPrice = (price) => {
 		return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(price / 20000);
 	};
+	const [mounted, setMounted] = useState(false);
+	useEffect(() => {
+	  setMounted(true);
+	}, []);
 
 	return (
+		mounted && (
 		<MainLayout>
 			<div className='sec-com'>
 				<div className='container-lg'>
@@ -451,7 +456,7 @@ const HomeStay = () => {
 				</div>
 			</div>
 		</MainLayout>
-	);
+	))
 };
 
 export default HomeStay;

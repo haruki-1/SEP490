@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/components/ui/button';
 import { Input } from '@/components/components/ui/input';
@@ -64,7 +64,9 @@ export default function LoginForm() {
 					? router.push('/manager')
 					: role === 'Admin'
 					? router.push('/admin')
-					: router.push(callbackUrl);
+					: setTimeout(() => {
+						router.push(callbackUrl);
+					}, 1000);
 			} else {
 				console.error('Login failed:', responseData);
 				toast.error(`Login failed: ${responseData.message || 'Invalid credentials'}`);
@@ -98,8 +100,13 @@ export default function LoginForm() {
 			setForgotLoading(false);
 		}
 	};
+	const [mounted, setMounted] = useState(false);
+	useEffect(() => {
+	  setMounted(true);
+	}, []);
 
 	return (
+		mounted && (
 		<AuthLayout>
 			<div className='relative flex items-center justify-center p-4 bg-gray-100 h-dvh'>
 				<Image src='/images/authen/bg-authen.jpg' fill alt='bg-authen' />
@@ -190,5 +197,5 @@ export default function LoginForm() {
 				</Card>
 			</div>
 		</AuthLayout>
-	);
+	))
 }

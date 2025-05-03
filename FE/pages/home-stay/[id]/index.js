@@ -28,7 +28,7 @@ import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import { getHomeStayDetail } from 'pages/api/homestay/getHomeStayDetail';
 import MainLayout from 'pages/layout';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
 import 'react-photo-view/dist/react-photo-view.css';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -194,7 +194,7 @@ const HomeStayDetail = () => {
 		  return;
 		}
 	  
-		// 🛠 Tính Check-in và Check-out đúng:
+		// Tính Check-in và Check-out đúng:
 		const sortedDates = [...selectedDates].sort((a, b) => {
 			const dateA = homestay.calendar.find(c => c.id === a)?.date;
 			const dateB = homestay.calendar.find(c => c.id === b)?.date;
@@ -204,6 +204,7 @@ const HomeStayDetail = () => {
 		const checkInDate = homestay.calendar.find(c => c.id === sortedDates[0])?.date;
 		const lastSelectedDate = homestay.calendar.find(c => c.id === sortedDates[sortedDates.length - 1])?.date;
 		const checkoutDateObj = new Date(lastSelectedDate);
+		checkoutDateObj.setDate(checkoutDateObj.getDate() + 1);
 		const checkOutDate = checkoutDateObj.toISOString().split('T')[0]; 
 
 		const checkInTime = homestay.checkInTime || '14:00:00';
@@ -295,7 +296,13 @@ const HomeStayDetail = () => {
 		.sort((a, b) => new Date(a.date) - new Date(b.date));
 	const selectedCheckIn = availableDates?.find((date) => date.id === selectedDates[0]);
 
+	const [mounted, setMounted] = useState(false);
+	useEffect(() => {
+	  setMounted(true);
+	}, []);
+
 	return (
+		mounted && (
 		<MainLayout>
 			<div className='sec-com bg-gradient-to-b from-blue-50 to-white'>
 				<div className='px-4 container-lg'>
@@ -835,7 +842,7 @@ const HomeStayDetail = () => {
 				</div>
 			</div>
 		</MainLayout>
-	);
+	))
 };
 
 export default HomeStayDetail;

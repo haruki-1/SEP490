@@ -114,13 +114,12 @@ namespace API.Controllers
             var firstDate = sortedDates.First();
             var lastDate = sortedDates.Last();
             var replaceCheckInDate = homeStay.CheckInTime.Replace("PM", "").Replace("AM", "");
-            var replaceCheckOutDate = homeStay.CheckInTime.Replace("PM", "").Replace("AM", "");
+            var replaceCheckOutDate = homeStay.CheckOutTime.Replace("PM", "").Replace("AM", "");
 
             DateTime checkInDate = firstDate.Date.Add(TimeSpan.Parse(replaceCheckInDate));
             DateTime checkOutDate = lastDate.Date.Add(TimeSpan.Parse(replaceCheckOutDate));
 
-            if (firstDate == lastDate)
-                checkOutDate = firstDate.Date.Add(TimeSpan.Parse(homeStay.CheckOutTime.Replace("PM", "").Replace("AM", "")));
+            int numberOfNights = sortedCalendars.Count - 1;
 
             decimal totalPrice = sortedCalendars.Take(sortedCalendars.Count - 1).Sum(c => c.Price);
 
@@ -156,7 +155,7 @@ namespace API.Controllers
                 CheckInDate = checkInDate,
                 CheckOutDate = checkOutDate,
                 TotalPrice = totalPrice,
-                UnitPrice = totalPrice / (checkOutDate - checkInDate).Days,
+                UnitPrice = totalPrice / numberOfNights,
                 Status = "Wait For Payment",
                 UserID = userId,
                 HomeStayName = homeStay.Name,
