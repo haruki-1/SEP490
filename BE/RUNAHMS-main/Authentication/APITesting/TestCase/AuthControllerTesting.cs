@@ -29,6 +29,7 @@ public class AuthControllerTesting
         _mockPasswordHasher = new Mock<IPasswordHasher>();
         _mockEmailSender = new Mock<IEmailSender>();
         _mockConfiguration = new Mock<IConfiguration>();
+        _mockConfiguration.Setup(config => config["Base:UrlClient"]).Returns("http://localhost:3000");
 
 
         _controller = new AuthController(
@@ -36,8 +37,7 @@ public class AuthControllerTesting
             _mockTokenService.Object,
             _mockPasswordHasher.Object,
             _mockEmailSender.Object,
-            _mockConfiguration.Object,
-            null
+            _mockConfiguration.Object
         );
     }
 
@@ -248,6 +248,8 @@ public class AuthControllerTesting
         // Assert
         Assert.IsNotNull(result);
         Assert.AreEqual("http://localhost:3000", result.Url);
+        _mockUserRepo.Verify(repo => repo.ConfirmEmail(userId), Times.Once);
+        _mockUserRepo.Verify(repo => repo.SaveAsync(), Times.Once);
     }
 
 

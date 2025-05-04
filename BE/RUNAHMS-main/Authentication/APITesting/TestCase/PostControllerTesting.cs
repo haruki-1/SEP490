@@ -135,13 +135,13 @@ public class PostControllerTesting
             Id = postId,
             Title = "Post4 ",
             Description = "Post4 Description",
-            Location = "Ho Chi Minh",
+            Location = "Ha Noi",
             PublishDate = DateTime.Now,
             UserID = userId,
             isDeleted = false,
             PostImages = new List<PostImage>
         {
-            new PostImage { Image = "https://homestaybooking-001-site1.ntempurl.com/images/1dbf2c51-8bbc-4561-9aed-51e8e87596d9_4.jpg" }
+            new PostImage { Image = "image4.jpg" }
         },
             CommentPosts = new List<CommentPost> { comment, reply }
         };
