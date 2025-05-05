@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bussiness Object", "Bussine
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PayOSService", "PayOSService\PayOSService.csproj", "{20D6DABC-FC25-4CAB-A3D0-626BAC98290E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APITesting", "APITesting\APITesting.csproj", "{F0AB5463-20FC-4D74-B6C0-01CA9BF3960D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{20D6DABC-FC25-4CAB-A3D0-626BAC98290E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{20D6DABC-FC25-4CAB-A3D0-626BAC98290E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{20D6DABC-FC25-4CAB-A3D0-626BAC98290E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F0AB5463-20FC-4D74-B6C0-01CA9BF3960D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F0AB5463-20FC-4D74-B6C0-01CA9BF3960D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F0AB5463-20FC-4D74-B6C0-01CA9BF3960D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F0AB5463-20FC-4D74-B6C0-01CA9BF3960D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
